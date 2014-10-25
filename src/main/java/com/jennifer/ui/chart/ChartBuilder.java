@@ -73,7 +73,7 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     public JSONObject area() {
-        return (JSONObject) this.builderOptions.get("area");
+        return this.builderOptions.getJSONObject("area");
     }
 
     public int area(String key) {
