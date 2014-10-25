@@ -55,6 +55,7 @@ public class BlockGrid extends Grid {
         return domain(str.toArray(a));
     }
 
+    /*
     public Dom top(Dom g) {
         int full_height = chart.height();
 
@@ -105,7 +106,7 @@ public class BlockGrid extends Grid {
         }
 
         return g;
-    }
+    } */
 
     public boolean full() {
         return has("full") ? b("full") : false;
@@ -165,10 +166,11 @@ public class BlockGrid extends Grid {
         this.domain(domains);
         this.step = this.i("step", 10);
         
-        grid.max = grid.max || 100;
+        //grid.max = grid.max || 100;
     }
 
     public Object draw() {
-        return this.drawGrid();
+        return null;
+        //return this.drawGrid();
     }
 }

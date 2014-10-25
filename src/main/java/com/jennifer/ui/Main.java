@@ -1,9 +1,11 @@
 package com.jennifer.ui;
 
+import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.util.LinearScale;
 import com.jennifer.ui.util.Time;
 import com.jennifer.ui.util.TimeScale;
 import com.jennifer.ui.util.TimeUtil;
+import org.json.JSONObject;
 
 import java.util.Date;
 
@@ -40,6 +42,22 @@ public class Main {
         System.out.println(tscale.realTicks(Time.HOURS, 1));
 
 
+        JSONObject o = new JSONObject();
+        o.put("width", 100);
+        o.put("height", 100);
+        o.put("padding", new JSONObject().put("left", 0));
+        o.put("padding", "empty");
+        o.put("grid", new JSONObject()
+                .put("x", new JSONObject()
+                    .put("type", "block")
+                    .put("target", "name")
+                )
+                .put("y", new JSONObject()
+                    .put("type", "range")
+                    .put("target", "name2")
+                )
+        );
 
+        System.out.print(o.toString(4));
     }
 }
