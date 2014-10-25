@@ -146,14 +146,23 @@ public class ChartBuilder extends AbstractDraw {
         return createGradient(color);
     }
 
+    private String createGradient(JSONObject color) {
+        return null;
+    }
+
     private String getColor(String color) {
 
         Object parsedColor = ColorUtil.parse(color);
-        if (parsedColor instanceof String)
-            return color;
 
-        return createGradient(parsedColor, color);
+        if (parsedColor instanceof String) {
+            return (String)parsedColor;
+        }
+        return createGradient((JSONObject)parsedColor, color);
 
+    }
+
+    private String createGradient(JSONObject parsedColor, String color) {
+        return null;
     }
 
     @Override
