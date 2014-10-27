@@ -12,13 +12,19 @@ import java.util.List;
  *
  * Created by yuni on 2014-10-23.
  */
-public abstract  class AbstractDraw {
+public abstract  class AbstractDraw implements Drawable  {
 
 
     HashMap<String, Object> attrs = new HashMap<String, Object>();
 
     public abstract void drawBefore();
     public abstract Object draw();
+
+    public Object render() {
+        this.drawBefore();
+
+        return this.draw();
+    }
 
     public void attr(String key, Object value) {
         attrs.put(key, value);
@@ -66,21 +72,6 @@ public abstract  class AbstractDraw {
 
     public List<Object> list(String key) {
         return (List<Object>)attrs.get(key);
-    }
-
-    public Object render() {
-
-        this.drawBefore();
-
-        return this.draw();
-    }
-
-    protected DomUtil dom(String tagName) {
-        return DomUtil.el(tagName);
-    }
-
-    protected DomUtil dom(String tagName, String[] attrs) {
-        return DomUtil.el(tagName, attrs);
     }
 
     /**

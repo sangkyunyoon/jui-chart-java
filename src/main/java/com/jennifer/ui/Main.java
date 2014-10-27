@@ -5,6 +5,8 @@ import com.jennifer.ui.util.LinearScale;
 import com.jennifer.ui.util.Time;
 import com.jennifer.ui.util.TimeScale;
 import com.jennifer.ui.util.TimeUtil;
+import com.jennifer.ui.util.dom.Path;
+import com.jennifer.ui.util.dom.Svg;
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -59,5 +61,20 @@ public class Main {
         );
 
         System.out.print(o.toString(4));
+
+        /** element test **/
+
+        Svg svg = new Svg();
+
+        Path path = svg.group().path();
+
+        path.MoveTo(0, 0);
+        path.LineTo(100, 100);
+        path.Close();
+        path.put("stroke", "black");
+        path.put("stroke-dasharray", "5, 5");
+
+
+        System.out.println(svg.toXml());
     }
 }

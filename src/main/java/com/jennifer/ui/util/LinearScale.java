@@ -1,5 +1,7 @@
 package com.jennifer.ui.util;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 
 /**
@@ -17,7 +19,7 @@ public class LinearScale extends AbstractScale {
         super();
     }
 
-    public LinearScale(double[] domain, double[] range) {
+    public LinearScale(JSONArray domain, JSONArray range) {
         super(domain, range);
     }
 
@@ -25,21 +27,23 @@ public class LinearScale extends AbstractScale {
         int index = -1;
         int target;
 
-        for (int i = 0, len = _domain.length; i < len; i++) {
+        JSONArray domain = domain();
+        
+        for (int i = 0, len = domain.length(); i < len; i++) {
 
             if (i == len - 1) {
-                if (x == _domain[i]) {
+                if (x == domain.getDouble(i)) {
                     index = i;
                     break;
                 }
             } else {
-                if (_domain[i] < _domain[i + 1]) {
-                    if (x >= _domain[i] && x < _domain[i + 1]) {
+                if (domain.getDouble(i) < domain.getDouble(i + 1)) {
+                    if (x >= domain.getDouble(i) && x < domain.getDouble(i + 1)) {
                         index = i;
                         break;
                     }
-                } else if (_domain[i] >= _domain[i + 1]) {
-                    if (x <= _domain[i] && _domain[i + 1] < x) {
+                } else if (domain.getDouble(i) >= domain.getDouble(i + 1)) {
+                    if (x <= domain.getDouble(i) && domain.getDouble(i + 1) < x) {
                         index = i;
                         break;
                     }
@@ -47,14 +51,16 @@ public class LinearScale extends AbstractScale {
             }
         }
 
-        if (_range == null) {
+        JSONArray range = range();
+
+        if (range.length() == 0) {
             if (index == 0) {
                 return 0;
             } else if (index == -1) {
                 return 1;
             } else {
-                double min = _domain[index - 1];
-                double max = _domain[index];
+                double min = domain.getDouble(index - 1);
+                double max = domain.getDouble(index);
 
                 double pos = (x - min) / (max - min);
 
@@ -62,8 +68,8 @@ public class LinearScale extends AbstractScale {
             }
         } else {
 
-            if (_domain.length - 1 == index) {
-                return _range[index];
+            if (domain.length() - 1 == index) {
+                return range.getDouble(index);
             } else if (index == -1) {
 
                 double max = max();
@@ -73,11 +79,11 @@ public class LinearScale extends AbstractScale {
 
                     if (_clamp) return max;
 
-                    double last = _domain[_domain.length -1];
-                    double last2 = _domain[_domain.length -2];
+                    double last = domain.getDouble(domain.length() - 1);
+                    double last2 = domain.getDouble(domain.length() -2);
 
-                    double rlast = _range[_range.length -1];
-                    double rlast2 = _range[_range.length -2];
+                    double rlast = range.getDouble(range.length() -1);
+                    double rlast2 = range.getDouble(range.length() -2);
 
                     double distLast = Math.abs(last - last2);
                     double distRLast = Math.abs(rlast - rlast2);
@@ -88,11 +94,11 @@ public class LinearScale extends AbstractScale {
 
                     if (_clamp) return min;
 
-                    double first = _domain[0];
-                    double first2 = _domain[1];
+                    double first = domain.getDouble(0);
+                    double first2 = domain.getDouble(1);
 
-                    double rfirst = _range[0];
-                    double rfirst2 = _range[1];
+                    double rfirst = range.getDouble(0);
+                    double rfirst2 = range.getDouble(1);
 
                     double distFirst = Math.abs(first - first2);
                     double distRFirst = Math.abs(rfirst - rfirst2);
@@ -100,14 +106,14 @@ public class LinearScale extends AbstractScale {
                     return rfirst - Math.abs(x - min) * distRFirst / distFirst;
                 }
 
-                return _range[_range.length - 1];
+                return range.getDouble(range.length() - 1);
             } else {
 
-                double min = _domain[index];
-                double max = _domain[index+1];
+                double min = domain.getDouble(index);
+                double max = domain.getDouble(index+1);
 
-                double minR = _range[index];
-                double maxR = _range[index + 1];
+                double minR = range.getDouble(index);
+                double maxR = range.getDouble(index + 1);
 
                 double pos = (x - min) / (max - min);
 
@@ -120,7 +126,7 @@ public class LinearScale extends AbstractScale {
 
     }
 
-    public LinearScale rangeRound(double[] range) {
+    public LinearScale rangeRound(JSONArray range) {
         _round = true;
 
         return (LinearScale)this.range(range);
@@ -130,18 +136,20 @@ public class LinearScale extends AbstractScale {
         return new LinearScale(this.range(), this.domain()).get(y);
     }
 
-    public double[] ticks() {
+    public JSONArray ticks() {
         return ticks(10, false, 1000000);
     }
 
-    public double[] ticks(int count, boolean isNice, int intNumber) {
-        ArrayList<Double> list = new ArrayList<Double>();
+    public JSONArray ticks(int count, boolean isNice, int intNumber) {
+        JSONArray list = new JSONArray();
 
-        if (_domain[0] == 0 && _domain[1] == 0) {
-            return new double[0];
+        JSONArray domain = domain();
+
+        if (domain.getDouble(0) == 0 && domain.getDouble(1) == 0) {
+            return new JSONArray();
         }
 
-        double[] arr = MathUtil.nice(_domain[0], _domain[1], count, isNice );
+        double[] arr = MathUtil.nice(domain.getDouble(0), domain.getDouble(1), count, isNice );
 
         double min = arr[0];
         double max = arr[1];
@@ -151,14 +159,14 @@ public class LinearScale extends AbstractScale {
         double start = min * intNumber;
         double end = max * intNumber;
         while (start <= end) {
-            list.add(Double.valueOf(start/intNumber));
+            list.put(start/intNumber);
             start += spacing * intNumber;
         }
 
-        if (list.get(list.size()-1).doubleValue() * intNumber != end && start > end) {
-            list.add(Double.valueOf(end / intNumber));
+        if (list.getDouble(list.length()-1) * intNumber != end && start > end) {
+            list.put(end / intNumber);
         }
 
-        return ScaleUtil.convert(list);
+        return list;
     }
 }

@@ -1,42 +1,27 @@
 package com.jennifer.ui.util;
 
+import org.json.JSONArray;
+
 /**
  * Created by yuni on 2014-10-24.
  */
 public abstract class AbstractScale implements Scale {
-    protected double[] _domain;
-    protected double[] _range;
     protected double _rangeBand;
-
     protected boolean _clamp;
+    private JSONArray domain = new JSONArray();
+    private JSONArray range = new JSONArray();
 
     protected AbstractScale() {
-        _domain = new double[] {0, 1 };
-        _range = new double[] { 0, 1 };
+
     }
 
-    protected AbstractScale(double[] domain, double[] range) {
-        _domain = domain;
-        _range = range;
+    protected AbstractScale(JSONArray domain, JSONArray range) {
+        this.domain = domain;
+        this.range = range;
     }
 
     public void clamp(boolean clamp) {
         _clamp = clamp;
-    }
-
-    public Scale domain(double[] domain) {
-        _domain = domain;
-        return this;
-    }
-    public Scale range(double[] range) {
-        _range = range;
-        return this;
-    }
-    public double[] domain() {
-        return _domain;
-    }
-    public double[] range() {
-        return _range;
     }
 
     public double get(double x) {
@@ -45,12 +30,12 @@ public abstract class AbstractScale implements Scale {
 
     @Override
     public double max() {
-        return Math.max(_domain[0], _domain[_domain.length - 1]);
+        return Math.max(domain.getDouble(0), domain.getDouble(domain.length()-1));
     }
 
     @Override
     public double min() {
-        return Math.min(_domain[0], _domain[_domain.length - 1]);
+        return Math.min(domain.getDouble(0), domain.getDouble(domain.length()-1));
     }
 
     @Override
@@ -66,5 +51,23 @@ public abstract class AbstractScale implements Scale {
     @Override
     public double invert(double y) {
         return 0;
+    }
+
+    public JSONArray domain() {
+        return domain;
+    }
+
+    public JSONArray range() {
+        return range;
+    }
+
+    public Scale domain(JSONArray domain) {
+        this.domain = domain;
+        return this;
+    }
+
+    public Scale range(JSONArray range) {
+        this.range = range;
+        return this;
     }
 }

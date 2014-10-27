@@ -1,11 +1,20 @@
 package com.jennifer.ui.chart;
 
+import brush.EqualizerBrush;
+import com.jennifer.ui.chart.brush.*;
+import com.jennifer.ui.chart.grid.*;
 import com.jennifer.ui.common.ChartData;
 import com.jennifer.ui.util.ColorUtil;
+import com.jennifer.ui.util.DomUtil;
+import com.jennifer.ui.util.Scale;
+import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import sun.org.mozilla.javascript.internal.ast.Block;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.RunnableFuture;
 
 /**
  * ChartBuilder options list
@@ -30,6 +39,9 @@ public class ChartBuilder extends AbstractDraw {
 
     private final JSONObject options;
     private final JSONObject builderOptions = new JSONObject();
+    private HashMap<String, Class> grids = new HashMap<String, Class>();
+    private HashMap<String, Class> brushes = new HashMap<String, Class>();
+    private HashMap<String, Class> widgets = new HashMap<String, Class>();
 
     public ChartBuilder() {
         this(new JSONObject());
@@ -39,6 +51,61 @@ public class ChartBuilder extends AbstractDraw {
         this.options = o;
 
         caculate();
+        initPlugin();
+    }
+
+    private void initPlugin() {
+
+        // annotation scan
+
+        // default grid
+        addGrid("block", BlockGrid.class);
+        addGrid("range", RangeGrid.class);
+        addGrid("date", DateGrid.class);
+        addGrid("rule", RuleGrid.class);
+        addGrid("radar", RadarGrid.class);
+
+        // default brush
+        addBrush("area",                AreaBrush.class);
+        addBrush("bar",                 BarBrush.class);
+        addBrush("bargauge",            BarGaugeBrush.class);
+        addBrush("bubble",              BubbleBrush.class);
+        addBrush("candlestick",         CandleStickBrush.class);
+        addBrush("circlegauge",         CircleGaugeBrush.class);
+        addBrush("column",              ColumnBrush.class);
+        addBrush("donut",               DonutBrush.class);
+        addBrush("equalizer",           EqualizerBrush.class);
+        addBrush("fillgauge",           FillGaugeBrush.class);
+        addBrush("fullgauge",           FullGaugeBrush.class);
+        addBrush("fullstack",           FullStackBrush.class);
+        addBrush("gauge",               GagueBrush.class);
+        addBrush("line",                LineBrush.class);
+        addBrush("ohlc",                OhlcBrush.class);
+        addBrush("path",                PathBrush.class);
+        addBrush("pie",                 PieBrush.class);
+        addBrush("scatter",             ScatterBrush.class);
+        addBrush("scatterpath",         ScatterPathBrush.class);
+        addBrush("stackarea",           StackAreaBrush.class);
+        addBrush("stackbar",            StackBarBrush.class);
+        addBrush("stackcolumn",         StackColumnBrush.class);
+        addBrush("stackgauge",          StackGagueBrush.class);
+        addBrush("stackline",           StackLineBrush.class);
+        addBrush("stackscatter",        StackScatterBrush.class);
+
+
+        // default widget
+    }
+
+    private void addBrush(String key, Class brushClass) {
+        brushes.put(key, brushClass);
+    }
+
+    private void addWidget(String key, Class widgetClass) {
+        widgets.put(key, widgetClass);
+    }
+
+    private void addGrid(String key, Class gridClass) {
+        grids.put(key, gridClass);
     }
 
     public int i(String key) {
@@ -262,12 +329,223 @@ public class ChartBuilder extends AbstractDraw {
         return null;
     }
 
+    private void drawObject(String type) {
+        if (builderOptions.has(type) && !builderOptions.isNull(type)) {
+            JSONArray list = builderOptions.getJSONArray(type);
+
+            for(int i = 0, len = list.length(); i < len; i++) {
+                JSONObject obj = list.getJSONObject(i);
+                String objType = obj.getString("type");
+                Class cls = "brush".equals(type) ? brushes.get(objType) : widgets.get(objType);
+
+                JSONObject drawObject;
+                if ("widget".equals(type)) {
+                    drawObject = builderOptions.getJSONArray("brush").getJSONObject(i);
+                } else {
+                    drawObject = obj;
+                }
+
+                setGridAxis(obj, drawObject);
+
+                obj.put("index", i);
+
+                // create object and rendering
+
+                try {
+                    Drawable drawable = (Drawable) cls.getDeclaredConstructor(ChartBuilder.class, JSONObject.class).newInstance(this, obj);
+                    drawable.render();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
+
+    private void setGridAxis(JSONObject obj, JSONObject drawObject) {
+        obj.remove("x");
+        obj.remove("y");
+        obj.remove("c");
+
+        JSONObject scales = builderOptions.getJSONObject("scales");
+
+        if (scales.has("x") || scales.has("x1")) {
+
+            Scale scaleX;
+            Scale scaleY;
+            Scale scaleC;
+
+             if (drawObject.has("x1") && drawObject.getInt("x1")  > -1) {
+                 scaleX = (Scale) scales.getJSONArray("x1").get(drawObject.getInt("x1"));
+
+                 obj.put("x", scaleX);
+             } else {
+                 if (drawObject.has("x")) {
+                     scaleX = (Scale) scales.getJSONArray("x").get(drawObject.getInt("x"));
+                 } else {
+                     scaleX = (Scale) scales.getJSONArray("x").get(0);
+                 }
+
+                 obj.put("x", scaleX);
+             }
+
+             if (drawObject.has("y1") && drawObject.getInt("y1")  > -1) {
+                 scaleY = (Scale) scales.getJSONArray("y1").get(drawObject.getInt("y1"));
+
+                 obj.put("y", scaleY);
+             } else {
+                 if (drawObject.has("y")) {
+                     scaleY = (Scale) scales.getJSONArray("y").get(drawObject.getInt("y"));
+                 } else {
+                     scaleY = (Scale) scales.getJSONArray("y").get(0);
+                 }
+
+                 obj.put("y", scaleY);
+             }
+
+
+             if (drawObject.has("c") && drawObject.getInt("c")  > -1) {
+                 scaleC = (Scale) scales.getJSONArray("c").get(drawObject.getInt("c"));
+
+                 obj.put("c", scaleC);
+
+             }
+
+
+
+        }
+
+
+    }
+
+    private void drawWidget() {
+        drawObject("widget");
+    }
+
+    private void drawBrush() {
+        drawObject("brush");
+    }
+
+    private void drawGrid() {
+        JSONObject grid = builderOptions.getJSONObject("grid");
+
+        if (grid != null) {
+
+            // create default cusotm grid
+            if (grid.has("type")) {
+                grid = new JSONObject();
+                grid.put("c", new JSONArray(grid));
+            }
+
+            if (builderOptions.has("scales")) {
+                builderOptions.put("scales", new JSONObject());
+            }
+
+            JSONObject scales = builderOptions.getJSONObject("scales");
+
+            JSONArray keys = grid.names();
+
+            for(int i = 0, len = keys.length(); i < len; i++) {
+                String key = keys.getString(i);
+
+                Orient orient = Orient.CUSTOM;
+
+                if ("x".equals(key)) {
+                    orient = Orient.BOTTOM;
+                } else if ("y".equals(key)) {
+                    orient = Orient.LEFT;
+                } else if ("x1".equals(key)) {
+                    orient = Orient.TOP;
+                } else if ("y1".equals(key)) {
+                    orient = Orient.RIGHT;
+                }
+
+                if (!scales.has(key)) {
+                    scales.put(key, new JSONArray());
+                }
+
+                JSONArray scale = scales.getJSONArray(key);
+
+                if (!(grid.get(key) instanceof JSONArray)) {
+                    JSONArray o = new JSONArray();
+                    o.put(grid);
+
+                    grid = new JSONObject();
+                    grid.put(key, o);
+                }
+
+                JSONArray gridObject = grid.getJSONArray(key);
+
+                for(int keyIndex = 0, gridLen = gridObject.length(); keyIndex < gridLen; keyIndex++) {
+
+                    JSONObject g = gridObject.getJSONObject(keyIndex);
+
+                    Class cls = grids.get(g.getString("type"));
+                    Drawable drawable = null;
+
+                    try {
+                        drawable = (Drawable) cls.getDeclaredConstructor(ChartBuilder.class, JSONObject.class).newInstance(this, g);
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                    }
+
+                    JSONObject ret = (JSONObject)drawable.render();
+
+                    int dist = g.optInt("dist", 0);
+                    Transform root = (Transform)ret.get("root");
+
+                    if ("y".equals(key)) {
+                        root.translate(x() - dist, y());
+                    } else if ("y1".equals(key)) {
+                        root.translate(x2() + dist, y());
+                    } else if ("x".equals(key)) {
+                        root.translate(x(), y2() + dist);
+                    } else if ("x1".equals(key)) {
+                        root.translate(x(), y() - dist);
+                    }
+
+                    scales.getJSONArray(key).put(keyIndex, (Scale)ret.get("scale"));
+
+                }
+
+            }
+        }
+    }
+
     public Object render() {
 
         caculate();
 
         drawBefore();
 
+        drawGrid();
+        drawBrush();
+        drawWidget();
+
         return null;
+    }
+
+    public JSONArray data() {
+        return barray("data");
+    }
+
+    public JSONObject series() {
+        return bobject("series");
+    }
+
+    public JSONObject series(String key) {
+        return series().getJSONObject(key);
     }
 }

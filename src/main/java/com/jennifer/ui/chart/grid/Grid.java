@@ -2,6 +2,7 @@ package com.jennifer.ui.chart.grid;
 
 import com.jennifer.ui.chart.AbstractDraw;
 import com.jennifer.ui.chart.ChartBuilder;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -9,12 +10,19 @@ import java.util.HashMap;
  * Created by Jayden on 2014-10-24.
  */
 public class Grid extends AbstractDraw {
-    protected GridOrient orient;
+    protected Orient orient;
     protected ChartBuilder chart;
+    protected JSONObject options;
 
-    public Grid(ChartBuilder chart, GridOrient orient) {
+    public Grid(Orient orient, ChartBuilder chart, JSONObject options) {
         this.chart = chart;
         this.orient = orient;
+
+        init();
+    }
+
+    public void init() {
+
     }
 
     @Override

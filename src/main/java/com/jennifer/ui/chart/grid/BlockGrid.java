@@ -1,10 +1,13 @@
 package com.jennifer.ui.chart.grid;
 
 import com.jennifer.ui.chart.ChartBuilder;
+import com.jennifer.ui.chart.ChartGrid;
 import com.jennifer.ui.common.ChartData;
 import com.jennifer.ui.util.OrdinalScale;
 import com.jennifer.ui.util.Scale;
 import com.jennifer.ui.util.StringUtil;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +23,9 @@ import java.util.Objects;
 public class BlockGrid extends Grid {
 
     private OrdinalScale scale = new OrdinalScale();
+    private JSONObject attrs = new JSONObject();
+
+
     private double[] points;
     private double[] domain;
     private double band;
@@ -27,32 +33,13 @@ public class BlockGrid extends Grid {
     private int bar;
     private int step;
 
-    public BlockGrid(ChartBuilder chart, GridOrient orient) {
-        super(chart, orient);
+    public BlockGrid(Orient orient, ChartBuilder chart, JSONObject options) {
+        super(orient, chart, options);
     }
 
-    public Scale getScale() {
-        return scale;
-    }
+    @Override
+    public void init() {
 
-    public BlockGrid title(String title) {
-        attr("title", title);
-        return this;
-    }
-
-    public BlockGrid domain(String str) {
-        return domain(str.split(","));
-    }
-
-    public BlockGrid domain(String[] str) {
-        scale.domainString(str);
-        attr("domain", StringUtil.join(str, ","));
-        return this;
-    }
-
-    public BlockGrid domain(List<String> str) {
-        String[] a = new String[str.size()];
-        return domain(str.toArray(a));
     }
 
     /*
@@ -121,10 +108,10 @@ public class BlockGrid extends Grid {
 
         int width = chart.width();
         int height = chart.height();
-        int max = (orient == GridOrient.LEFT || orient == GridOrient.RIGHT) ? height : width;
+        int max = (orient == Orient.LEFT || orient == Orient.RIGHT) ? height : width;
 
-        // scale 도메인 설정
-        this.domain((String) attr("domain"));
+        this.scale.domain(options.getJSONArray("domain"));
+
         double range[] = new double[] { 0, (double)max };
 
         if (this.full()) {
@@ -142,31 +129,32 @@ public class BlockGrid extends Grid {
 
     private void initDomain() {
 
-        if (!this.has("target") || this.has("domain")) {
-            return;
+        if (has("target") && !has("domain")) {
+            JSONArray domain = new JSONArray();
+            JSONArray data = chart.data();
+
+            int start = 0;
+            int end = data.length() - 1;
+            int step = 1;
+
+            boolean reverse = options.optBoolean("reverse", false);
+
+            if (reverse) {
+                start = data.length() - 1;
+                end = 0;
+                step = 1;
+            }
+
+            for(int i = start; ((reverse) ? i >= end : i <= end); i += step) {
+                domain.put(data.getJSONObject(i).getDouble(options.getString("target")));
+            }
+
+            options.put("domain", domain);
+            options.put("step", options.optInt("step", 10));
+            options.put("max", options.optInt("max", 100));
+
         }
 
-        List<String> domains = new ArrayList<String>();
-        ChartData data = chart.data();
-
-        int start = 0;
-        int end = data.length() - 1;
-        int step = 1;
-
-        if (this.reverse()) {
-            start = data.length() - 1;
-            end = 0;
-            step = -1;
-        }
-
-        for (int i = start; ((this.reverse()) ? i >= end : i <=end); i += step) {
-            domains.add((String)data.get(i, this.target()));
-        }
-
-        this.domain(domains);
-        this.step = this.i("step", 10);
-        
-        //grid.max = grid.max || 100;
     }
 
     public Object draw() {

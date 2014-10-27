@@ -1,8 +1,8 @@
 package com.jennifer.ui.chart.grid;
 
-public enum GridOrient {
+public enum Orient {
     LEFT,
     RIGHT,
     TOP,
-    BOTTOM
+    CUSTOM, BOTTOM
 }
