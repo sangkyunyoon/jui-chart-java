@@ -12,10 +12,11 @@ import org.json.JSONObject;
  */
 public class DomUtil {
 
-    private JSONObject attrs = new JSONObject();;
+    private JSONObject attrs = new JSONObject();
+    private JSONObject styles = new JSONObject();
     private String tagName;
     private String text = "";
-    private JSONArray children = new JSONArray();;
+    private JSONArray children = new JSONArray();
 
     public DomUtil(String tagName, JSONObject attr) {
         this(tagName);
@@ -51,7 +52,32 @@ public class DomUtil {
     public Object get(String key) { return attrs.get(key); }
     public int getInt(String key) { return attrs.getInt(key); }
     public double getDouble(String key) { return attrs.getDouble(key); }
+    
+    public DomUtil css(String key, int value) { styles.put(key, value);  return this; }
+    public DomUtil css(String key, double value) { styles.put(key, value);  return this; }
+    public DomUtil css(String key, Object value) { styles.put(key, value);  return this; }
+    public DomUtil css(String key, String value) { styles.put(key, value);  return this; }
 
+    public String cssString(String key) { return styles.getString(key); }
+    public Object css(String key) { return styles.get(key); }
+    public int cssInt(String key) { return styles.getInt(key); }
+    public double cssDouble(String key) { return styles.getDouble(key); }
+
+    public JSONObject css() {
+        return styles;
+    }
+
+    public DomUtil css(JSONObject o) {
+
+        JSONArray names = o.names();
+
+        for(int i = 0, len = names.length(); i < len; i++) {
+            String key = names.getString(i);
+            css(key, o.get(key));
+        }
+
+        return this;
+    }
 
     public DomUtil append(String tagName) {
         return append(new DomUtil(tagName));
@@ -75,8 +101,31 @@ public class DomUtil {
         return this;
     }
 
+    public String collapseStyle() {
+        StringBuilder str = new StringBuilder();
+        JSONArray names = styles.names();
+
+        if (names != null) {
+            for(int i = 0, len = names.length(); i < len; i++) {
+                String key = names.getString(i);
+                String value = styles.getString(key);
+
+                str.append("" + key + ":" + value + ";");
+            }
+        }
+
+        return str.toString();
+    }
+
     public String collapseAttr() {
         StringBuilder str = new StringBuilder();
+
+        String style = collapseStyle();
+
+        if (!style.equals("")) {
+            put("style", style);
+        }
+
         JSONArray names = attrs.names();
 
         if (names != null) {

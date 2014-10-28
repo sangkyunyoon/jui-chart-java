@@ -1,5 +1,8 @@
 package com.jennifer.ui.util;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -12,23 +15,18 @@ public class TimeScale extends LinearScale {
         super();
     }
 
-    public TimeScale(double[] domain, double[] range) {
+    public TimeScale(JSONArray domain, JSONArray range) {
         super(domain, range);
     }
 
-    public TimeScale(Date[] domain) {
-        this.domain(domain);
-    }
+    public Scale domain(JSONArray domain) {
 
-    public TimeScale(Date[] domain, double[] range) {
-        this.domain(domain);
-        this.range(range);
-    }
-
-    public Scale domain(Date[] domain) {
-
-        for(int i = 0, len = domain.length; i < len; i++) {
-            _domain[i] = domain[i].getTime();
+        for(int i = 0, len = domain.length(); i < len; i++) {
+            if (domain.get(i) instanceof Date) {
+                domain.put(i, ((Date)domain.get(i)).getTime());
+            } else {
+                domain.put(i, domain.get(i));
+            }
         }
 
         return this;

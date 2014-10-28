@@ -16,7 +16,8 @@ import java.util.Date;
 public class Main {
 
     public static void main(String[] args) {
-        LinearScale scale = new LinearScale(new double[] { 0, 100}, new double[] {0, 1000 });
+        /*
+        LinearScale scale = new LinearScale();
 
         System.out.println(scale.get(0) + " : " + 0);
         System.out.println(scale.get(1) + " : " + 10);
@@ -34,7 +35,7 @@ public class Main {
             new Date(),
             TimeUtil.add(new Date(), Time.HOURS, 5)
         });
-        tscale.range(new double[] { 0, 1000 } );
+        tscale.range( );
 
         System.out.println(tscale.get(TimeUtil.add(new Date(), Time.HOURS, 1).getTime()));
 
@@ -60,7 +61,7 @@ public class Main {
         );
 
         System.out.print(o.toString(4));
-
+        */
         /** element test **/
 
         Svg svg = new Svg();
@@ -72,6 +73,8 @@ public class Main {
         path.Close();
         path.put("stroke", "black");
         path.put("stroke-dasharray", "5, 5");
+
+        path.css("background", "yellow");
 
 
         System.out.println(svg.toXml());

@@ -26,8 +26,8 @@ public class BlockGrid extends Grid {
     private JSONObject attrs = new JSONObject();
 
 
-    private double[] points;
-    private double[] domain;
+    private JSONArray points;
+    private JSONArray domain;
     private double band;
     private double half_band;
     private int bar;
@@ -158,7 +158,6 @@ public class BlockGrid extends Grid {
     }
 
     public Object draw() {
-        return null;
-        //return this.drawGrid();
+        return this.drawGrid();
     }
 }

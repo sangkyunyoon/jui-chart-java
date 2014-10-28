@@ -34,4 +34,9 @@ public class Grid extends AbstractDraw {
     public Object draw() {
         return null;
     }
+
+    public Object drawGrid() {
+
+        return null;
+    }
 }
