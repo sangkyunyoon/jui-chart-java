@@ -1,11 +1,13 @@
 package com.jennifer.ui;
 
+import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.util.LinearScale;
 import com.jennifer.ui.util.Time;
 import com.jennifer.ui.util.TimeScale;
 import com.jennifer.ui.util.TimeUtil;
 import com.jennifer.ui.util.dom.Path;
 import com.jennifer.ui.util.dom.Svg;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -78,5 +80,33 @@ public class Main {
 
 
         System.out.println(svg.toXml());
+
+
+        JSONObject chartOpt = new JSONObject();
+        chartOpt.put("grid", new JSONObject());
+
+        JSONObject grid = chartOpt.getJSONObject("grid");
+        grid.put("x1", new JSONObject());
+
+        JSONObject x1 = grid.getJSONObject("x1");
+        x1.put("type", "block").put("target", "name");
+
+        chartOpt.put("data", new JSONArray());
+        JSONArray data = chartOpt.getJSONArray("data");
+        for(int i = 0; i < 10; i++) {
+            JSONObject d = new JSONObject();
+
+            d.put("name", "tab" + i);
+            d.put("value", i * 10);
+
+            data.put(d);
+        }
+
+
+
+        System.out.println(chartOpt.toString(4));
+
+        ChartBuilder chart = new ChartBuilder(chartOpt);
+        System.out.println(chart.render());
     }
 }

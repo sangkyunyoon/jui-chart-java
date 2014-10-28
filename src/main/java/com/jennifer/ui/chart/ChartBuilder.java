@@ -3,14 +3,21 @@ package com.jennifer.ui.chart;
 import com.jennifer.ui.chart.brush.EqualizerBrush;
 import com.jennifer.ui.chart.brush.*;
 import com.jennifer.ui.chart.grid.*;
+import com.jennifer.ui.chart.theme.DarkTheme;
+import com.jennifer.ui.chart.theme.JenniferTheme;
 import com.jennifer.ui.util.ColorUtil;
+import com.jennifer.ui.util.DomUtil;
+import com.jennifer.ui.util.JSONUtil;
 import com.jennifer.ui.util.Scale;
+import com.jennifer.ui.util.dom.Svg;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
+import static com.jennifer.ui.util.DomUtil.el;
 
 /**
  * ChartBuilder options list
@@ -38,6 +45,8 @@ public class ChartBuilder extends AbstractDraw {
     private HashMap<String, Class> grids = new HashMap<String, Class>();
     private HashMap<String, Class> brushes = new HashMap<String, Class>();
     private HashMap<String, Class> widgets = new HashMap<String, Class>();
+    private Svg svg;
+    private JSONObject themeList = new JSONObject();
 
     public ChartBuilder() {
         this(new JSONObject());
@@ -46,22 +55,53 @@ public class ChartBuilder extends AbstractDraw {
     public ChartBuilder(JSONObject o) {
         this.options = o;
 
+        init();
+
         caculate();
-        initPlugin();
     }
 
-    private void initPlugin() {
+    private void init() {
 
-        // annotation scan
+        initPadding();
+
+        initTheme();
 
         // default grid
-        addGrid("block", BlockGrid.class);
-        addGrid("range", RangeGrid.class);
-        addGrid("date", DateGrid.class);
-        addGrid("rule", RuleGrid.class);
-        addGrid("radar", RadarGrid.class);
+        initGrid();
 
         // default brush
+        initBrush();
+
+        // default widget
+        initWidget();
+
+        // svg main
+
+        initSvg();
+
+        setTheme(options.optString("theme", "jennifer"));
+
+        //TODO: support style option
+        if (options.has("style")) {
+
+        }
+
+    }
+
+    private void initSvg() {
+        JSONObject o = new JSONObject();
+        o.put("width", bi("width"));
+        o.put("height", bi("height"));
+
+        this.svg = new Svg(o);
+    }
+
+    private void initWidget() {
+
+
+    }
+
+    private void initBrush() {
         addBrush("area",                AreaBrush.class);
         addBrush("bar",                 BarBrush.class);
         addBrush("bargauge",            BarGaugeBrush.class);
@@ -87,9 +127,61 @@ public class ChartBuilder extends AbstractDraw {
         addBrush("stackgauge",          StackGagueBrush.class);
         addBrush("stackline",           StackLineBrush.class);
         addBrush("stackscatter",        StackScatterBrush.class);
+    }
+
+    private void initGrid() {
+        addGrid("block", BlockGrid.class);
+        addGrid("range", RangeGrid.class);
+        addGrid("date", DateGrid.class);
+        addGrid("rule", RuleGrid.class);
+        addGrid("radar", RadarGrid.class);
+    }
+
+    private void initTheme() {
+        addTheme("jennifer", JenniferTheme.create());
+        addTheme("dark", DarkTheme.create());
+    }
+
+    private void addTheme(String name, JSONObject themeObj) {
+        themeList.put(name, themeObj);
+    }
+
+    private void initPadding() {
+        builderOptions.put("width", options.optInt("width", 400));
+        builderOptions.put("height", options.optInt("height", 400));
 
 
-        // default widget
+        // default Option
+        if (this.options.has("padding")) {
+
+            Object padding = this.options.get("padding");
+
+            if (padding instanceof String && "empty".equals((String)padding)) {
+                JSONObject o = new JSONObject();
+                o.put("left", 0);
+                o.put("right", 0);
+                o.put("bottom", 0);
+                o.put("top", 0);
+                this.builderOptions.put("padding", o);
+            } else {
+                JSONObject source = (JSONObject)padding;
+                JSONObject o = new JSONObject();
+                o.put("left", source.optInt("left", 50));
+                o.put("right", source.optInt("right", 50));
+                o.put("bottom", source.optInt("bottom", 50));
+                o.put("top", source.optInt("top", 50));
+
+                this.builderOptions.put("padding", o);
+            }
+
+        } else {
+            JSONObject o = new JSONObject();
+            o.put("left", 50);
+            o.put("right", 50);
+            o.put("bottom", 50);
+            o.put("top", 50);
+            this.builderOptions.put("padding", o);
+        }
     }
 
     private void addBrush(String key, Class brushClass) {
@@ -114,8 +206,8 @@ public class ChartBuilder extends AbstractDraw {
 
     private void caculate() {
 
-        int width  = i("width") - (padding("left") + padding("right"));
-        int height  = i("height") - (padding("top") + padding("bottom"));
+        int width  = bi("width") - (padding("left") + padding("right"));
+        int height  = bi("height") - (padding("top") + padding("bottom"));
         int x = padding("left");
         int y = padding("top");
 
@@ -168,7 +260,7 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     public int padding(String key) {
-        return this.options.getJSONObject("padding").getInt(key);
+        return this.builderOptions.getJSONObject("padding").getInt(key);
     }
 
     public ChartBuilder addGrid(Grid grid) {
@@ -176,15 +268,28 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     private JSONObject cloneObject(String key) {
-        return new JSONObject(this.options, new String[] { key });
+        if (options.has(key)) {
+            return JSONUtil.extend(new JSONObject(), options.getJSONObject(key));
+        } else {
+            return new JSONObject();
+        }
     }
 
     private JSONArray cloneArray(String key) {
-        return new JSONArray(this.options.getJSONArray(key));
+        JSONArray list = new JSONArray();
+        JSONArray source = this.options.getJSONArray(key);
+
+        if (source != null) {
+            for(int i = 0, len = source.length(); i < len; i++) {
+                list.put(JSONUtil.clone(source.getJSONObject(i)));
+            }
+        }
+
+        return list;
     }
 
     private Object clone(String key) {
-        return this.options.get(key);
+        return this.options.has(key) ? this.options.get(key) : null;
     }
 
     public String color(int index, JSONArray colors) {
@@ -215,13 +320,16 @@ public class ChartBuilder extends AbstractDraw {
 
     private String getColor(String color) {
 
+        return color;
+        /*
+
         Object parsedColor = ColorUtil.parse(color);
 
         if (parsedColor instanceof String) {
             return (String)parsedColor;
         }
         return createGradient((JSONObject)parsedColor, color);
-
+        */
     }
 
     private String createGradient(JSONObject parsedColor, String color) {
@@ -236,7 +344,7 @@ public class ChartBuilder extends AbstractDraw {
         Object brush = clone("brush");
         Object widget = clone("widget");
 
-        JSONArray data = barray("data");
+        JSONArray data = cloneArray("data");
 
         // series 데이타 구성
         for (int i = 0, len = data.length(); i < len; i++) {
@@ -252,6 +360,9 @@ public class ChartBuilder extends AbstractDraw {
                 }
 
                 JSONObject obj = series.getJSONObject(key);
+
+                if (row.get(key) instanceof String) break;
+
                 double value = row.getDouble(key);
 
                 if (!obj.has("min")) obj.put("min", 0);
@@ -267,6 +378,7 @@ public class ChartBuilder extends AbstractDraw {
         barray("widget", createBrushData(widget, series.names()));
         bobject("grid", grid);
         bobject("hash", null);
+        barray("data", data);
 
     }
 
@@ -299,7 +411,7 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     private JSONArray barray(String key) {
-        return this.builderOptions.getJSONArray(key);
+        return builderOptions.has(key) ? builderOptions.getJSONArray(key) : new JSONArray();
     }
 
     private void barray(String key, JSONArray value) {
@@ -349,7 +461,12 @@ public class ChartBuilder extends AbstractDraw {
 
                 try {
                     Drawable drawable = (Drawable) cls.getDeclaredConstructor(ChartBuilder.class, JSONObject.class).newInstance(this, obj);
-                    drawable.render();
+                    JSONObject result = (JSONObject)drawable.render();
+
+                    Transform root = (Transform)result.get("root");
+
+                    this.svg.append(root);
+
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 } catch (InstantiationException e) {
@@ -430,7 +547,6 @@ public class ChartBuilder extends AbstractDraw {
 
     private void drawGrid() {
         JSONObject grid = builderOptions.getJSONObject("grid");
-
         if (grid != null) {
 
             // create default cusotm grid
@@ -439,17 +555,17 @@ public class ChartBuilder extends AbstractDraw {
                 grid.put("c", new JSONArray(grid));
             }
 
-            if (builderOptions.has("scales")) {
+            if (!builderOptions.has("scales")) {
                 builderOptions.put("scales", new JSONObject());
             }
 
             JSONObject scales = builderOptions.getJSONObject("scales");
 
+
             JSONArray keys = grid.names();
 
             for(int i = 0, len = keys.length(); i < len; i++) {
                 String key = keys.getString(i);
-
                 Orient orient = Orient.CUSTOM;
 
                 if ("x".equals(key)) {
@@ -470,23 +586,23 @@ public class ChartBuilder extends AbstractDraw {
 
                 if (!(grid.get(key) instanceof JSONArray)) {
                     JSONArray o = new JSONArray();
-                    o.put(grid);
+                    o.put(JSONUtil.extend(new JSONObject(), grid.getJSONObject(key)));
 
-                    grid = new JSONObject();
                     grid.put(key, o);
                 }
 
                 JSONArray gridObject = grid.getJSONArray(key);
+
 
                 for(int keyIndex = 0, gridLen = gridObject.length(); keyIndex < gridLen; keyIndex++) {
 
                     JSONObject g = gridObject.getJSONObject(keyIndex);
 
                     Class cls = grids.get(g.getString("type"));
-                    Drawable drawable = null;
+                    Grid newGrid = null;
 
                     try {
-                        drawable = (Drawable) cls.getDeclaredConstructor(ChartBuilder.class, JSONObject.class).newInstance(this, g);
+                        newGrid = (Grid) cls.getDeclaredConstructor(Orient.class, ChartBuilder.class, JSONObject.class).newInstance(orient, this, g);
                     } catch (InstantiationException e) {
                         e.printStackTrace();
                     } catch (IllegalAccessException e) {
@@ -497,7 +613,7 @@ public class ChartBuilder extends AbstractDraw {
                         e.printStackTrace();
                     }
 
-                    JSONObject ret = (JSONObject)drawable.render();
+                    JSONObject ret = (JSONObject)newGrid.render();
 
                     int dist = g.optInt("dist", 0);
                     Transform root = (Transform)ret.get("root");
@@ -512,7 +628,9 @@ public class ChartBuilder extends AbstractDraw {
                         root.translate(x(), y() - dist);
                     }
 
-                    scales.getJSONArray(key).put(keyIndex, (Scale)ret.get("scale"));
+                    this.svg.append(root);
+
+                    scales.getJSONArray(key).put(keyIndex, newGrid);
 
                 }
 
@@ -520,7 +638,7 @@ public class ChartBuilder extends AbstractDraw {
         }
     }
 
-    public Object render() {
+    public String render() {
 
         caculate();
 
@@ -530,11 +648,19 @@ public class ChartBuilder extends AbstractDraw {
         drawBrush();
         drawWidget();
 
-        return null;
+        return this.svg.render();
     }
 
     public JSONArray data() {
         return barray("data");
+    }
+
+    public Object data(int i, String key) {
+        return barray("data").getJSONObject(i).get(key);
+    }
+
+    public double dataDouble(int i, String key) {
+        return barray("data").getJSONObject(i).getDouble(key);
     }
 
     public JSONObject series() {
@@ -544,4 +670,51 @@ public class ChartBuilder extends AbstractDraw {
     public JSONObject series(String key) {
         return series().getJSONObject(key);
     }
+
+    public JSONObject theme() {
+        return builderOptions.getJSONObject("theme");
+    }
+
+    public String theme(String key) {
+        JSONObject theme = theme();
+
+        if (theme.has(key) ) {
+            if (key.indexOf("Color") > -1) {
+                return getColor(theme.getString(key));
+            } else {
+                return theme.getString(key);
+            }
+        }
+
+        return "";
+    }
+
+    public String theme(boolean checked, String key1, String key2) {
+        String value = (checked) ? key1 : key2;
+
+        return theme(value);
+    }
+
+    public void setTheme(String theme) {
+        setTheme(themeList.getJSONObject(theme));
+    }
+
+    public void setTheme(JSONObject o) {
+        builderOptions.put("theme", o);
+    }
+
+    public void setTheme(String key, String value) {
+        theme().put(key, value);
+    }
+
+    public Transform text(JSONObject textOpt, String text) {
+        JSONObject o = new JSONObject();
+
+        o.put("font-family", theme("fontFamily"));
+        o.put("font-size", theme("fontSize"));
+        o.put("fill", theme("fontColor"));
+
+        return (Transform) el("text", JSONUtil.extend(o, textOpt)).textNode(text);
+    }
+
 }

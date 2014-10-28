@@ -1,18 +1,10 @@
 package com.jennifer.ui.chart.grid;
 
 import com.jennifer.ui.chart.ChartBuilder;
-import com.jennifer.ui.chart.ChartGrid;
-import com.jennifer.ui.common.ChartData;
 import com.jennifer.ui.util.OrdinalScale;
-import com.jennifer.ui.util.Scale;
-import com.jennifer.ui.util.StringUtil;
+import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 
 /**
  *
@@ -22,7 +14,6 @@ import java.util.Objects;
  */
 public class BlockGrid extends Grid {
 
-    private OrdinalScale scale = new OrdinalScale();
     private JSONObject attrs = new JSONObject();
 
 
@@ -39,68 +30,69 @@ public class BlockGrid extends Grid {
 
     @Override
     public void init() {
-
+        scale = new OrdinalScale();
     }
 
-    /*
-    public Dom top(Dom g) {
+
+    protected void drawTop(Transform root) {
         int full_height = chart.height();
 
-        if (!this.has("line")) {
-            g.append(this.axisLine(chart, {
-                    x2 : chart.width()
-            }))
+        boolean hasLine = options.optBoolean("line", false);
+        boolean hasFull = options.optBoolean("full", false);
+
+        if (!hasLine) {
+            JSONObject o = new JSONObject();
+            o.put("x2", chart.width());
+            root.append(this.axisLine(o));
         }
 
-        for (int i = 0; i < this.points.length; i++) {
+        for (int i = 0, len = this.points.length(); i < len; i++) {
 
-            String domain = (this.has("format")) ? this.execFormat(this.domain[i]) : this.domain[i];
+            //TODO: support format string
+            String domain = this.domain.getString(i);
+
+            System.out.println(i);
 
             if ("".equals(domain)) {
                 continue;
             }
 
-            Dom axis = dom.group({
-                    "transform" : "translate(" + this.points[i] + ", 0)"
-            })
+            Transform axis = root.group().translate(this.points.getDouble(i), 0);
 
-            axis.append(this.line(chart, {
-                    x1 : -this.half_band,
-                    y1 : 0,
-                    x2 : -this.half_band,
-                    y2 : (this.has("line")) ? full_height : this.bar
-            }));
+            JSONObject lineOpt = new JSONObject();
+            lineOpt.put("x1",-this.half_band);
+            lineOpt.put("y1",0);
+            lineOpt.put("x2",-this.half_band);
+            lineOpt.put("y2",hasLine ? full_height : this.bar);
 
-            axis.append(chart.text({
-                    x : 0,
-                    y : -20,
-                    "text-anchor" : "middle"
-            }, (grid.format) ? grid.format(this.domain[i]) : this.domain[i]))
+            axis.append(this.line(lineOpt));
 
-            g.append(axis);
+            JSONObject textOpt = new JSONObject();
+            textOpt.put("x", 0);
+            textOpt.put("y", -20);
+            textOpt.put("text-anchor", "middle");
+
+            axis.append(chart.text(textOpt, domain));
         }
 
-        if (!this.has("full")) {
-            var axis = dom.group({
-                    "transform" : "translate(" + chart.width() + ", 0)"
-            })
+        if (!hasFull) {
+            Transform axis = root.group().translate(chart.width(), 0);
 
-            axis.append(this.line(chart, {
-                    y2 : (grid.line) ? full_height : this.bar
-            }));
+            JSONObject lineOpt = new JSONObject();
+            lineOpt.put("y2", hasLine ? full_height : this.bar);
 
-            g.append(axis);
+            axis.append(this.line(lineOpt));
         }
+    }
 
-        return g;
-    } */
 
     public boolean full() {
-        return has("full") ? b("full") : false;
+        return options.optBoolean("full", false);
     }
 
     public boolean reverse() {
-        return has("reverse") ? b("reverse") : false;
+
+        return options.optBoolean("reverse", false);
     }
 
     public void drawBefore() {
@@ -112,12 +104,13 @@ public class BlockGrid extends Grid {
 
         this.scale.domain(options.getJSONArray("domain"));
 
-        double range[] = new double[] { 0, (double)max };
-
+        JSONArray range = new JSONArray();
+        range.put(0).put(max);
         if (this.full()) {
-            this.scale.rangeBands(range, 0, 0);
+            scale.rangeBands(range, 0, 0);
         } else {
-            this.scale.rangePoints(range, 0);
+            System.out.print(range);
+            scale.rangePoints(range, 0);
         }
 
         this.points = this.scale.range();
@@ -130,6 +123,7 @@ public class BlockGrid extends Grid {
     private void initDomain() {
 
         if (has("target") && !has("domain")) {
+
             JSONArray domain = new JSONArray();
             JSONArray data = chart.data();
 
@@ -146,7 +140,7 @@ public class BlockGrid extends Grid {
             }
 
             for(int i = start; ((reverse) ? i >= end : i <= end); i += step) {
-                domain.put(data.getJSONObject(i).getDouble(options.getString("target")));
+                domain.put(data.getJSONObject(i).getString(options.getString("target")));
             }
 
             options.put("domain", domain);

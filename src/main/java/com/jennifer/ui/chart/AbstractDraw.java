@@ -14,9 +14,6 @@ import java.util.List;
  */
 public abstract  class AbstractDraw implements Drawable  {
 
-
-    HashMap<String, Object> attrs = new HashMap<String, Object>();
-
     public abstract void drawBefore();
     public abstract Object draw();
 
@@ -26,6 +23,7 @@ public abstract  class AbstractDraw implements Drawable  {
         return this.draw();
     }
 
+    /*
     public void attr(String key, Object value) {
         attrs.put(key, value);
     }
@@ -74,12 +72,9 @@ public abstract  class AbstractDraw implements Drawable  {
         return (List<Object>)attrs.get(key);
     }
 
-    /**
-     * Common Attributes
-     *
-     * @return
-     */
+
     public String target() {
         return s("target");
     }
+    */
 }

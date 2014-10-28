@@ -1,6 +1,7 @@
 package com.jennifer.ui.util.dom;
 
 import com.jennifer.ui.util.DomUtil;
+import com.jennifer.ui.util.JSONUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -44,7 +45,7 @@ public class Transform extends DomUtil {
                 }
             }
 
-            put("transform", list.join(" "));
+            put("transform", JSONUtil.join(list, " "));
 
         }
 

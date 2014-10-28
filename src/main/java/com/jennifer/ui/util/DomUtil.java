@@ -29,12 +29,12 @@ public class DomUtil {
 
     }
 
-    public static DomUtil el(String tagName) {
-        return new DomUtil(tagName);
+    public static Transform el(String tagName) {
+        return new Transform(tagName);
     }
 
-    public static DomUtil el(String tagName, JSONObject attr) {
-        return new DomUtil(tagName, attr);
+    public static Transform el(String tagName, JSONObject attr) {
+        return new Transform(tagName, attr);
     }
 
     public DomUtil(String tagName) {
@@ -123,6 +123,9 @@ public class DomUtil {
         String style = collapseStyle();
 
         if (!style.equals("")) {
+            if (attrs.has("style")) {
+                style =  getString("style") + ";" + style ;
+            }
             put("style", style);
         }
 
@@ -131,8 +134,7 @@ public class DomUtil {
         if (names != null) {
             for(int i = 0, len = names.length(); i < len; i++) {
                 String key = names.getString(i);
-                String value = getString(key);
-
+                String value = get(key).toString();
                 str.append(" " + key + "=\"" + value + "\"");
             }
         }
