@@ -3,10 +3,6 @@ package com.jennifer.ui.chart;
 import com.jennifer.ui.chart.brush.EqualizerBrush;
 import com.jennifer.ui.chart.brush.*;
 import com.jennifer.ui.chart.grid.*;
-import com.jennifer.ui.chart.theme.DarkTheme;
-import com.jennifer.ui.chart.theme.JenniferTheme;
-import com.jennifer.ui.util.ColorUtil;
-import com.jennifer.ui.util.DomUtil;
 import com.jennifer.ui.util.JSONUtil;
 import com.jennifer.ui.util.Scale;
 import com.jennifer.ui.util.dom.Svg;
@@ -14,6 +10,8 @@ import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -138,8 +136,9 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     private void initTheme() {
-        addTheme("jennifer", JenniferTheme.create());
-        addTheme("dark", DarkTheme.create());
+
+        addTheme("jennifer", JSONUtil.load("chart/theme/jennifer.json"));
+        addTheme("dark", JSONUtil.load("chart/theme/dark.json"));
     }
 
     private void addTheme(String name, JSONObject themeObj) {
@@ -680,9 +679,9 @@ public class ChartBuilder extends AbstractDraw {
 
         if (theme.has(key) ) {
             if (key.indexOf("Color") > -1) {
-                return getColor(theme.getString(key));
+                return getColor(theme.get(key).toString());
             } else {
-                return theme.getString(key);
+                return theme.get(key).toString();
             }
         }
 

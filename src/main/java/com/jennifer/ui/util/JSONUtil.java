@@ -3,6 +3,11 @@ package com.jennifer.ui.util;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 /**
  * Created by Jayden on 2014-10-28.
  */
@@ -60,5 +65,25 @@ public class JSONUtil {
             o.put(str[i]);
         }
         return o;
+    }
+
+    public static JSONObject load(String filename) {
+        return new JSONObject(read(filename));
+    }
+
+    public static String read(String filename)
+    {
+        String content = null;
+        File file = new File("src/main/java/com/jennifer/ui/" + filename); //for ex foo.txt
+        try {
+            FileReader reader = new FileReader(file);
+            char[] chars = new char[(int) file.length()];
+            reader.read(chars);
+            content = new String(chars);
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return content;
     }
 }
