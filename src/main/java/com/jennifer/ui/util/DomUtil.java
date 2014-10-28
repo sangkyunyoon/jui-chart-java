@@ -1,16 +1,8 @@
 package com.jennifer.ui.util;
 
-import com.jennifer.ui.util.dom.Path;
-import com.jennifer.ui.util.dom.Polygon;
-import com.jennifer.ui.util.dom.Polyline;
 import com.jennifer.ui.util.dom.Transform;
-import com.sun.java.browser.plugin2.DOM;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
 
 /**
  * Created by Jayden on 2014-10-24.

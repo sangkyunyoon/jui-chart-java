@@ -1,12 +1,11 @@
 package com.jennifer.ui;
 
-import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.util.LinearScale;
 import com.jennifer.ui.util.Time;
 import com.jennifer.ui.util.TimeScale;
 import com.jennifer.ui.util.TimeUtil;
-import com.jennifer.ui.util.dom.Path;
-import com.jennifer.ui.util.dom.Svg;
+import com.jennifer.ui.util.Path;
+import com.jennifer.ui.util.Svg;
 import org.json.JSONObject;
 
 import java.util.Date;
