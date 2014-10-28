@@ -1,20 +1,16 @@
 package com.jennifer.ui.chart;
 
-import brush.EqualizerBrush;
+import com.jennifer.ui.chart.brush.EqualizerBrush;
 import com.jennifer.ui.chart.brush.*;
 import com.jennifer.ui.chart.grid.*;
-import com.jennifer.ui.common.ChartData;
 import com.jennifer.ui.util.ColorUtil;
-import com.jennifer.ui.util.DomUtil;
 import com.jennifer.ui.util.Scale;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import sun.org.mozilla.javascript.internal.ast.Block;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.concurrent.RunnableFuture;
 
 /**
  * ChartBuilder options list
