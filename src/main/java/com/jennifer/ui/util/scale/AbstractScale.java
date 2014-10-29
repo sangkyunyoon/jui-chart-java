@@ -1,4 +1,4 @@
-package com.jennifer.ui.util;
+package com.jennifer.ui.util.scale;
 
 import org.json.JSONArray;
 
@@ -43,7 +43,7 @@ public abstract class AbstractScale implements Scale {
 
     @Override
     public double min() {
-        return Math.min(domain.getDouble(0), domain.getDouble(domain.length()-1));
+        return Math.min(domain.getDouble(0), domain.getDouble(domain.length() - 1));
     }
 
     @Override

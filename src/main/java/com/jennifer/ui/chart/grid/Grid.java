@@ -3,7 +3,7 @@ package com.jennifer.ui.chart.grid;
 import com.jennifer.ui.chart.AbstractDraw;
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.util.JSONUtil;
-import com.jennifer.ui.util.Scale;
+import com.jennifer.ui.util.scale.Scale;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONObject;
 

@@ -2,7 +2,7 @@ package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.AbstractDraw;
 import com.jennifer.ui.chart.ChartBuilder;
-import com.jennifer.ui.util.Scale;
+import com.jennifer.ui.util.scale.Scale;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

@@ -1,4 +1,4 @@
-package com.jennifer.ui.util;
+package com.jennifer.ui.util.scale;
 
 import org.json.JSONArray;
 

@@ -1,7 +1,7 @@
 package com.jennifer.ui.util;
 
-
-import com.jennifer.ui.common.Point;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Created by yuni on 2014-10-24.
@@ -15,8 +15,8 @@ public class MathUtil {
         return x * Math.sin(radian) + y * Math.cos(radian);
     }
 
-    public static Point rotate(int x, int y, float radian) {
-        return new Point(rotateX(x, y, radian), rotateY(x, y, radian));
+    public static JSONObject rotate(int x, int y, float radian) {
+        return new JSONObject().put("x", rotateX(x, y, radian)).put("y", rotateY(x, y, radian));
     }
 
     public static double radian (double degree) {

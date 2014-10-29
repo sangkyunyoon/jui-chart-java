@@ -3,6 +3,7 @@ package com.jennifer.ui.chart.grid;
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.util.*;
 import com.jennifer.ui.util.dom.Transform;
+import com.jennifer.ui.util.scale.TimeScale;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

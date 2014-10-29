@@ -1,9 +1,9 @@
-package com.jennifer.ui.util;
+package com.jennifer.ui.util.scale;
 
+import com.jennifer.ui.util.Time;
+import com.jennifer.ui.util.TimeUtil;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -44,7 +44,7 @@ public class TimeScale extends LinearScale {
 
     public long maxLong() {
         JSONArray domain = this.domain();
-        return Math.max(domain.getLong(0), domain.getLong(domain.length()-1));
+        return Math.max(domain.getLong(0), domain.getLong(domain.length() - 1));
     }
 
     public long minLong() {

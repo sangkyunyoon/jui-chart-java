@@ -4,5 +4,6 @@ public enum Orient {
     LEFT,
     RIGHT,
     TOP,
-    CUSTOM, BOTTOM
+    CUSTOM,
+    BOTTOM
 }

@@ -1,7 +1,7 @@
 package com.jennifer.ui.chart.grid;
 
 import com.jennifer.ui.chart.ChartBuilder;
-import com.jennifer.ui.util.OrdinalScale;
+import com.jennifer.ui.util.scale.OrdinalScale;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;

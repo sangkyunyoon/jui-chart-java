@@ -5,15 +5,13 @@ import com.jennifer.ui.chart.brush.*;
 import com.jennifer.ui.chart.grid.*;
 import com.jennifer.ui.util.ColorUtil;
 import com.jennifer.ui.util.JSONUtil;
-import com.jennifer.ui.util.Scale;
+import com.jennifer.ui.util.scale.Scale;
 import com.jennifer.ui.util.StringUtil;
 import com.jennifer.ui.util.dom.Svg;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 

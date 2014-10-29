@@ -1,8 +1,7 @@
-package com.jennifer.ui.util;
+package com.jennifer.ui.util.scale;
 
+import com.jennifer.ui.util.MathUtil;
 import org.json.JSONArray;
-
-import java.util.ArrayList;
 
 /**
  * Linear Scale

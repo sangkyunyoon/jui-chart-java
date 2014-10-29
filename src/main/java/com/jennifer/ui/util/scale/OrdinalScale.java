@@ -1,11 +1,6 @@
-package com.jennifer.ui.util;
+package com.jennifer.ui.util.scale;
 
-import com.jennifer.ui.chart.ChartBuilder;
-import com.jennifer.ui.chart.brush.ScatterBrush;
 import org.json.JSONArray;
-
-import javax.print.attribute.standard.OrientationRequested;
-import java.util.ArrayList;
 
 /**
  * Created by Jayden on 2014-10-24.
