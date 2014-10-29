@@ -3,8 +3,10 @@ package com.jennifer.ui.chart;
 import com.jennifer.ui.chart.brush.EqualizerBrush;
 import com.jennifer.ui.chart.brush.*;
 import com.jennifer.ui.chart.grid.*;
+import com.jennifer.ui.util.ColorUtil;
 import com.jennifer.ui.util.JSONUtil;
 import com.jennifer.ui.util.Scale;
+import com.jennifer.ui.util.StringUtil;
 import com.jennifer.ui.util.dom.Svg;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
@@ -45,6 +47,9 @@ public class ChartBuilder extends AbstractDraw {
     private HashMap<String, Class> widgets = new HashMap<String, Class>();
     private Svg svg;
     private JSONObject themeList = new JSONObject();
+    private Transform defs;
+    private String clipId;
+    private Transform root;
 
     public ChartBuilder() {
         this(new JSONObject());
@@ -92,6 +97,7 @@ public class ChartBuilder extends AbstractDraw {
         o.put("height", bi("height"));
 
         this.svg = new Svg(o);
+        this.root = this.svg.g().translate(0.5, 0.5);
     }
 
     private void initWidget() {
@@ -137,8 +143,9 @@ public class ChartBuilder extends AbstractDraw {
 
     private void initTheme() {
 
-        addTheme("jennifer", JSONUtil.load("chart/theme/jennifer.json"));
-        addTheme("dark", JSONUtil.load("chart/theme/dark.json"));
+        addTheme("jennifer", JSONUtil.loadJSONFile("chart/theme/jennifer.json"));
+        addTheme("dark", JSONUtil.loadJSONFile("chart/theme/dark.json"));
+        addTheme("gradient", JSONUtil.loadJSONFile("chart/theme/gradient.json"));
     }
 
     private void addTheme(String name, JSONObject themeObj) {
@@ -303,24 +310,13 @@ public class ChartBuilder extends AbstractDraw {
         }
 
         if (bobject("hash").has(color)) {
-            return "url(#" + bobject("hash").getString(color) +  ")";
+            return url(bobject("hash").getString(color));
         }
 
         return getColor(color);
     }
 
-    private String getColor(JSONObject color) {
-        return createGradient(color);
-    }
-
-    private String createGradient(JSONObject color) {
-        return null;
-    }
-
     private String getColor(String color) {
-
-        return color;
-        /*
 
         Object parsedColor = ColorUtil.parse(color);
 
@@ -328,11 +324,40 @@ public class ChartBuilder extends AbstractDraw {
             return (String)parsedColor;
         }
         return createGradient((JSONObject)parsedColor, color);
-        */
     }
 
-    private String createGradient(JSONObject parsedColor, String color) {
-        return null;
+    private String createGradient(JSONObject parsedColor, String hashKey) {
+
+        JSONObject hash = bobject("hash");
+
+        if (hash.has(hashKey)) {
+            return url(hash.getString(hashKey));
+        }
+
+        String id = StringUtil.createId("gradient");
+
+        parsedColor.put("id", id);
+
+        String type = parsedColor.getString("type");
+        Transform g = el(type + "Gradient", parsedColor);
+
+        JSONArray stops = parsedColor.getJSONArray("stops");
+        for (int i = 0, len = stops.length(); i < len; i++) {
+            g.append(el("stop", stops.getJSONObject(i)));
+        }
+        parsedColor.remove("stops");
+
+        this.defs.append(g);
+
+        if (hashKey != null) {
+            hash.put(hashKey, id);
+        }
+
+        return url(id);
+    }
+
+    private String url(String id) {
+        return "url(#" + id + ")";
     }
 
     @Override
@@ -362,13 +387,23 @@ public class ChartBuilder extends AbstractDraw {
 
                 if (row.get(key) instanceof String) break;
 
-                double value = row.getDouble(key);
+                if (row.get(key) instanceof Double) {
+                    double value = row.getDouble(key);
 
-                if (!obj.has("min")) obj.put("min", 0);
-                if (!obj.has("max")) obj.put("max", 0);
+                    if (!obj.has("min")) obj.put("min", 0);
+                    if (!obj.has("max")) obj.put("max", 0);
 
-                if (value < obj.getDouble("min")) obj.put("min", value);
-                if (value > obj.getDouble("max")) obj.put("max", value);
+                    if (value < obj.getDouble("min")) obj.put("min", value);
+                    if (value > obj.getDouble("max")) obj.put("max", value);
+                } else if (row.get(key) instanceof Long) {
+                    long value = row.getLong(key);
+
+                    if (!obj.has("min")) obj.put("min", 0);
+                    if (!obj.has("max")) obj.put("max", 0);
+
+                    if (value < obj.getLong("min")) obj.put("min", value);
+                    if (value > obj.getLong("max")) obj.put("max", value);
+                }
             }
         }
 
@@ -464,7 +499,7 @@ public class ChartBuilder extends AbstractDraw {
 
                     Transform root = (Transform)result.get("root");
 
-                    this.svg.append(root);
+                    this.root.append(root);
 
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
@@ -627,7 +662,7 @@ public class ChartBuilder extends AbstractDraw {
                         root.translate(x(), y() - dist);
                     }
 
-                    this.svg.append(root);
+                    this.root.append(root);
 
                     scales.getJSONArray(key).put(keyIndex, newGrid);
 
@@ -642,12 +677,28 @@ public class ChartBuilder extends AbstractDraw {
         caculate();
 
         drawBefore();
-
+        drawDefs();
         drawGrid();
         drawBrush();
         drawWidget();
 
+        this.svg.css("background", theme("backgroundColor"));
+
         return this.svg.render();
+    }
+
+    private void drawDefs() {
+        this.defs = (Transform) this.root.defs();
+        this.clipId = StringUtil.createId("clip-id");
+
+        JSONObject o = new JSONObject();
+        o.put("id", this.clipId);
+
+        JSONObject rect = new JSONObject();
+        rect.put("x", 0).put("y", 0).put("width", width()).put("height", height());
+
+        this.defs.clipPath(o).rect(rect);
+
     }
 
     public JSONArray data() {

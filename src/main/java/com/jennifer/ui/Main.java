@@ -1,10 +1,7 @@
 package com.jennifer.ui;
 
 import com.jennifer.ui.chart.ChartBuilder;
-import com.jennifer.ui.util.LinearScale;
-import com.jennifer.ui.util.Time;
-import com.jennifer.ui.util.TimeScale;
-import com.jennifer.ui.util.TimeUtil;
+import com.jennifer.ui.util.*;
 import com.jennifer.ui.util.dom.Path;
 import com.jennifer.ui.util.dom.Svg;
 import org.json.JSONArray;
@@ -79,32 +76,46 @@ public class Main {
         path.css("background", "yellow");
 
 
-        System.out.println(svg.toXml());
+        //System.out.println(svg.toXml());
 
 
         JSONObject chartOpt = new JSONObject();
+        chartOpt.put("theme", "dark");
+        chartOpt.put("width", "800");
+        chartOpt.put("height", "800");
         chartOpt.put("grid", new JSONObject());
+        chartOpt.put("padding", new JSONObject());
+
+        chartOpt.getJSONObject("padding").put("left", 100);
+
 
         JSONObject grid = chartOpt.getJSONObject("grid");
-        grid.put("x1", new JSONObject());
+        grid.put("x", new JSONObject());
 
-        JSONObject x1 = grid.getJSONObject("x1");
-        x1.put("type", "block").put("target", "name");
+        JSONObject x = grid.getJSONObject("x");
+        x.put("type", "date").put("target", "time").put("step", new JSONArray());
+        x.getJSONArray("step").put("seconds").put(1);  // interval 1 minutes
+        x.put("key", "time");
+
+        grid.put("y", JSONUtil.clone(x));
+        //grid.put("y1", JSONUtil.clone(x1));
 
         chartOpt.put("data", new JSONArray());
         JSONArray data = chartOpt.getJSONArray("data");
+
+        long now = System.currentTimeMillis();
+
         for(int i = 0; i < 10; i++) {
             JSONObject d = new JSONObject();
 
             d.put("name", "tab" + i);
             d.put("value", i * 10);
+            d.put("time", TimeUtil.add(now, "seconds", i));
 
             data.put(d);
         }
 
-
-
-        System.out.println(chartOpt.toString(4));
+        //System.out.println(chartOpt.toString(4));
 
         ChartBuilder chart = new ChartBuilder(chartOpt);
         System.out.println(chart.render());

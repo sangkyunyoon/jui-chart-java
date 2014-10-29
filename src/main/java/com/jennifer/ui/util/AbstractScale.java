@@ -13,12 +13,19 @@ public abstract class AbstractScale implements Scale {
     private String key;
 
     protected AbstractScale() {
-
+        init();
     }
 
     protected AbstractScale(JSONArray domain, JSONArray range) {
         this.domain = domain;
         this.range = range;
+
+        init();
+    }
+
+    protected void init() {
+
+
     }
 
     public void clamp(boolean clamp) {
@@ -82,6 +89,10 @@ public abstract class AbstractScale implements Scale {
     }
 
     public Scale rangePoints(JSONArray interval, int i) {
+        return this;
+    }
+
+    public Scale rangeRound(JSONArray range) {
         return this;
     }
 }

@@ -18,4 +18,5 @@ public interface Scale {
     public double get(double value);
     public Scale rangeBands(JSONArray interval, int i, int i1);
     public Scale rangePoints(JSONArray interval, int i);
+    public Scale rangeRound(JSONArray range);
 }

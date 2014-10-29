@@ -1,5 +1,7 @@
 package com.jennifer.ui.util;
 
+import java.util.Date;
+
 /**
  * Created by Jayden on 2014-10-24.
  */
@@ -13,5 +15,13 @@ public class StringUtil {
         }
 
         return b.toString();
+    }
+
+    public static String createId() {
+        return createId("jennifer");
+    }
+
+    public static String createId(String key) {
+        return  key  + "-" + System.currentTimeMillis() + "-" + (Math.round(Math.random() * 100) % 100);
     }
 }

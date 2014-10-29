@@ -11,6 +11,7 @@ import java.util.Date;
  * Created by Jayden on 2014-10-24.
  */
 public class TimeScale extends LinearScale {
+
     public TimeScale() {
         super();
     }
@@ -18,6 +19,7 @@ public class TimeScale extends LinearScale {
     public TimeScale(JSONArray domain, JSONArray range) {
         super(domain, range);
     }
+
 
     public Scale domain(JSONArray domain) {
 
@@ -29,7 +31,7 @@ public class TimeScale extends LinearScale {
             }
         }
 
-        return this;
+        return super.domain(domain);
     }
 
     public double get(Date d) {
@@ -40,27 +42,32 @@ public class TimeScale extends LinearScale {
         return get((double)time);
     }
 
-    public ArrayList<Date> ticks(Time type, int step) {
-        long start = (long)this.min();
-        long end = (long)this.max();
+    public long maxLong() {
+        JSONArray domain = this.domain();
+        return Math.max(domain.getLong(0), domain.getLong(domain.length()-1));
+    }
 
-        ArrayList<Date> times = new ArrayList<Date>();
+    public long minLong() {
+        JSONArray domain = this.domain();
+        return Math.min(domain.getLong(0), domain.getLong(domain.length()-1));
+    }
+
+    public JSONArray ticks(String type, int step) {
+        long start = this.minLong();
+        long end = this.maxLong();
+
+        JSONArray times = new JSONArray();
+
         while(start < end) {
-            Date d = new Date();
-            d.setTime(start);
+            times.put(start);
 
-            times.add(d);
-
-            start = TimeUtil.add(d, type, step).getTime();
+            start = TimeUtil.add(start, type, step);
         }
 
-        Date d = new Date();
-        d.setTime(start);
+        times.put(start);
 
-        times.add(d);
-
-        double first = this.get(times.get(0).getTime());
-        double second = this.get(times.get(1).getTime());
+        double first = this.get(times.getLong(0));
+        double second = this.get(times.getLong(1));
 
         _rangeBand = second - first;
 
@@ -68,29 +75,29 @@ public class TimeScale extends LinearScale {
 
     }
 
-    public ArrayList<Date> realTicks(Time type, int step) {
-        long start = (long)this.min();
-        long end = (long)this.max();
+    public JSONArray realTicks(String type, int step) {
+        long start = this.minLong();
+        long end = this.maxLong();
 
-        ArrayList<Date> times = new ArrayList<Date>();
+        JSONArray times = new JSONArray();
+
         Calendar c = Calendar.getInstance();
 
-        Date date = new Date();
-        date.setTime(start);
+        Date date = TimeUtil.get(start);
         Date realStart = null;
 
         c.setTime(date);
-        if (type == Time.YEARS) {
+        if (Time.YEARS.equals(type)) {
             c.set(c.get(Calendar.YEAR), 1, 1, 0, 0, 0);
-        } else if (type == Time.MONTHS) {
+        } else if (Time.MONTHS.equals(type)) {
             c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), 1, 0, 0, 0);
-        } else if (type == Time.DAYS) {
+        } else if (Time.DAYS.equals(type)) {
             c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE), 0, 0, 0);
-        } else if (type == Time.HOURS) {
+        } else if (Time.HOURS.equals(type)) {
             c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE), c.get(Calendar.HOUR_OF_DAY), 0, 0);
-        } else if (type == Time.MINUTES) {
+        } else if (Time.MINUTES.equals(type)) {
             c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE), c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), 0);
-        } else if (type == Time.SECONDS) {
+        } else if (Time.SECONDS.equals(type)) {
             c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE), c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND));
         }
 
@@ -98,27 +105,16 @@ public class TimeScale extends LinearScale {
 
         long start2 = realStart.getTime();
         while (start2 < end) {
+            times.put(start2);
 
-            Date d = new Date();
-            d.setTime(start2);
-
-            times.add(d);
-
-            start2 = TimeUtil.add(d, type, step).getTime();
+            start2 = TimeUtil.add(start2, type, step);
         }
 
-        double first = this.get(times.get(1).getTime());
-        double second = this.get(times.get(2).getTime());
+        double first = this.get(times.getLong(1));
+        double second = this.get(times.getLong(2));
 
         _rangeBand = second - first;
 
         return times;
-    }
-
-    public Date invert(long time) {
-        Date d = new Date();
-        d.setTime((long)super.invert((double)time));
-
-        return d;
     }
 }

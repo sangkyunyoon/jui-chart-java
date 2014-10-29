@@ -51,7 +51,55 @@ public class BlockGrid extends Grid {
             //TODO: support format string
             String domain = this.domain.getString(i);
 
-            System.out.println(i);
+            if ("".equals(domain)) {
+                continue;
+            }
+
+            Transform axis = root.group().translate(this.points.getDouble(i), 0);
+
+            JSONObject lineOpt = new JSONObject();
+            lineOpt.put("x1",-this.half_band);
+            lineOpt.put("y1",0);
+            lineOpt.put("x2",-this.half_band);
+            lineOpt.put("y2",hasLine ? full_height : -this.bar);
+
+            axis.append(this.line(lineOpt));
+
+            JSONObject textOpt = new JSONObject();
+            textOpt.put("x", 0);
+            textOpt.put("y", -20);
+            textOpt.put("text-anchor", "middle");
+            textOpt.put("fill", chart.theme("gridFontColor"));
+
+            axis.append(chart.text(textOpt, domain));
+        }
+
+        if (!hasFull) {
+            Transform axis = root.group().translate(chart.width(), 0);
+
+            JSONObject lineOpt = new JSONObject();
+            lineOpt.put("y2", hasLine ? full_height : -this.bar);
+
+            axis.append(this.line(lineOpt));
+        }
+    }
+
+    protected void drawBottom(Transform root) {
+        int full_height = chart.height();
+
+        boolean hasLine = options.optBoolean("line", false);
+        boolean hasFull = options.optBoolean("full", false);
+
+        if (!hasLine) {
+            JSONObject o = new JSONObject();
+            o.put("x2", chart.width());
+            root.append(this.axisLine(o));
+        }
+
+        for (int i = 0, len = this.points.length(); i < len; i++) {
+
+            //TODO: support format string
+            String domain = this.domain.getString(i);
 
             if ("".equals(domain)) {
                 continue;
@@ -63,14 +111,15 @@ public class BlockGrid extends Grid {
             lineOpt.put("x1",-this.half_band);
             lineOpt.put("y1",0);
             lineOpt.put("x2",-this.half_band);
-            lineOpt.put("y2",hasLine ? full_height : this.bar);
+            lineOpt.put("y2",hasLine ? -full_height : this.bar);
 
             axis.append(this.line(lineOpt));
 
             JSONObject textOpt = new JSONObject();
             textOpt.put("x", 0);
-            textOpt.put("y", -20);
+            textOpt.put("y", 20);
             textOpt.put("text-anchor", "middle");
+            textOpt.put("fill", chart.theme("gridFontColor"));
 
             axis.append(chart.text(textOpt, domain));
         }
@@ -79,12 +128,106 @@ public class BlockGrid extends Grid {
             Transform axis = root.group().translate(chart.width(), 0);
 
             JSONObject lineOpt = new JSONObject();
-            lineOpt.put("y2", hasLine ? full_height : this.bar);
+            lineOpt.put("y2", hasLine ? -full_height : this.bar);
 
             axis.append(this.line(lineOpt));
         }
     }
 
+    protected void drawLeft(Transform root) {
+        int full_width = chart.width();
+
+        boolean hasLine = options.optBoolean("line", false);
+        boolean hasFull = options.optBoolean("full", false);
+
+        if (!hasLine) {
+            JSONObject o = new JSONObject();
+            o.put("y2", chart.height());
+            root.append(this.axisLine(o));
+        }
+
+        for (int i = 0, len = this.points.length(); i < len; i++) {
+
+            //TODO: support format string
+            String domain = this.domain.getString(i);
+
+            if ("".equals(domain)) {
+                continue;
+            }
+
+            Transform axis = root.group().translate(0, this.points.getDouble(i) - this.half_band);
+
+            JSONObject lineOpt = new JSONObject();
+            lineOpt.put("x2",hasLine ? full_width : -this.bar);
+
+            axis.append(this.line(lineOpt));
+
+            JSONObject textOpt = new JSONObject();
+            textOpt.put("x", -this.bar - 4);
+            textOpt.put("y", this.half_band);
+            textOpt.put("text-anchor", "end");
+            textOpt.put("fill", chart.theme("gridFontColor"));
+
+            axis.append(chart.text(textOpt, domain));
+        }
+
+        if (!hasFull) {
+            Transform axis = root.group().translate(0, chart.height());
+
+            JSONObject lineOpt = new JSONObject();
+            lineOpt.put("x2", hasLine ? full_width : -this.bar);
+
+            axis.append(this.line(lineOpt));
+        }
+    }
+
+
+    protected void drawRight(Transform root) {
+        int full_width = chart.width();
+
+        boolean hasLine = options.optBoolean("line", false);
+        boolean hasFull = options.optBoolean("full", false);
+
+        if (!hasLine) {
+            JSONObject o = new JSONObject();
+            o.put("y2", chart.height());
+            root.append(this.axisLine(o));
+        }
+
+        for (int i = 0, len = this.points.length(); i < len; i++) {
+
+            //TODO: support format string
+            String domain = this.domain.getString(i);
+
+            if ("".equals(domain)) {
+                continue;
+            }
+
+            Transform axis = root.group().translate(0, this.points.getDouble(i) - this.half_band);
+
+            JSONObject lineOpt = new JSONObject();
+            lineOpt.put("x2",hasLine ? -full_width : this.bar);
+
+            axis.append(this.line(lineOpt));
+
+            JSONObject textOpt = new JSONObject();
+            textOpt.put("x", this.bar + 4);
+            textOpt.put("y", this.half_band);
+            textOpt.put("text-anchor", "start");
+            textOpt.put("fill", chart.theme("gridFontColor"));
+
+            axis.append(chart.text(textOpt, domain));
+        }
+
+        if (!hasFull) {
+            Transform axis = root.group().translate(0, chart.height());
+
+            JSONObject lineOpt = new JSONObject();
+            lineOpt.put("x2", hasLine ? -full_width : this.bar);
+
+            axis.append(this.line(lineOpt));
+        }
+    }
 
     public boolean full() {
         return options.optBoolean("full", false);
@@ -109,7 +252,6 @@ public class BlockGrid extends Grid {
         if (this.full()) {
             scale.rangeBands(range, 0, 0);
         } else {
-            System.out.print(range);
             scale.rangePoints(range, 0);
         }
 

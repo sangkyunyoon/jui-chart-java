@@ -159,8 +159,7 @@ public class DomUtil {
         str.append("<" + tagName );
         str.append(collapseAttr());
         if (children.length() == 0) {
-
-            if (text.equals("")) {
+            if (!text.equals("")) {
                 str.append(">" + text);
                 str.append("</" + tagName + ">");
             } else {
@@ -193,6 +192,9 @@ public class DomUtil {
     }
     public DomUtil symbol(JSONObject o) {
         return append(el("symbol", o));
+    }
+    public DomUtil clipPath(JSONObject o) {
+        return append(el("clipPath", o));
     }
 
     public Transform g(JSONObject o) {
@@ -304,6 +306,9 @@ public class DomUtil {
     }
     public DomUtil symbol() {
         return append(el("symbol"));
+    }
+    public DomUtil clipPath() {
+        return append(el("clipPath"));
     }
 
     public Transform g() {

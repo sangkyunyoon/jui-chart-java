@@ -28,12 +28,13 @@ public class JSONUtil {
 
 
         JSONArray names = attr.names();
+        if (names != null) {
+            for(int i = 0, len = names.length(); i < len; i++) {
+                String key = names.getString(i);
+                Object value = attr.get(key);
 
-        for(int i = 0, len = names.length(); i < len; i++) {
-            String key = names.getString(i);
-            Object value = attr.get(key);
-
-            newObj.put(key, value);
+                newObj.put(key, value);
+            }
         }
 
         return newObj;
@@ -56,7 +57,7 @@ public class JSONUtil {
     }
 
     public static JSONObject clone(JSONObject jsonObject) {
-        return extend(new JSONObject(), jsonObject);
+        return new JSONObject(jsonObject.toString());
     }
 
     public static JSONArray toJSONArray(String str[]) {
@@ -67,14 +68,14 @@ public class JSONUtil {
         return o;
     }
 
-    public static JSONObject load(String filename) {
-        return new JSONObject(read(filename));
+    public static JSONObject loadJSONFile(String filename) {
+        return new JSONObject(readFile("src/main/java/com/jennifer/ui/" + filename));
     }
 
-    public static String read(String filename)
+    public static String readFile(String filename)
     {
         String content = null;
-        File file = new File("src/main/java/com/jennifer/ui/" + filename); //for ex foo.txt
+        File file = new File(filename); //for ex foo.txt
         try {
             FileReader reader = new FileReader(file);
             char[] chars = new char[(int) file.length()];
@@ -85,5 +86,16 @@ public class JSONUtil {
             e.printStackTrace();
         }
         return content;
+    }
+
+    public static void reverse(JSONArray domain) {
+        JSONArray temp = new JSONArray();
+        for(int i = 0, len = domain.length(); i < len; i++) {
+            temp.put(i, domain.get(i));
+        }
+
+        for(int i = temp.length() -1, j = 0; i >= 0; i--, j++) {
+            domain.put(j, temp.get(i));
+        }
     }
 }
