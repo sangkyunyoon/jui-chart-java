@@ -36,6 +36,10 @@ public abstract class AbstractScale implements Scale {
         return 0;
     }
 
+    public double get(String x) {
+        return 0;
+    }
+
     @Override
     public double max() {
         return Math.max(domain.getDouble(0), domain.getDouble(domain.length()-1));

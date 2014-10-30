@@ -34,6 +34,10 @@ public class OrdinalScale extends AbstractScale {
         }
     }
 
+    public double get(double x) {
+        return range().getDouble((int)x);
+    }
+
     public Scale rangePoints(JSONArray interval, int padding) {
 
         JSONArray domain = domain();

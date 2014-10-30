@@ -1,6 +1,7 @@
 package com.jennifer.ui;
 
 import com.jennifer.ui.chart.ChartBuilder;
+import com.jennifer.ui.chart.brush.Brush;
 import com.jennifer.ui.util.*;
 import com.jennifer.ui.util.dom.Path;
 import com.jennifer.ui.util.dom.Svg;
@@ -85,22 +86,29 @@ public class Main {
         chartOpt.put("height", "800");
         chartOpt.put("grid", new JSONObject());
         chartOpt.put("padding", new JSONObject());
+        chartOpt.put("data", new JSONArray());
+        chartOpt.put("brush", new JSONArray());
+
 
         chartOpt.getJSONObject("padding").put("left", 100);
 
-
+        // grid
         JSONObject grid = chartOpt.getJSONObject("grid");
         grid.put("x", new JSONObject());
+        grid.put("y", new JSONObject());
 
         JSONObject x = grid.getJSONObject("x");
-        x.put("type", "date").put("target", "time").put("step", new JSONArray());
-        x.getJSONArray("step").put("seconds").put(1);  // interval 1 minutes
-        x.put("key", "time");
+        JSONObject y = grid.getJSONObject("y");
 
-        grid.put("y", JSONUtil.clone(x));
-        //grid.put("y1", JSONUtil.clone(x1));
+        x.put("type", "range").put("target", new JSONArray().put("value").put("+").put("value2")).put("step", 10);
+        y.put("type", "block").put("target", "name");
+        // brush
 
-        chartOpt.put("data", new JSONArray());
+        JSONArray brush = chartOpt.getJSONArray("brush");
+        brush.put(Brush.stackbar().put("target", new JSONArray().put("value").put("value2")));
+
+        // data
+
         JSONArray data = chartOpt.getJSONArray("data");
 
         long now = System.currentTimeMillis();
@@ -109,7 +117,8 @@ public class Main {
             JSONObject d = new JSONObject();
 
             d.put("name", "tab" + i);
-            d.put("value", i * 10);
+            d.put("value", i * 2 + 0.1);
+            d.put("value2", i * 3 + 5);
             d.put("time", TimeUtil.add(now, "seconds", i));
 
             data.put(d);

@@ -98,4 +98,9 @@ public class JSONUtil {
             domain.put(j, temp.get(i));
         }
     }
+
+    public static String format(String s, JSONObject row) {
+        // TODO: implements json format string
+        return s;
+    }
 }

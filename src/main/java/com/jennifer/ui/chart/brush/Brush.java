@@ -2,7 +2,8 @@ package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.AbstractDraw;
 import com.jennifer.ui.chart.ChartBuilder;
-import com.jennifer.ui.util.scale.Scale;
+import com.jennifer.ui.chart.grid.Grid;
+import com.jennifer.ui.util.dom.Path;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -10,6 +11,9 @@ import org.json.JSONObject;
  * Created by Jayden on 2014-10-27.
  */
 public abstract class Brush extends AbstractDraw {
+
+    public static final String SYMBOL_CURVE = "curve";
+    public static final String SYMBOL_STEP = "step";
 
     protected ChartBuilder chart;
     protected JSONObject options;
@@ -91,8 +95,8 @@ public abstract class Brush extends AbstractDraw {
     public JSONArray getXY () {
         JSONArray data = chart.data();
 
-        Scale x = (Scale)this.options.get("x");
-        Scale y = (Scale)this.options.get("y");
+        Grid x = (Grid)this.options.get("x");
+        Grid y = (Grid)this.options.get("y");
 
         JSONArray xy = new JSONArray();
 
@@ -136,8 +140,8 @@ public abstract class Brush extends AbstractDraw {
     public JSONArray getStackXY() {
         JSONArray xy = getXY();
 
-        Scale x = (Scale)this.options.get("x");
-        Scale y = (Scale)this.options.get("y");
+        Grid x = (Grid)this.options.get("x");
+        Grid y = (Grid)this.options.get("y");
 
         JSONArray data = chart.data();
 
@@ -162,4 +166,15 @@ public abstract class Brush extends AbstractDraw {
         return xy;
     }
 
+    /**
+     * static create method
+     *
+     * @param type
+     * @return
+     */
+    public static JSONObject create(String type) { return new JSONObject().put("type", type); }
+    public static JSONObject bar() { return create("bar"); }
+    public static JSONObject area() { return create("area"); }
+    public static JSONObject column() { return create("column"); }
+    public static JSONObject stackbar() { return create("stackbar"); }
 }

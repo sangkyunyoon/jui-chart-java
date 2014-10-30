@@ -272,8 +272,9 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     private JSONObject cloneObject(String key) {
+
         if (options.has(key)) {
-            return JSONUtil.extend(new JSONObject(), options.getJSONObject(key));
+            return JSONUtil.clone(options.getJSONObject(key));
         } else {
             return new JSONObject();
         }
@@ -383,21 +384,23 @@ public class ChartBuilder extends AbstractDraw {
 
                 JSONObject obj = series.getJSONObject(key);
 
-                if (row.get(key) instanceof String) break;
+                Object valueObject = row.get(key);
 
-                if (row.get(key) instanceof Double) {
+                if (valueObject instanceof String) continue;
+
+                if (valueObject instanceof Double || valueObject instanceof Integer ) {
                     double value = row.getDouble(key);
 
-                    if (!obj.has("min")) obj.put("min", 0);
-                    if (!obj.has("max")) obj.put("max", 0);
+                    if (!obj.has("min")) obj.put("min", value);
+                    if (!obj.has("max")) obj.put("max", value);
 
                     if (value < obj.getDouble("min")) obj.put("min", value);
                     if (value > obj.getDouble("max")) obj.put("max", value);
                 } else if (row.get(key) instanceof Long) {
                     long value = row.getLong(key);
 
-                    if (!obj.has("min")) obj.put("min", 0);
-                    if (!obj.has("max")) obj.put("max", 0);
+                    if (!obj.has("min")) obj.put("min", value);
+                    if (!obj.has("max")) obj.put("max", value);
 
                     if (value < obj.getLong("min")) obj.put("min", value);
                     if (value > obj.getLong("max")) obj.put("max", value);
@@ -405,12 +408,15 @@ public class ChartBuilder extends AbstractDraw {
             }
         }
 
+        System.out.println(series);
+
         // series_list
         barray("brush", createBrushData(brush, series.names()));
         barray("widget", createBrushData(widget, series.names()));
         bobject("grid", grid);
         bobject("hash", null);
         barray("data", data);
+        bobject("series", series);
 
     }
 
@@ -426,7 +432,7 @@ public class ChartBuilder extends AbstractDraw {
             } else if (brush instanceof JSONObject) {
                 list.put(brush);
             } else if (brush instanceof JSONArray){
-                list = new JSONArray((JSONArray)brush);
+                list = (JSONArray)brush;
             }
 
             for(int i = 0, len = list.length(); i < len; i++) {
@@ -522,33 +528,33 @@ public class ChartBuilder extends AbstractDraw {
 
         if (scales.has("x") || scales.has("x1")) {
 
-            Scale scaleX;
-            Scale scaleY;
-            Scale scaleC;
+            Grid scaleX;
+            Grid scaleY;
+            Grid scaleC;
 
              if (drawObject.has("x1") && drawObject.getInt("x1")  > -1) {
-                 scaleX = (Scale) scales.getJSONArray("x1").get(drawObject.getInt("x1"));
+                 scaleX = (Grid) scales.getJSONArray("x1").get(drawObject.getInt("x1"));
 
                  obj.put("x", scaleX);
              } else {
                  if (drawObject.has("x")) {
-                     scaleX = (Scale) scales.getJSONArray("x").get(drawObject.getInt("x"));
+                     scaleX = (Grid) scales.getJSONArray("x").get(drawObject.getInt("x"));
                  } else {
-                     scaleX = (Scale) scales.getJSONArray("x").get(0);
+                     scaleX = (Grid) scales.getJSONArray("x").get(0);
                  }
 
                  obj.put("x", scaleX);
              }
 
              if (drawObject.has("y1") && drawObject.getInt("y1")  > -1) {
-                 scaleY = (Scale) scales.getJSONArray("y1").get(drawObject.getInt("y1"));
+                 scaleY = (Grid) scales.getJSONArray("y1").get(drawObject.getInt("y1"));
 
                  obj.put("y", scaleY);
              } else {
                  if (drawObject.has("y")) {
-                     scaleY = (Scale) scales.getJSONArray("y").get(drawObject.getInt("y"));
+                     scaleY = (Grid) scales.getJSONArray("y").get(drawObject.getInt("y"));
                  } else {
-                     scaleY = (Scale) scales.getJSONArray("y").get(0);
+                     scaleY = (Grid) scales.getJSONArray("y").get(0);
                  }
 
                  obj.put("y", scaleY);
@@ -556,13 +562,11 @@ public class ChartBuilder extends AbstractDraw {
 
 
              if (drawObject.has("c") && drawObject.getInt("c")  > -1) {
-                 scaleC = (Scale) scales.getJSONArray("c").get(drawObject.getInt("c"));
+                 scaleC = (Grid) scales.getJSONArray("c").get(drawObject.getInt("c"));
 
                  obj.put("c", scaleC);
 
              }
-
-
 
         }
 

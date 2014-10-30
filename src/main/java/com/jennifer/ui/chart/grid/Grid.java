@@ -5,6 +5,7 @@ import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.util.JSONUtil;
 import com.jennifer.ui.util.scale.Scale;
 import com.jennifer.ui.util.dom.Transform;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static com.jennifer.ui.util.DomUtil.el;
@@ -104,6 +105,10 @@ public abstract class Grid extends AbstractDraw {
         return scale.get(x);
     }
 
+    public double get(String x) {
+        return scale.get(x);
+    }
+
     protected void drawCustom(Transform root) {
 
     }
@@ -123,4 +128,34 @@ public abstract class Grid extends AbstractDraw {
     protected void drawBottom(Transform root) {
 
     }
+
+    protected String getFormatString(Object o) {
+        return o.toString();
+    }
+
+
+    /** scale method alias */
+
+    public double max() { return scale.max(); }
+
+    public double min() { return scale.min(); }
+
+    public double rangeBand() { return scale.rangeBand(); }
+
+    public double rate(double value, double max) {
+        return get(max() * (value / max));
+    }
+
+    public double invert(double y) {
+        return scale.invert(y);
+    }
+
+    public JSONArray domain() {
+        return scale.domain();
+    }
+
+    public JSONArray range() {
+        return scale.range();
+    }
+
 }

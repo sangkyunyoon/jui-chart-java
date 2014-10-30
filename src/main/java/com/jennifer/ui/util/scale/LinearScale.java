@@ -136,7 +136,11 @@ public class LinearScale extends AbstractScale {
     }
 
     public JSONArray ticks() {
-        return ticks(10, false, 1000000);
+        return ticks(10, false, 10000000);
+    }
+
+    public JSONArray ticks(int count, boolean isNice) {
+        return ticks(count, isNice, 10000000);
     }
 
     public JSONArray ticks(int count, boolean isNice, int intNumber) {
@@ -148,12 +152,12 @@ public class LinearScale extends AbstractScale {
             return new JSONArray();
         }
 
-        double[] arr = MathUtil.nice(domain.getDouble(0), domain.getDouble(1), count, isNice );
+        JSONArray arr = MathUtil.nice(domain.getDouble(0), domain.getDouble(1), count, isNice );
 
-        double min = arr[0];
-        double max = arr[1];
-        double range = arr[2];
-        double spacing = arr[3];
+        double min = arr.getDouble(0);
+        double max = arr.getDouble(1);
+        double range = arr.getDouble(2);
+        double spacing = arr.getDouble(3);
 
         double start = min * intNumber;
         double end = max * intNumber;

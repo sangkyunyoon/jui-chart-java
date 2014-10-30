@@ -67,7 +67,7 @@ public class MathUtil {
       return niceNum(range, false);
     }
 
-    public static double[] nice(double min, double max, double ticks, boolean isNice) {
+    public static JSONArray nice(double min, double max, double ticks, boolean isNice) {
 
         double _max;
         double _min;
@@ -93,6 +93,6 @@ public class MathUtil {
         _niceMax = (isNice) ? Math.floor(_max / _tickSpacing) * _tickSpacing : _max;
 
 
-        return new double[] { _niceMin, _niceMax, _range, _tickSpacing };
+        return new JSONArray().put(_niceMin).put(_niceMax).put(_range).put(_tickSpacing);
     }
 }
