@@ -15,7 +15,7 @@ public class MathUtil {
         return x * Math.sin(radian) + y * Math.cos(radian);
     }
 
-    public static JSONObject rotate(int x, int y, float radian) {
+    public static JSONObject rotate(double x, double y, double radian) {
         return new JSONObject().put("x", rotateX(x, y, radian)).put("y", rotateY(x, y, radian));
     }
 
