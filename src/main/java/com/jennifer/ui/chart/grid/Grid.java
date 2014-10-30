@@ -3,6 +3,7 @@ package com.jennifer.ui.chart.grid;
 import com.jennifer.ui.chart.AbstractDraw;
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.util.JSONUtil;
+import com.jennifer.ui.util.Option;
 import com.jennifer.ui.util.scale.Scale;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
@@ -49,6 +50,9 @@ public abstract class Grid extends AbstractDraw {
     protected boolean has(String key) {
         return options.has(key);
     }
+
+    protected String theme(String key) { return chart.theme(key); }
+    protected String theme(boolean checked, String key1, String key2) { return chart.theme(checked, key1, key2); }
 
     protected Transform axisLine(JSONObject attr) {
 

@@ -7,11 +7,11 @@ import org.json.JSONObject;
  * Created by yuni on 2014-10-24.
  */
 public class MathUtil {
-    public static double rotateX(int x, int y, float radian) {
+    public static double rotateX(double x, double y, double radian) {
         return x * Math.cos(radian) - y * Math.sin(radian);
     }
 
-    public static double rotateY(int x, int y, float radian) {
+    public static double rotateY(double x, double y, double radian) {
         return x * Math.sin(radian) + y * Math.cos(radian);
     }
 

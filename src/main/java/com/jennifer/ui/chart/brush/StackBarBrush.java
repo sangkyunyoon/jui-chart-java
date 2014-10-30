@@ -2,6 +2,7 @@ package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.grid.Grid;
+import com.jennifer.ui.util.Option;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -60,12 +61,12 @@ public class StackBarBrush extends Brush {
                 double xValue = chart.dataDouble(i, target.getString(j)) + value;
                 double endX = x.get(xValue);
 
-                JSONObject o = new JSONObject();
-                o.put("x", (startX < endX) ? startX : endX);
-                o.put("y", startY);
-                o.put("width", Math.abs(startX - endX));
-                o.put("height", barWidth);
-                o.put("fill", chart.color(j, options.optJSONArray("colors")));
+                Option o = new Option()
+                                .x((startX < endX) ? startX : endX)
+                                .y(startY)
+                                .width(Math.abs(startX - endX))
+                                .height(barWidth)
+                                .fill(this.color(j));
                 group.rect(o);
 
                 startX = endX;

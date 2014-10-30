@@ -2,6 +2,7 @@ package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.grid.Grid;
+import com.jennifer.ui.util.Option;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -64,20 +65,11 @@ public class ColumnBrush extends Brush {
                 double startY = y.get(chart.dataDouble(i, target.getString(j)));
                 double h = Math.abs(zeroY - startY);
 
-                JSONObject o = new JSONObject();
+                Option o = new Option().x(startX).height(h).width(columnWidth).fill(this.color(j));
                 if (startY <= zeroY) {
-                    o.put("x", startX);
-                    o.put("y", startY);
-                    o.put("height", h);
-                    o.put("width", columnWidth);
-                    o.put("fill", chart.color(j, options.optJSONArray("colors")));
+                    o.y(startY);
                 } else {
-
-                    o.put("x", startX);
-                    o.put("y", zeroY);
-                    o.put("height", h);
-                    o.put("width", columnWidth);
-                    o.put("fill", chart.color(j, options.optJSONArray("colors")));
+                    o.y(zeroY);
                 }
 
                 group.rect(o);

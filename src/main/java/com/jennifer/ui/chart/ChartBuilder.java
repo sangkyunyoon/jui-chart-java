@@ -706,6 +706,9 @@ public class ChartBuilder extends AbstractDraw {
     public JSONArray data() {
         return barray("data");
     }
+    public JSONObject data(int i) {
+        return barray("data").getJSONObject(i);
+    }
 
     public Object data(int i, String key) {
         return barray("data").getJSONObject(i).get(key);
@@ -768,5 +771,4 @@ public class ChartBuilder extends AbstractDraw {
 
         return (Transform) el("text", JSONUtil.extend(o, textOpt)).textNode(text);
     }
-
 }

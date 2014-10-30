@@ -166,6 +166,10 @@ public abstract class Brush extends AbstractDraw {
         return xy;
     }
 
+    public String color(int i) {
+        return chart.color(i, options.optJSONArray("colors"));
+    }
+
     /**
      * static create method
      *

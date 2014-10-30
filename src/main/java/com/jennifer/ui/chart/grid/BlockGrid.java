@@ -1,6 +1,7 @@
 package com.jennifer.ui.chart.grid;
 
 import com.jennifer.ui.chart.ChartBuilder;
+import com.jennifer.ui.util.Option;
 import com.jennifer.ui.util.scale.OrdinalScale;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
@@ -41,8 +42,8 @@ public class BlockGrid extends Grid {
         boolean hasFull = options.optBoolean("full", false);
 
         if (!hasLine) {
-            JSONObject o = new JSONObject();
-            o.put("x2", chart.width());
+            Option o = new Option()
+                            .x2(chart.width());
             root.append(this.axisLine(o));
         }
 
@@ -57,19 +58,19 @@ public class BlockGrid extends Grid {
 
             Transform axis = root.group().translate(this.points.getDouble(i), 0);
 
-            JSONObject lineOpt = new JSONObject();
-            lineOpt.put("x1",-this.half_band);
-            lineOpt.put("y1",0);
-            lineOpt.put("x2",-this.half_band);
-            lineOpt.put("y2",hasLine ? full_height : -this.bar);
+            Option lineOpt = new Option()
+                    .x1(-half_band)
+                    .y1(0)
+                    .x2(-half_band)
+                    .y2(hasLine ? full_height : -this.bar);
 
             axis.append(this.line(lineOpt));
 
-            JSONObject textOpt = new JSONObject();
-            textOpt.put("x", 0);
-            textOpt.put("y", -20);
-            textOpt.put("text-anchor", "middle");
-            textOpt.put("fill", chart.theme("gridFontColor"));
+            Option textOpt = new Option()
+                .x(0)
+                .y(-20)
+                .textAnchor("middle")
+                .fill(chart.theme("gridFontColor"));
 
             axis.append(chart.text(textOpt, domain));
         }
@@ -77,8 +78,7 @@ public class BlockGrid extends Grid {
         if (!hasFull) {
             Transform axis = root.group().translate(chart.width(), 0);
 
-            JSONObject lineOpt = new JSONObject();
-            lineOpt.put("y2", hasLine ? full_height : -this.bar);
+            Option lineOpt = new Option().y2(hasLine ? full_height : -this.bar);
 
             axis.append(this.line(lineOpt));
         }
