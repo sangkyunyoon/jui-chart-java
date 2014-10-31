@@ -10,6 +10,8 @@ import org.json.JSONObject;
 
 import java.util.Date;
 
+import static com.jennifer.ui.util.Option.opt;
+
 /**
  * Created by Jayden on 2014-10-24.
  */
@@ -80,41 +82,41 @@ public class Main {
         //System.out.println(svg.toXml());
 
 
-        JSONObject chartOpt = new JSONObject();
+        Option chartOpt = new Option();
         chartOpt.put("theme", "dark");
         chartOpt.put("width", "800");
         chartOpt.put("height", "800");
-        chartOpt.put("grid", new JSONObject());
-        chartOpt.put("padding", new JSONObject());
-        chartOpt.put("data", new JSONArray());
-        chartOpt.put("brush", new JSONArray());
+        chartOpt.put("grid", opt());
+        chartOpt.put("padding", opt());
+        chartOpt.put("data", new OptionArray());
+        chartOpt.put("brush", new OptionArray());
 
 
-        chartOpt.getJSONObject("padding").put("left", 100);
+        chartOpt.object("padding").put("left", 100);
 
         // grid
-        JSONObject grid = chartOpt.getJSONObject("grid");
-        grid.put("x", new JSONObject());
-        grid.put("y", new JSONObject());
+        Option grid = (Option) chartOpt.object("grid");
+        grid.put("x", opt());
+        grid.put("y", opt());
 
-        JSONObject x = grid.getJSONObject("x");
-        JSONObject y = grid.getJSONObject("y");
+        Option x = (Option) grid.object("x");
+        Option y = (Option) grid.object("y");
 
-        x.put("type", "range").put("target", new JSONArray().put("value").put("+").put("value2")).put("step", 10);
+        x.put("type", "range").put("target", new OptionArray().put("value").put("value2")).put("step", 10);
         y.put("type", "block").put("target", "name");
         // brush
 
-        JSONArray brush = chartOpt.getJSONArray("brush");
-        brush.put(Brush.stackbar().put("target", new JSONArray().put("value").put("value2")));
+        OptionArray brush = (OptionArray) chartOpt.array("brush");
+        brush.put(Brush.stackbar().put("target", new OptionArray().put("value").put("value2")));
 
         // data
 
-        JSONArray data = chartOpt.getJSONArray("data");
+        OptionArray data = (OptionArray) chartOpt.array("data");
 
         long now = System.currentTimeMillis();
 
         for(int i = 0; i < 10; i++) {
-            JSONObject d = new JSONObject();
+            Option d = opt();
 
             d.put("name", "tab" + i);
             d.put("value", i * 2 + 0.1);

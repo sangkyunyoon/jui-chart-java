@@ -4,18 +4,23 @@ import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.util.*;
 import com.jennifer.ui.util.dom.Transform;
 import com.jennifer.ui.util.scale.TimeScale;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Date;
+
+import static com.jennifer.ui.util.Option.opt;
 
 /**
  * Created by Jayden on 2014-10-24.
  */
 public class DateGrid extends Grid {
-    private JSONArray ticks;
+    private OptionArray ticks;
     private int bar;
-    private JSONArray values;
+    private OptionArray values;
+
+    public DateGrid(Orient orient, ChartBuilder chart, Option options) {
+        super(orient, chart, options);
+    }
 
     public DateGrid(Orient orient, ChartBuilder chart, JSONObject options) {
         super(orient, chart, options);
@@ -37,7 +42,7 @@ public class DateGrid extends Grid {
         boolean hasFull = options.optBoolean("full", false);
 
         if (!hasLine) {
-            JSONObject o = new JSONObject();
+            Option o = opt();
             o.put("x2", chart.width());
             root.append(this.axisLine(o));
         }
@@ -46,12 +51,12 @@ public class DateGrid extends Grid {
 
             Transform axis = root.group().translate(this.values.getDouble(i), 0);
 
-            JSONObject lineOpt = new JSONObject();
+            Option lineOpt = opt();
             lineOpt.put("y2",hasLine ? full_height : -bar);
 
             axis.append(line(lineOpt));
 
-            JSONObject textOpt = new JSONObject();
+            Option textOpt = opt();
             textOpt.put("x", 0);
             textOpt.put("y", -bar - 4);
             textOpt.put("text-anchor", "middle");
@@ -69,7 +74,7 @@ public class DateGrid extends Grid {
         boolean hasFull = options.optBoolean("full", false);
 
         if (!hasLine) {
-            JSONObject o = new JSONObject();
+            Option o = opt();
             o.put("x2", chart.width());
             root.append(this.axisLine(o));
         }
@@ -78,16 +83,16 @@ public class DateGrid extends Grid {
 
             Transform axis = root.group().translate(values.getDouble(i), 0);
 
-            JSONObject lineOpt = new JSONObject();
-            lineOpt.put("y2",hasLine ? -full_height : bar);
+            Option lineOpt = opt();
+            lineOpt.y2(hasLine ? -full_height : bar);
 
             axis.append(line(lineOpt));
 
-            JSONObject textOpt = new JSONObject();
-            textOpt.put("x", 0);
-            textOpt.put("y", bar*3);
-            textOpt.put("text-anchor", "middle");
-            textOpt.put("fill", chart.theme("gridFontColor"));
+            Option textOpt = opt();
+            textOpt.x(0);
+            textOpt.y(bar * 3);
+            textOpt.textAnchor("middle");
+            textOpt.fill(chart.theme("gridFontColor"));
 
             axis.append(chart.text(textOpt, getFormatString(ticks.getLong(i))));
         }
@@ -100,7 +105,7 @@ public class DateGrid extends Grid {
         boolean hasFull = options.optBoolean("full", false);
 
         if (!hasLine) {
-            JSONObject o = new JSONObject();
+            Option o = opt();
             o.put("y2", chart.height());
             root.append(this.axisLine(o));
         }
@@ -109,12 +114,12 @@ public class DateGrid extends Grid {
 
             Transform axis = root.group().translate(0, values.getDouble(i));
 
-            JSONObject lineOpt = new JSONObject();
+            Option lineOpt = opt();
             lineOpt.put("x2",hasLine ? full_width : -bar);
 
             axis.append(line(lineOpt));
 
-            JSONObject textOpt = new JSONObject();
+            Option textOpt = opt();
             textOpt.put("x", -bar-4);
             textOpt.put("y", bar);
             textOpt.put("text-anchor", "end");
@@ -131,7 +136,7 @@ public class DateGrid extends Grid {
         boolean hasFull = options.optBoolean("full", false);
 
         if (!hasLine) {
-            JSONObject o = new JSONObject();
+            Option o = opt();
             o.put("y2", chart.height());
             root.append(this.axisLine(o));
         }
@@ -140,12 +145,12 @@ public class DateGrid extends Grid {
 
             Transform axis = root.group().translate(0, values.getDouble(i));
 
-            JSONObject lineOpt = new JSONObject();
+            Option lineOpt = opt();
             lineOpt.put("x2",hasLine ? -full_width : bar);
 
             axis.append(line(lineOpt));
 
-            JSONObject textOpt = new JSONObject();
+            Option textOpt = opt();
             textOpt.put("x", bar+4);
             textOpt.put("y", -bar);
             textOpt.put("text-anchor", "start");
@@ -158,9 +163,9 @@ public class DateGrid extends Grid {
     private String getFormatString(long d) {
         String text;
         if (options.has("format")) {
-            text = TimeUtil.format(d, options.getString("format"));
+            text = TimeUtil.format(d, options.string("format"));
         } else {
-            text = TimeUtil.format(d, options.getJSONArray("step"));
+            text = TimeUtil.format(d, options.array("step"));
         }
         return text;
     }
@@ -174,28 +179,28 @@ public class DateGrid extends Grid {
             max = chart.width();
         }
 
-        JSONArray range = new JSONArray().put(0).put(max);
+        OptionArray range = (OptionArray)new OptionArray().put(0).put(max);
 
         TimeScale timeScale = (TimeScale) this.scale;
 
-        timeScale.domain(options.getJSONArray("domain")).rangeRound(range);
+        timeScale.domain(options.array("domain")).rangeRound(range);
 
         boolean realtime = options.optBoolean("realtime", false);
-        JSONArray step = options.getJSONArray("step");
+        OptionArray step = (OptionArray) options.array("step");
 
         if (realtime) {
-            this.ticks = timeScale.realTicks(step.getString(0), step.getInt(1));
+            this.ticks = timeScale.realTicks(step.string(0), step.I(1));
         } else {
-            this.ticks = timeScale.ticks(step.getString(0), step.getInt(1));
+            this.ticks = timeScale.ticks(step.string(0), step.I(1));
         }
 
         // step = [this.time.days, 1];
         this.bar = 6;
 
-        this.values = new JSONArray();
+        this.values = new OptionArray();
 
         for (int i = 0, len = this.ticks.length(); i < len; i++) {
-            this.values.put(this.scale.get(this.ticks.getDouble(i)));
+            this.values.put(this.scale.get(this.ticks.D(i)));
         }
     }
 
@@ -205,14 +210,14 @@ public class DateGrid extends Grid {
         if (has("target") && !has("domain")) {
 
             if (options.get("target") instanceof String) {
-                JSONArray list = new JSONArray();
-                list.put(options.getString("target"));
+                OptionArray list = new OptionArray();
+                list.put(options.string("target"));
                 options.put("target", list);
             }
 
-            JSONArray target = options.getJSONArray("target");
-            JSONArray domain = new JSONArray();
-            JSONArray data = chart.data();
+            OptionArray target = (OptionArray) options.array("target");
+            OptionArray domain = new OptionArray();
+            OptionArray data = chart.data();
 
             long min = 0;
             long max = 0;
@@ -224,7 +229,7 @@ public class DateGrid extends Grid {
                 String key = target.getString(i);
 
                 for(int index = 0, dataLength = data.length(); index < dataLength; index++) {
-                    JSONObject row =  data.getJSONObject(index);
+                    Option row = (Option) data.object(index);
 
                     long value = 0;
 

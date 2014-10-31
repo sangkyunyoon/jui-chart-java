@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static com.jennifer.ui.util.DomUtil.el;
+import static com.jennifer.ui.util.Option.opt;
 
 /**
  * Created by Jayden on 2014-10-24.
@@ -19,14 +20,18 @@ public abstract class Grid extends AbstractDraw {
     protected Scale scale;
     protected Orient orient;
     protected ChartBuilder chart;
-    protected JSONObject options;
+    protected Option options;
 
-    public Grid(Orient orient, ChartBuilder chart, JSONObject options) {
+    public Grid(Orient orient, ChartBuilder chart, Option options) {
         this.chart = chart;
         this.orient = orient;
         this.options = options;
 
         init();
+    }
+
+    public Grid(Orient orient, ChartBuilder chart, JSONObject options) {
+        this(orient, chart, JSONUtil.extend(options));
     }
 
     public void init() {
@@ -54,9 +59,9 @@ public abstract class Grid extends AbstractDraw {
     protected String theme(String key) { return chart.theme(key); }
     protected String theme(boolean checked, String key1, String key2) { return chart.theme(checked, key1, key2); }
 
-    protected Transform axisLine(JSONObject attr) {
+    protected Transform axisLine(Option attr) {
 
-        JSONObject o = new JSONObject();
+        Option o = opt();
         o.put("x1", 0);
         o.put("y1", 0);
         o.put("x2", 0);
@@ -68,8 +73,8 @@ public abstract class Grid extends AbstractDraw {
         return el("line", JSONUtil.extend(o, attr));
     }
 
-    protected Transform line(JSONObject attr) {
-        JSONObject o = new JSONObject();
+    protected Transform line(Option attr) {
+        Option o = new Option();
         o.put("x1", 0);
         o.put("y1", 0);
         o.put("x2", 0);
@@ -83,9 +88,9 @@ public abstract class Grid extends AbstractDraw {
     }
 
     protected Object drawGrid() {
-        JSONObject result = new JSONObject();
+        Option result = new Option();
 
-        JSONObject o = new JSONObject();
+        Option o = new Option();
         o.put("class", "grid " + options.optString("type", "block"));
         Transform root = el("g", o);
 
@@ -162,4 +167,7 @@ public abstract class Grid extends AbstractDraw {
         return scale.range();
     }
 
+    public Option get(int i, double value) {
+        return (Option)opt().put("x", i).put("y", value);
+    }
 }

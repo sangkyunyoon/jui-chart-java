@@ -25,6 +25,9 @@ public class BarBrush extends Brush {
     private JSONArray target;
     private double barHeight;
 
+    public BarBrush(ChartBuilder chart, Option options) {
+        super(chart, options);
+    }
     public BarBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
     }

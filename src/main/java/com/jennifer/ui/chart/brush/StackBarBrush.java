@@ -3,11 +3,13 @@ package com.jennifer.ui.chart.brush;
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.grid.Grid;
 import com.jennifer.ui.util.Option;
+import com.jennifer.ui.util.OptionArray;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static com.jennifer.ui.util.DomUtil.el;
+import static com.jennifer.ui.util.Option.opt;
 
 /**
  * Created by Jayden on 2014-10-27.
@@ -21,8 +23,9 @@ public class StackBarBrush extends Brush {
     private int count;
     private double height;
     private double barWidth;
-    private JSONArray target;
+    private OptionArray target;
 
+    public StackBarBrush(ChartBuilder chart, Option options) { super(chart, options); }
     public StackBarBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
     }
@@ -40,7 +43,7 @@ public class StackBarBrush extends Brush {
         y = (Grid)options.get("y");
 
         count = chart.data().length();
-        target = options.getJSONArray("target");
+        target = (OptionArray) options.array("target");
 
         height = y.rangeBand();
         barWidth = height - outerPadding * 2;
@@ -58,22 +61,21 @@ public class StackBarBrush extends Brush {
             Transform group = root.group();
 
             for(int j = 0, len = target.length(); j < len; j++) {
-                double xValue = chart.dataDouble(i, target.getString(j)) + value;
+                double xValue = chart.dataDouble(i, target.string(j)) + value;
                 double endX = x.get(xValue);
 
-                Option o = new Option()
-                                .x((startX < endX) ? startX : endX)
-                                .y(startY)
-                                .width(Math.abs(startX - endX))
-                                .height(barWidth)
-                                .fill(this.color(j));
-                group.rect(o);
+                group.rect(opt()
+                        .x((startX < endX) ? startX : endX)
+                        .y(startY)
+                        .width(Math.abs(startX - endX))
+                        .height(barWidth)
+                        .fill(color(j)));
 
                 startX = endX;
                 value = xValue;
             }
         }
 
-        return new JSONObject().put("root", root);
+        return opt().put("root", root);
     }
 }

@@ -1,5 +1,6 @@
 package com.jennifer.ui.util.scale;
 
+import com.jennifer.ui.util.OptionArray;
 import org.json.JSONArray;
 
 /**
@@ -7,9 +8,10 @@ import org.json.JSONArray;
  */
 public interface Scale {
     public Scale domain(JSONArray domain);
-    public Scale range(JSONArray range);
-    public JSONArray domain();
-    public JSONArray range();
+    public Scale domain(OptionArray domain);
+    public Scale range(OptionArray range);
+    public OptionArray domain();
+    public OptionArray range();
     public double max();
     public double min();
     public double rangeBand();
@@ -17,8 +19,8 @@ public interface Scale {
     public double invert(double y);
     public double get(double value);
     public double get(String x);
-    public Scale rangeBands(JSONArray interval, int i, int i1);
-    public Scale rangePoints(JSONArray interval, int i);
-    public Scale rangeRound(JSONArray range);
+    public Scale rangeBands(OptionArray interval, int i, int i1);
+    public Scale rangePoints(OptionArray interval, int i);
+    public Scale rangeRound(OptionArray range);
 
 }

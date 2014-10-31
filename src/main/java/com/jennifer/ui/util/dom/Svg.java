@@ -1,11 +1,11 @@
 package com.jennifer.ui.util.dom;
 
 import com.jennifer.ui.util.DomUtil;
-import org.json.JSONObject;
+import com.jennifer.ui.util.Option;
 
 public class Svg extends DomUtil{
 
-    public Svg(JSONObject attr) {
+    public Svg(Option attr) {
         super("svg", attr);
     }
 

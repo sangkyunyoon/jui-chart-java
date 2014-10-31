@@ -2,19 +2,22 @@ package com.jennifer.ui.util;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import com.jennifer.ui.util.Option;
+import com.jennifer.ui.util.OptionArray;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+
+import static com.jennifer.ui.util.Option.opt;
 
 /**
  * Created by Jayden on 2014-10-28.
  */
 public class JSONUtil {
 
-    public static JSONObject extend(JSONObject o, JSONObject attr) {
-        JSONObject newObj = new JSONObject();
+    public static Option extend(Option o, Option attr) {
+        Option newObj = opt();
 
         JSONArray names1 = o.names();
         if (names1 != null) {
@@ -27,7 +30,7 @@ public class JSONUtil {
         }
 
 
-        JSONArray names = attr.names();
+        JSONArray names =  attr.names();
         if (names != null) {
             for(int i = 0, len = names.length(); i < len; i++) {
                 String key = names.getString(i);
@@ -40,7 +43,24 @@ public class JSONUtil {
         return newObj;
     }
 
-    public static String join(JSONArray list, String seperator) {
+
+    public static Option extend(JSONObject options) {
+        Option newObj = new Option();
+
+        JSONArray names =  options.names();
+        if (names != null) {
+            for(int i = 0, len = names.length(); i < len; i++) {
+                String key = names.getString(i);
+                Object value = options.get(key);
+
+                newObj.put(key, value);
+            }
+        }
+
+        return newObj;
+    }
+
+    public static String join(OptionArray list, String seperator) {
         StringBuilder sb = new StringBuilder();
 
         if (list != null) {
@@ -56,20 +76,24 @@ public class JSONUtil {
         return sb.toString();
     }
 
-    public static JSONObject clone(JSONObject jsonObject) {
-        return new JSONObject(jsonObject.toString());
+    public static Option clone(JSONObject obj) {
+        return new Option(obj.toString());
     }
 
-    public static JSONArray toJSONArray(String str[]) {
-        JSONArray o = new JSONArray();
+    public static Option clone(Option obj) {
+        return new Option(obj.toString());
+    }
+
+    public static OptionArray toOptionArray(String str[]) {
+        OptionArray o = new OptionArray();
         for(int i = 0, len = str.length; i < len; i++) {
             o.put(str[i]);
         }
         return o;
     }
 
-    public static JSONObject loadJSONFile(String filename) {
-        return new JSONObject(readFile("src/main/java/com/jennifer/ui/" + filename));
+    public static Option loadJSONFile(String filename) {
+        return new Option(readFile("src/main/java/com/jennifer/ui/" + filename));
     }
 
     public static String readFile(String filename)
@@ -88,8 +112,8 @@ public class JSONUtil {
         return content;
     }
 
-    public static void reverse(JSONArray domain) {
-        JSONArray temp = new JSONArray();
+    public static void reverse(OptionArray domain) {
+        OptionArray temp = new OptionArray();
         for(int i = 0, len = domain.length(); i < len; i++) {
             temp.put(i, domain.get(i));
         }
@@ -99,8 +123,9 @@ public class JSONUtil {
         }
     }
 
-    public static String format(String s, JSONObject row) {
+    public static String format(String s, Option row) {
         // TODO: implements json format string
         return s;
     }
+
 }

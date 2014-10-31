@@ -1,6 +1,6 @@
 package com.jennifer.ui.util.scale;
 
-import org.json.JSONArray;
+import com.jennifer.ui.util.OptionArray;
 
 /**
  * Created by Jayden on 2014-10-24.
@@ -11,14 +11,14 @@ public class OrdinalScale extends AbstractScale {
         super();
     }
 
-    public OrdinalScale(JSONArray domain, JSONArray range) {
+    public OrdinalScale(OptionArray domain, OptionArray range) {
         super(domain, range);
     }
 
     public double get(String x) {
         int index = -1;
 
-        JSONArray domain = domain();
+        OptionArray domain = domain();
 
         for (int i = 0, len = domain.length(); i < len; i++) {
             if (x.equals(domain.getString(i))) {
@@ -38,10 +38,10 @@ public class OrdinalScale extends AbstractScale {
         return range().getDouble((int)x);
     }
 
-    public Scale rangePoints(JSONArray interval, int padding) {
+    public Scale rangePoints(OptionArray interval, int padding) {
 
-        JSONArray domain = domain();
-        JSONArray range = new JSONArray();
+        OptionArray domain = domain();
+        OptionArray range = new OptionArray();
 
         double start = interval.getDouble(0);
         double end = interval.getDouble(1);
@@ -62,10 +62,10 @@ public class OrdinalScale extends AbstractScale {
         return this;
     }
 
-    public Scale rangeBands(JSONArray interval, int padding, int outerPadding) {
+    public Scale rangeBands(OptionArray interval, int padding, int outerPadding) {
 
-        JSONArray domain = domain();
-        JSONArray range = new JSONArray();
+        OptionArray domain = domain();
+        OptionArray range = new OptionArray();
 
         int count = domain.length();
         int step = count - 1;

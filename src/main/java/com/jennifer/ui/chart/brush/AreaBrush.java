@@ -1,12 +1,15 @@
 package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.ChartBuilder;
+import com.jennifer.ui.util.Option;
+import com.jennifer.ui.util.OptionArray;
 import com.jennifer.ui.util.dom.Path;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static com.jennifer.ui.util.DomUtil.el;
+import static com.jennifer.ui.util.Option.opt;
 
 /**
  * Created by Jayden on 2014-10-27.
@@ -16,6 +19,9 @@ public class AreaBrush extends LineBrush {
     private Transform root;
     private int maxY;
 
+    public AreaBrush(ChartBuilder chart, Option options) {
+        super(chart, options);
+    }
     public AreaBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
     }
@@ -28,19 +34,19 @@ public class AreaBrush extends LineBrush {
 
     @Override
     public Object draw() {
-        JSONArray path = this.getXY();
+        OptionArray path = this.getXY();
 
         for(int k = 0, len = path.length(); k < len; k++) {
-            JSONObject o = path.getJSONObject(k);
+            Option o = (Option) path.object(k);
 
-            Path p = this.createLine(o, k);
-            JSONArray xList = o.getJSONArray("x");
+            Path p = createLine(o, k);
+            OptionArray xList = (OptionArray) o.array("x");
 
-            p.LineTo(xList.getDouble(xList.length() - 1), maxY);
-            p.LineTo(xList.getDouble(0), maxY);
+            p.LineTo(xList.D(xList.length() - 1), maxY);
+            p.LineTo(xList.D(0), maxY);
             p.Close();
 
-            p.put("fill", chart.color(k, options.getJSONArray("colors")));
+            p.put("fill", color(k));
             p.put("fill-opacity", chart.theme("areaOpacity"));
             p.put("stroke-width", 0);
 
@@ -50,7 +56,7 @@ public class AreaBrush extends LineBrush {
         }
 
 
-        return new JSONObject().put("root", root);
+        return opt().put("root", root);
     }
 
 

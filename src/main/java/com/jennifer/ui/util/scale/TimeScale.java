@@ -1,5 +1,7 @@
 package com.jennifer.ui.util.scale;
 
+import com.jennifer.ui.util.Option;
+import com.jennifer.ui.util.OptionArray;
 import com.jennifer.ui.util.Time;
 import com.jennifer.ui.util.TimeUtil;
 import org.json.JSONArray;
@@ -16,12 +18,12 @@ public class TimeScale extends LinearScale {
         super();
     }
 
-    public TimeScale(JSONArray domain, JSONArray range) {
+    public TimeScale(OptionArray domain, OptionArray range) {
         super(domain, range);
     }
 
 
-    public Scale domain(JSONArray domain) {
+    public Scale domain(OptionArray domain) {
 
         for(int i = 0, len = domain.length(); i < len; i++) {
             if (domain.get(i) instanceof Date) {
@@ -34,6 +36,10 @@ public class TimeScale extends LinearScale {
         return super.domain(domain);
     }
 
+    public Scale domain(JSONArray domain) {
+        return domain((OptionArray)domain);
+    }
+
     public double get(Date d) {
         return get((double)d.getTime());
     }
@@ -43,20 +49,20 @@ public class TimeScale extends LinearScale {
     }
 
     public long maxLong() {
-        JSONArray domain = this.domain();
+        OptionArray domain = this.domain();
         return Math.max(domain.getLong(0), domain.getLong(domain.length() - 1));
     }
 
     public long minLong() {
-        JSONArray domain = this.domain();
+        OptionArray domain = this.domain();
         return Math.min(domain.getLong(0), domain.getLong(domain.length()-1));
     }
 
-    public JSONArray ticks(String type, int step) {
+    public OptionArray ticks(String type, int step) {
         long start = this.minLong();
         long end = this.maxLong();
 
-        JSONArray times = new JSONArray();
+        OptionArray times = new OptionArray();
 
         while(start < end) {
             times.put(start);
@@ -75,11 +81,11 @@ public class TimeScale extends LinearScale {
 
     }
 
-    public JSONArray realTicks(String type, int step) {
+    public OptionArray realTicks(String type, int step) {
         long start = this.minLong();
         long end = this.maxLong();
 
-        JSONArray times = new JSONArray();
+        OptionArray times = new OptionArray();
 
         Calendar c = Calendar.getInstance();
 

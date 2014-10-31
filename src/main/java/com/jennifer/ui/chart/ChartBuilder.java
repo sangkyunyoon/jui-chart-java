@@ -3,10 +3,7 @@ package com.jennifer.ui.chart;
 import com.jennifer.ui.chart.brush.EqualizerBrush;
 import com.jennifer.ui.chart.brush.*;
 import com.jennifer.ui.chart.grid.*;
-import com.jennifer.ui.util.ColorUtil;
-import com.jennifer.ui.util.JSONUtil;
-import com.jennifer.ui.util.scale.Scale;
-import com.jennifer.ui.util.StringUtil;
+import com.jennifer.ui.util.*;
 import com.jennifer.ui.util.dom.Svg;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
@@ -16,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import static com.jennifer.ui.util.DomUtil.el;
+import static com.jennifer.ui.util.Option.opt;
 
 /**
  * ChartBuilder options list
@@ -38,22 +36,22 @@ import static com.jennifer.ui.util.DomUtil.el;
  */
 public class ChartBuilder extends AbstractDraw {
 
-    private final JSONObject options;
-    private final JSONObject builderOptions = new JSONObject();
+    private final Option options;
+    private final Option builderOptions = opt();
     private HashMap<String, Class> grids = new HashMap<String, Class>();
     private HashMap<String, Class> brushes = new HashMap<String, Class>();
     private HashMap<String, Class> widgets = new HashMap<String, Class>();
     private Svg svg;
-    private JSONObject themeList = new JSONObject();
+    private Option themeList = new Option();
     private Transform defs;
     private String clipId;
     private Transform root;
 
     public ChartBuilder() {
-        this(new JSONObject());
+        this(opt());
     }
 
-    public ChartBuilder(JSONObject o) {
+    public ChartBuilder(Option o) {
         this.options = o;
 
         init();
@@ -90,7 +88,7 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     private void initSvg() {
-        JSONObject o = new JSONObject();
+        Option o = new Option();
         o.put("width", bi("width"));
         o.put("height", bi("height"));
 
@@ -146,7 +144,7 @@ public class ChartBuilder extends AbstractDraw {
         addTheme("gradient", JSONUtil.loadJSONFile("chart/theme/gradient.json"));
     }
 
-    private void addTheme(String name, JSONObject themeObj) {
+    private void addTheme(String name, Option themeObj) {
         themeList.put(name, themeObj);
     }
 
@@ -161,15 +159,15 @@ public class ChartBuilder extends AbstractDraw {
             Object padding = this.options.get("padding");
 
             if (padding instanceof String && "empty".equals((String)padding)) {
-                JSONObject o = new JSONObject();
+                Option o = new Option();
                 o.put("left", 0);
                 o.put("right", 0);
                 o.put("bottom", 0);
                 o.put("top", 0);
                 this.builderOptions.put("padding", o);
             } else {
-                JSONObject source = (JSONObject)padding;
-                JSONObject o = new JSONObject();
+                Option source = (Option)padding;
+                Option o = new Option();
                 o.put("left", source.optInt("left", 50));
                 o.put("right", source.optInt("right", 50));
                 o.put("bottom", source.optInt("bottom", 50));
@@ -179,7 +177,7 @@ public class ChartBuilder extends AbstractDraw {
             }
 
         } else {
-            JSONObject o = new JSONObject();
+            Option o = new Option();
             o.put("left", 50);
             o.put("right", 50);
             o.put("bottom", 50);
@@ -218,7 +216,7 @@ public class ChartBuilder extends AbstractDraw {
         int x2 = x + width;
         int y2 = y + height;
 
-        JSONObject area = new JSONObject();
+        Option area = new Option();
 
         area.put("width", width);
         area.put("height", height);
@@ -231,8 +229,8 @@ public class ChartBuilder extends AbstractDraw {
 
     }
 
-    public JSONObject area() {
-        return this.builderOptions.getJSONObject("area");
+    public Option area() {
+        return (Option)builderOptions.object("area");
     }
 
     public int area(String key) {
@@ -264,29 +262,29 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     public int padding(String key) {
-        return this.builderOptions.getJSONObject("padding").getInt(key);
+        return builderOptions.object("padding").getInt(key);
     }
 
     public ChartBuilder addGrid(Grid grid) {
         return this;
     }
 
-    private JSONObject cloneObject(String key) {
+    private Option cloneObject(String key) {
 
         if (options.has(key)) {
-            return JSONUtil.clone(options.getJSONObject(key));
+            return JSONUtil.clone((Option)options.object(key));
         } else {
-            return new JSONObject();
+            return opt();
         }
     }
 
-    private JSONArray cloneArray(String key) {
-        JSONArray list = new JSONArray();
-        JSONArray source = this.options.getJSONArray(key);
+    private OptionArray cloneArray(String key) {
+        OptionArray list = new OptionArray();
+        OptionArray source = (OptionArray) options.array(key);
 
         if (source != null) {
             for(int i = 0, len = source.length(); i < len; i++) {
-                list.put(JSONUtil.clone(source.getJSONObject(i)));
+                list.put(JSONUtil.clone((Option) source.object(i)));
             }
         }
 
@@ -294,10 +292,13 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     private Object clone(String key) {
-        return this.options.has(key) ? this.options.get(key) : null;
+        return options.opt(key);
     }
 
     public String color(int index, JSONArray colors) {
+        return color(index, (OptionArray)colors);
+    }
+    public String color(int index, OptionArray colors) {
         String color = null;
 
         if (colors != null) {
@@ -305,7 +306,7 @@ public class ChartBuilder extends AbstractDraw {
         }
 
         if (color == null) {
-            color = bobject("theme").getJSONArray("colors").getString(index);
+            color = bobject("theme").array("colors").getString(index);
         }
 
         if (bobject("hash").has(color)) {
@@ -322,12 +323,12 @@ public class ChartBuilder extends AbstractDraw {
         if (parsedColor instanceof String) {
             return (String)parsedColor;
         }
-        return createGradient((JSONObject)parsedColor, color);
+        return createGradient((Option)parsedColor, color);
     }
 
-    private String createGradient(JSONObject parsedColor, String hashKey) {
+    private String createGradient(Option parsedColor, String hashKey) {
 
-        JSONObject hash = bobject("hash");
+        Option hash = bobject("hash");
 
         if (hash.has(hashKey)) {
             return url(hash.getString(hashKey));
@@ -337,12 +338,12 @@ public class ChartBuilder extends AbstractDraw {
 
         parsedColor.put("id", id);
 
-        String type = parsedColor.getString("type");
+        String type = parsedColor.string("type");
         Transform g = el(type + "Gradient", parsedColor);
 
-        JSONArray stops = parsedColor.getJSONArray("stops");
+        OptionArray stops = (OptionArray) parsedColor.array("stops");
         for (int i = 0, len = stops.length(); i < len; i++) {
-            g.append(el("stop", stops.getJSONObject(i)));
+            g.append(el("stop", (Option) stops.object(i)));
         }
         parsedColor.remove("stops");
 
@@ -355,23 +356,23 @@ public class ChartBuilder extends AbstractDraw {
         return url(id);
     }
 
-    private String url(String id) {
+    public String url(String id) {
         return "url(#" + id + ")";
     }
 
     @Override
     public void drawBefore() {
 
-        JSONObject series = cloneObject("series");
-        JSONObject grid = cloneObject("grid");
+        Option series = cloneObject("series");
+        Option grid = cloneObject("grid");
         Object brush = clone("brush");
         Object widget = clone("widget");
 
-        JSONArray data = cloneArray("data");
+        OptionArray data = cloneArray("data");
 
         // series 데이타 구성
         for (int i = 0, len = data.length(); i < len; i++) {
-            JSONObject row = data.getJSONObject(i);
+            Option row = (Option) data.object(i);
 
             Iterator it = row.keys();
 
@@ -379,10 +380,10 @@ public class ChartBuilder extends AbstractDraw {
                 String key = (String)it.next();
 
                 if (!series.has(key)) {
-                    series.put(key, new JSONObject());
+                    series.put(key, new Option());
                 }
 
-                JSONObject obj = series.getJSONObject(key);
+                Option obj = (Option) series.object(key);
 
                 Object valueObject = row.get(key);
 
@@ -407,12 +408,9 @@ public class ChartBuilder extends AbstractDraw {
                 }
             }
         }
-
-        System.out.println(series);
-
         // series_list
         barray("brush", createBrushData(brush, series.names()));
-        barray("widget", createBrushData(widget, series.names()));
+        barray("widget",createBrushData(widget,  series.names()));
         bobject("grid", grid);
         bobject("hash", null);
         barray("data", data);
@@ -420,27 +418,27 @@ public class ChartBuilder extends AbstractDraw {
 
     }
 
-    private JSONArray createBrushData(Object brush, JSONArray series_list) {
+    private OptionArray createBrushData(Object brush, JSONArray series_list) {
 
-        JSONArray list = new JSONArray();
+        OptionArray list = new OptionArray();
 
         if (brush != null) {
             if (brush instanceof String) {
-                JSONObject o = new JSONObject();
+                Option o = new Option();
                 o.put("type", (String)brush);
                 list.put(o);
-            } else if (brush instanceof JSONObject) {
+            } else if (brush instanceof Option) {
                 list.put(brush);
-            } else if (brush instanceof JSONArray){
-                list = (JSONArray)brush;
+            } else if (brush instanceof OptionArray){
+                list = (OptionArray)brush;
             }
 
             for(int i = 0, len = list.length(); i < len; i++) {
-                JSONObject b = list.getJSONObject(i);
+                JSONObject b = list.object(i);
                 if (b.isNull("target")) {
                     b.put("target", series_list);
                 } else if (b.get("target") instanceof String) {
-                    b.put("target", new JSONArray().put(b.getString("target")));
+                    b.put("target", (OptionArray)new OptionArray().put(b.getString("target")));
                 }
             }
         }
@@ -448,24 +446,24 @@ public class ChartBuilder extends AbstractDraw {
         return list;
     }
 
-    private JSONArray barray(String key) {
-        return builderOptions.has(key) ? builderOptions.getJSONArray(key) : new JSONArray();
+    private OptionArray barray(String key) {
+        return builderOptions.has(key) ? (OptionArray) builderOptions.array(key) : new OptionArray();
     }
 
-    private void barray(String key, JSONArray value) {
+    private void barray(String key, OptionArray value) {
         if (value == null) {
-            value = new JSONArray();
+            value = new OptionArray();
         }
         this.builderOptions.put(key, value);
     }
 
-    private JSONObject bobject(String key) {
-        return this.builderOptions.getJSONObject(key);
+    private Option bobject(String key) {
+        return (Option) this.builderOptions.object(key);
     }
 
-    private void bobject(String key, JSONObject value) {
+    private void bobject(String key, Option value) {
         if (value == null) {
-            value = new JSONObject();
+            value = opt();
         }
         this.builderOptions.put(key, value);
     }
@@ -477,18 +475,18 @@ public class ChartBuilder extends AbstractDraw {
 
     private void drawObject(String type) {
         if (builderOptions.has(type) && !builderOptions.isNull(type)) {
-            JSONArray list = builderOptions.getJSONArray(type);
+            OptionArray list = (OptionArray) builderOptions.array(type);
 
             for(int i = 0, len = list.length(); i < len; i++) {
-                JSONObject obj = list.getJSONObject(i);
+                JSONObject obj = list.object(i);
                 String objType = obj.getString("type");
                 Class cls = "brush".equals(type) ? brushes.get(objType) : widgets.get(objType);
 
-                JSONObject drawObject;
+                Option drawObject;
                 if ("widget".equals(type)) {
-                    drawObject = builderOptions.getJSONArray("brush").getJSONObject(i);
+                    drawObject = JSONUtil.clone(builderOptions.array("brush").getJSONObject(i));
                 } else {
-                    drawObject = obj;
+                    drawObject = JSONUtil.clone(obj);
                 }
 
                 setGridAxis(obj, drawObject);
@@ -499,7 +497,7 @@ public class ChartBuilder extends AbstractDraw {
 
                 try {
                     Drawable drawable = (Drawable) cls.getDeclaredConstructor(ChartBuilder.class, JSONObject.class).newInstance(this, obj);
-                    JSONObject result = (JSONObject)drawable.render();
+                    Option result = (Option)drawable.render();
 
                     Transform root = (Transform)result.get("root");
 
@@ -519,12 +517,12 @@ public class ChartBuilder extends AbstractDraw {
         }
     }
 
-    private void setGridAxis(JSONObject obj, JSONObject drawObject) {
+    private void setGridAxis(JSONObject obj, Option drawObject) {
         obj.remove("x");
         obj.remove("y");
         obj.remove("c");
 
-        JSONObject scales = builderOptions.getJSONObject("scales");
+        Option scales = (Option) builderOptions.object("scales");
 
         if (scales.has("x") || scales.has("x1")) {
 
@@ -533,36 +531,36 @@ public class ChartBuilder extends AbstractDraw {
             Grid scaleC;
 
              if (drawObject.has("x1") && drawObject.getInt("x1")  > -1) {
-                 scaleX = (Grid) scales.getJSONArray("x1").get(drawObject.getInt("x1"));
+                 scaleX = (Grid) scales.array("x1").get(drawObject.I("x1"));
 
                  obj.put("x", scaleX);
              } else {
                  if (drawObject.has("x")) {
-                     scaleX = (Grid) scales.getJSONArray("x").get(drawObject.getInt("x"));
+                     scaleX = (Grid) scales.array("x").get(drawObject.I("x"));
                  } else {
-                     scaleX = (Grid) scales.getJSONArray("x").get(0);
+                     scaleX = (Grid) scales.array("x").get(0);
                  }
 
                  obj.put("x", scaleX);
              }
 
-             if (drawObject.has("y1") && drawObject.getInt("y1")  > -1) {
-                 scaleY = (Grid) scales.getJSONArray("y1").get(drawObject.getInt("y1"));
+             if (drawObject.has("y1") && drawObject.I("y1")  > -1) {
+                 scaleY = (Grid) scales.array("y1").get(drawObject.I("y1"));
 
                  obj.put("y", scaleY);
              } else {
                  if (drawObject.has("y")) {
-                     scaleY = (Grid) scales.getJSONArray("y").get(drawObject.getInt("y"));
+                     scaleY = (Grid) scales.array("y").get(drawObject.I("y"));
                  } else {
-                     scaleY = (Grid) scales.getJSONArray("y").get(0);
+                     scaleY = (Grid) scales.array("y").get(0);
                  }
 
                  obj.put("y", scaleY);
              }
 
 
-             if (drawObject.has("c") && drawObject.getInt("c")  > -1) {
-                 scaleC = (Grid) scales.getJSONArray("c").get(drawObject.getInt("c"));
+             if (drawObject.has("c") && drawObject.I("c")  > -1) {
+                 scaleC = (Grid) scales.array("c").get(drawObject.I("c"));
 
                  obj.put("c", scaleC);
 
@@ -582,20 +580,20 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     private void drawGrid() {
-        JSONObject grid = builderOptions.getJSONObject("grid");
+        Option grid = (Option) builderOptions.object("grid");
         if (grid != null) {
 
             // create default cusotm grid
             if (grid.has("type")) {
-                grid = new JSONObject();
-                grid.put("c", new JSONArray(grid));
+                grid = opt();
+                grid.put("c", new OptionArray().put(grid));
             }
 
             if (!builderOptions.has("scales")) {
-                builderOptions.put("scales", new JSONObject());
+                builderOptions.put("scales", new Option());
             }
 
-            JSONObject scales = builderOptions.getJSONObject("scales");
+            Option scales = (Option) builderOptions.object("scales");
 
 
             JSONArray keys = grid.names();
@@ -615,30 +613,30 @@ public class ChartBuilder extends AbstractDraw {
                 }
 
                 if (!scales.has(key)) {
-                    scales.put(key, new JSONArray());
+                    scales.put(key, new OptionArray());
                 }
 
-                JSONArray scale = scales.getJSONArray(key);
+                OptionArray scale = (OptionArray) scales.array(key);
 
-                if (!(grid.get(key) instanceof JSONArray)) {
-                    JSONArray o = new JSONArray();
-                    o.put(JSONUtil.extend(new JSONObject(), grid.getJSONObject(key)));
+                if (!(grid.get(key) instanceof OptionArray)) {
+                    OptionArray o = new OptionArray();
+                    o.put(JSONUtil.clone(grid.object(key)));
 
                     grid.put(key, o);
                 }
 
-                JSONArray gridObject = grid.getJSONArray(key);
+                OptionArray gridObject = (OptionArray) grid.array(key);
 
 
                 for(int keyIndex = 0, gridLen = gridObject.length(); keyIndex < gridLen; keyIndex++) {
 
-                    JSONObject g = gridObject.getJSONObject(keyIndex);
+                    Option g = (Option) gridObject.object(keyIndex);
 
-                    Class cls = grids.get(g.getString("type"));
+                    Class cls = grids.get(g.string("type"));
                     Grid newGrid = null;
 
                     try {
-                        newGrid = (Grid) cls.getDeclaredConstructor(Orient.class, ChartBuilder.class, JSONObject.class).newInstance(orient, this, g);
+                        newGrid = (Grid) cls.getDeclaredConstructor(Orient.class, ChartBuilder.class, Option.class).newInstance(orient, this, g);
                     } catch (InstantiationException e) {
                         e.printStackTrace();
                     } catch (IllegalAccessException e) {
@@ -649,7 +647,7 @@ public class ChartBuilder extends AbstractDraw {
                         e.printStackTrace();
                     }
 
-                    JSONObject ret = (JSONObject)newGrid.render();
+                    Option ret = (Option) newGrid.render();
 
                     int dist = g.optInt("dist", 0);
                     Transform root = (Transform)ret.get("root");
@@ -666,7 +664,7 @@ public class ChartBuilder extends AbstractDraw {
 
                     this.root.append(root);
 
-                    scales.getJSONArray(key).put(keyIndex, newGrid);
+                    scales.array(key).put(keyIndex, newGrid);
 
                 }
 
@@ -693,45 +691,49 @@ public class ChartBuilder extends AbstractDraw {
         this.defs = (Transform) this.root.defs();
         this.clipId = StringUtil.createId("clip-id");
 
-        JSONObject o = new JSONObject();
+        Option o = new Option();
         o.put("id", this.clipId);
 
-        JSONObject rect = new JSONObject();
+        Option rect = new Option();
         rect.put("x", 0).put("y", 0).put("width", width()).put("height", height());
 
         this.defs.clipPath(o).rect(rect);
 
     }
 
-    public JSONArray data() {
+    public OptionArray data() {
         return barray("data");
     }
-    public JSONObject data(int i) {
-        return barray("data").getJSONObject(i);
+    public Option data(int i) {
+        return (Option) barray("data").object(i);
     }
 
     public Object data(int i, String key) {
-        return barray("data").getJSONObject(i).get(key);
+        return barray("data").object(i).get(key);
     }
 
     public double dataDouble(int i, String key) {
-        return barray("data").getJSONObject(i).getDouble(key);
+        return barray("data").object(i).getDouble(key);
     }
 
-    public JSONObject series() {
+    public Option series() {
         return bobject("series");
     }
 
-    public JSONObject series(String key) {
-        return series().getJSONObject(key);
+    public Option series(String key) {
+        return (Option) series().object(key);
     }
 
-    public JSONObject theme() {
-        return builderOptions.getJSONObject("theme");
+    public Option theme() {
+        return (Option) builderOptions.object("theme");
+    }
+
+    public double themeDouble(String key) {
+        return Double.valueOf(theme(key)).doubleValue();
     }
 
     public String theme(String key) {
-        JSONObject theme = theme();
+        Option theme = theme();
 
         if (theme.has(key) ) {
             if (key.indexOf("Color") > -1) {
@@ -751,24 +753,33 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     public void setTheme(String theme) {
-        setTheme(themeList.getJSONObject(theme));
+        setTheme(themeList.object(theme));
     }
 
-    public void setTheme(JSONObject o) {
-        builderOptions.put("theme", o);
-    }
+    public void setTheme(JSONObject o) { builderOptions.put("theme", o); }
+
+    public void setTheme(Option o) { builderOptions.put("theme", o); }
 
     public void setTheme(String key, String value) {
         theme().put(key, value);
     }
 
-    public Transform text(JSONObject textOpt, String text) {
-        JSONObject o = new JSONObject();
-
+    public Transform text(Option textOpt, String text) {
+        Option o = opt();
         o.put("font-family", theme("fontFamily"));
         o.put("font-size", theme("fontSize"));
         o.put("fill", theme("fontColor"));
 
         return (Transform) el("text", JSONUtil.extend(o, textOpt)).textNode(text);
     }
+
+    public String clipId() {
+        return url(clipId);
+    }
+
+    public Transform defs() {
+        return defs;
+    }
+
+
 }

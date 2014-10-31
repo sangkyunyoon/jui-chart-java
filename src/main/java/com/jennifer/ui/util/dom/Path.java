@@ -1,13 +1,12 @@
 package com.jennifer.ui.util.dom;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
+import com.jennifer.ui.util.Option;
+import com.jennifer.ui.util.OptionArray;
 
 public class Path extends Transform {
-    private JSONArray orders = new JSONArray();
+    private OptionArray orders = new OptionArray();
 
-    public Path(JSONObject o) {
+    public Path(Option o) {
         super("path", o);
     }
 

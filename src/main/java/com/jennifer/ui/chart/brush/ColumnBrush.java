@@ -26,6 +26,9 @@ public class ColumnBrush extends Brush {
     private double columnWidth;
 
 
+    public ColumnBrush(ChartBuilder chart, Option options) {
+        super(chart, options);
+    }
     public ColumnBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
     }

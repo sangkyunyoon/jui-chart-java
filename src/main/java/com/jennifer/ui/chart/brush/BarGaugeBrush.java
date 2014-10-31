@@ -24,6 +24,9 @@ public class BarGaugeBrush extends Brush {
     private String align;
     private boolean split;
 
+    public BarGaugeBrush(ChartBuilder chart, Option options) {
+        super(chart, options);
+    }
     public BarGaugeBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
     }
@@ -58,9 +61,13 @@ public class BarGaugeBrush extends Brush {
 
             Transform group = root.group();
 
-            String color = chart.color(i, options.getJSONArray("colors"));
+            String color = color(i);
 
-            Option o = new Option().x(x).y(y + size/2 + cut).textAnchor("end").fill(color);
+            Option o = new Option()
+                    .x(x)
+                    .y(y + size/2 + cut)
+                    .textAnchor("end")
+                    .fill(color);
 
             String text = "";
             if (data.has(options.getString("title"))) {
@@ -71,7 +78,12 @@ public class BarGaugeBrush extends Brush {
 
             group.append(chart.text(o, text));
 
-            Option rectOpt = new Option().x(x + cut).y(y).width(max).height(size).fill(chart.theme("gaugeBackgroundColor"));
+            Option rectOpt = new Option()
+                    .x(x + cut)
+                    .y(y)
+                    .width(max)
+                    .height(size)
+                    .fill(chart.theme("gaugeBackgroundColor"));
             group.rect(rectOpt);
 
             double value = data.getDouble("value") * max / 100;
@@ -84,7 +96,12 @@ public class BarGaugeBrush extends Brush {
                 startX += max - value;
             }
 
-            Option rectOpt2 = new Option().x(startX).y(y).width(value).height(size).fill(color);
+            Option rectOpt2 = new Option()
+                    .x(startX)
+                    .y(y)
+                    .width(value)
+                    .height(size)
+                    .fill(color);
 
             group.rect(rectOpt2);
 
@@ -110,7 +127,11 @@ public class BarGaugeBrush extends Brush {
                 }
             }
 
-            Option textOpt = new Option().x(textX).y(y + size/2 + cut).textAnchor(textAlign).fill(textColor);
+            Option textOpt = new Option()
+                    .x(textX)
+                    .y(y + size/2 + cut)
+                    .textAnchor(textAlign)
+                    .fill(textColor);
 
             group.append(chart.text(textOpt, data.getDouble("value") + "%"));
 
