@@ -11,6 +11,8 @@ import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 
+import static com.jennifer.ui.util.Option.opt;
+
 /**
  * Created by Jayden on 2014-10-24.
  */
@@ -43,9 +45,7 @@ public class RangeGrid extends Grid {
         boolean hasLine = options.optBoolean("line", false);
 
         if (!hasLine) {
-            Option o = new Option();
-            o.put("x2", chart.width());
-            root.append(this.axisLine(o));
+            root.append(this.axisLine(opt().x2(chart.width())));
         }
 
         double min = this.scale.min();

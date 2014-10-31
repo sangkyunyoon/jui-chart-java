@@ -47,6 +47,8 @@ public class Option extends JSONObject {
     public Option cx(double cx) { return (Option)put("cx", cx); }
     public Option cy(double cy) { return (Option)put("cy", cy); }
     public Option r(double r) { return (Option)put("r", r); }
+    public Option rx(double r) { return (Option)put("rx", r); }
+    public Option ry(double r) { return (Option)put("ry", r); }
 
     // Getter
     public double value() { return getDouble("value"); }
@@ -67,6 +69,8 @@ public class Option extends JSONObject {
     public double cx() { return getDouble("cx"); }
     public double cy() { return getDouble("cy"); }
     public double r() { return getDouble("r"); }
+    public double rx() { return getDouble("rx"); }
+    public double ry() { return getDouble("ry"); }
     public double fillOpacity() { return getDouble("fill-opacity"); }
 
     public JSONObject object(String key) { return optJSONObject(key); }

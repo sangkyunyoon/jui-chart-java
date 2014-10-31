@@ -420,4 +420,14 @@ public class DomUtil {
         return append(el("set"));
     }
 
+    public DomUtil attr(Option option) {
+        JSONArray list = option.names();
+
+        for(int i = 0, len = list.length(); i < len; i++) {
+            String key = list.getString(i);
+            put(key, option.get(key));
+        }
+
+        return this;
+    }
 }
