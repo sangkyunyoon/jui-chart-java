@@ -126,9 +126,8 @@ public class Main {
             data.put(d);
         }
 
-        //System.out.println(chartOpt.toString(4));
-
-        ChartBuilder chart = new ChartBuilder(chartOpt);
+        System.out.println(chartOpt.toString(4));
+        ChartBuilder chart = new ChartBuilder(new Option(chartOpt.toString()));
         System.out.println(chart.render());
     }
 }

@@ -59,6 +59,10 @@ public class ChartBuilder extends AbstractDraw {
         caculate();
     }
 
+    public ChartBuilder(JSONObject jsonObject) {
+        this(JSONUtil.clone(jsonObject));
+    }
+
     private void init() {
 
         initPadding();
@@ -166,7 +170,7 @@ public class ChartBuilder extends AbstractDraw {
                 o.put("top", 0);
                 this.builderOptions.put("padding", o);
             } else {
-                Option source = (Option)padding;
+                JSONObject source = (JSONObject)padding;
                 Option o = new Option();
                 o.put("left", source.optInt("left", 50));
                 o.put("right", source.optInt("right", 50));
@@ -272,7 +276,7 @@ public class ChartBuilder extends AbstractDraw {
     private Option cloneObject(String key) {
 
         if (options.has(key)) {
-            return JSONUtil.clone((Option)options.object(key));
+            return JSONUtil.clone(options.object(key));
         } else {
             return opt();
         }
@@ -280,11 +284,11 @@ public class ChartBuilder extends AbstractDraw {
 
     private OptionArray cloneArray(String key) {
         OptionArray list = new OptionArray();
-        OptionArray source = (OptionArray) options.array(key);
+        JSONArray source = options.array(key);
 
         if (source != null) {
             for(int i = 0, len = source.length(); i < len; i++) {
-                list.put(JSONUtil.clone((Option) source.object(i)));
+                list.put(JSONUtil.clone(source.getJSONObject(i)));
             }
         }
 
