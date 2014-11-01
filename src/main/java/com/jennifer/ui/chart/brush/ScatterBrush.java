@@ -7,6 +7,8 @@ import com.jennifer.ui.util.dom.Polygon;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 import static com.jennifer.ui.util.DomUtil.el;
 import static com.jennifer.ui.util.Option.opt;
 
@@ -38,13 +40,10 @@ public class ScatterBrush extends Brush {
 
     @Override
     public Object draw() {
-
-        drawScatter(getXY());
-
-        return opt().put("root", root);
+        return drawScatter(getXY());
     }
 
-    private void drawScatter(OptionArray points) {
+    protected Object drawScatter(OptionArray points) {
         for(int i = 0; i < points.length(); i++) {
             Option point = (Option) points.object(i);
             for(int j = 0; j < point.array("x").length(); j++) {
@@ -55,6 +54,8 @@ public class ScatterBrush extends Brush {
                 root.append(p);
             }
         }
+
+        return opt().put("root", root);
     }
 
     private Transform createScatter(Option pos, int i) {

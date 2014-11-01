@@ -16,4 +16,10 @@ public class StackLineBrush extends LineBrush {
     public StackLineBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
     }
+
+    @Override
+    public Object draw() {
+        return drawLine(getStackXY());
+    }
+
 }

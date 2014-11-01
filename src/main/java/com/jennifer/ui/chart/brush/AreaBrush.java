@@ -34,8 +34,10 @@ public class AreaBrush extends LineBrush {
 
     @Override
     public Object draw() {
-        OptionArray path = this.getXY();
+        return drawArea(this.getXY());
+    }
 
+    protected Object drawArea(OptionArray path) {
         for(int k = 0, len = path.length(); k < len; k++) {
             Option o = (Option) path.object(k);
 
@@ -54,7 +56,6 @@ public class AreaBrush extends LineBrush {
             root.append(p);
 
         }
-
 
         return opt().put("root", root);
     }

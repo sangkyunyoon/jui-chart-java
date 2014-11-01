@@ -16,6 +16,7 @@ import static com.jennifer.ui.util.Option.opt;
  */
 public class LineBrush extends Brush {
     private Transform root;
+    private String symbol;
 
     public LineBrush(ChartBuilder chart, Option options) {
         super(chart, options);
@@ -26,20 +27,22 @@ public class LineBrush extends Brush {
 
     @Override
     public void drawBefore() {
+
         root = el("g").translate(chart.x(), chart.y());
+        symbol = options.optString("symbol", "normal");
     }
 
 
 
     @Override
     public Object draw() {
+        return drawLine(getXY());
+    }
 
-        OptionArray path = this.getXY();
-
+    protected Object drawLine(OptionArray path) {
         for(int k = 0, len = path.length(); k < len; k++) {
             root.append(createLine((Option) path.object(k), k));
         }
-
 
         return opt().put("root", root);
     }
@@ -55,7 +58,7 @@ public class LineBrush extends Brush {
 
         p.MoveTo(x.D(0), y.D(0));
 
-        if (Brush.SYMBOL_CURVE.equals(options.getString("symbol"))) {
+        if (Brush.SYMBOL_CURVE.equals(symbol)) {
             Option px = this.curvePoints(x);
             Option py = this.curvePoints(y);
 
@@ -71,7 +74,7 @@ public class LineBrush extends Brush {
             }
         } else {
             for (int i = 0, len = x.length() -1; i < len; i++) {
-                if(Brush.SYMBOL_STEP.equals(options.getString("symbol"))) {
+                if(Brush.SYMBOL_STEP.equals(symbol)) {
                     p.LineTo(x.D(i), y.D(i + 1));
                 }
 

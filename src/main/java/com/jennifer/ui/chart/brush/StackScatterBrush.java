@@ -20,7 +20,6 @@ public class StackScatterBrush extends ScatterBrush {
     }
 
     public Object draw() {
-        return null;
-        //return drawScatter(getStackXY());
+        return drawScatter(getStackXY());
     }
 }

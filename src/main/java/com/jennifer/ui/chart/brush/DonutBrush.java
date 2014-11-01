@@ -98,7 +98,7 @@ public class DonutBrush extends Brush {
         return drawDonut(centerX, centerY, innerRadius, outerRadius, startAngle, endAngle, attrs, false);
     }
 
-    private Transform drawDonut(double centerX, double centerY, double innerRadius, double outerRadius, double startAngle, double endAngle, Option attrs, boolean hasCircle) {
+    protected Transform drawDonut(double centerX, double centerY, double innerRadius, double outerRadius, double startAngle, double endAngle, Option attrs, boolean hasCircle) {
 
         double dist = Math.abs(outerRadius - innerRadius);
 
