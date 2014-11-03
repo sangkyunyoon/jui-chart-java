@@ -1,4 +1,4 @@
 jennifer-chart
 ==============
 
-simple svg Jennifer chart
+implements simple svg Jennifer chart for java
