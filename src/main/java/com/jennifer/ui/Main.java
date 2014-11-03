@@ -2,6 +2,7 @@ package com.jennifer.ui;
 
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.brush.Brush;
+import com.jennifer.ui.chart.widget.Widget;
 import com.jennifer.ui.util.*;
 import com.jennifer.ui.util.dom.Path;
 import com.jennifer.ui.util.dom.Svg;
@@ -83,16 +84,13 @@ public class Main {
 
 
         Option chartOpt = new Option();
-        chartOpt.put("theme", "dark");
+        //chartOpt.put("theme", "dark");
         chartOpt.put("width", "800");
         chartOpt.put("height", "800");
         chartOpt.put("grid", opt());
-        chartOpt.put("padding", opt());
+        chartOpt.put("widget", new OptionArray());
         chartOpt.put("data", new OptionArray());
         chartOpt.put("brush", new OptionArray());
-
-
-        chartOpt.object("padding").put("left", 100);
 
         // grid
         Option grid = (Option) chartOpt.object("grid");
@@ -102,12 +100,16 @@ public class Main {
         Option x = (Option) grid.object("x");
         Option y = (Option) grid.object("y");
 
-        x.put("type", "range").put("target", new OptionArray().put("value").put("value2")).put("step", 10);
-        y.put("type", "block").put("target", "name");
+        x.put("type", "range").put("target", "{value} + {value2}").put("step", 10).put("line", true);
+        y.put("type", "block").put("target", "name").put("line", true);
         // brush
 
         OptionArray brush = (OptionArray) chartOpt.array("brush");
         brush.put(Brush.stackbar().put("target", new OptionArray().put("value").put("value2")));
+
+        OptionArray widget = (OptionArray) chartOpt.array("widget");
+        widget.put(Widget.legend().put("align", "start"));
+        widget.put(Widget.title().put("text", "sample title"));
 
         // data
 
@@ -126,8 +128,9 @@ public class Main {
             data.put(d);
         }
 
-        System.out.println(chartOpt.toString(4));
+        //System.out.println(chartOpt.toString(4));
         ChartBuilder chart = new ChartBuilder(new Option(chartOpt.toString()));
         System.out.println(chart.render());
+        //chart.render();
     }
 }

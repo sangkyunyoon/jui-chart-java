@@ -20,29 +20,46 @@
  * THE SOFTWARE.
  */
 
-package com.jennifer.ui.util;
+package com.jennifer.ui.chart.widget;
 
-import org.json.JSONArray;
+import com.jennifer.ui.chart.AbstractDraw;
+import com.jennifer.ui.chart.ChartBuilder;
+import com.jennifer.ui.chart.grid.Orient;
+import com.jennifer.ui.util.JSONUtil;
+import com.jennifer.ui.util.Option;
 import org.json.JSONObject;
 
-/**
- * Created by Jayden on 2014-10-31.
- */
-public class OptionArray extends JSONArray {
+public abstract class Widget extends AbstractDraw {
 
-    public OptionArray(String s) {
-        super(s);
+    protected ChartBuilder chart;
+    protected Option options;
+
+    public Widget(ChartBuilder chart, Option options) {
+        this.chart = chart;
+        this.options = options;
+
+        init();
     }
 
-    public OptionArray() {
-        super();
+    public Widget(ChartBuilder chart, JSONObject options) {
+        this(chart, JSONUtil.clone(options));
     }
 
-    public JSONObject object(int i) { return optJSONObject(i); }
-    public JSONArray array(int i) { return optJSONArray(i); }
-    public double D(int i) { return getDouble(i); }
-    public int I(int i) { return getInt(i); }
-    public long L(int i) { return getLong(i); }
-    public String string(int i) { return getString(i); }
+    public void init() {
 
+    }
+
+    @Override
+    public void drawBefore() {
+
+    }
+
+    @Override
+    public Object draw() {
+        return null;
+    }
+
+    public static JSONObject create(String type) { return new JSONObject().put("type", type); }
+    public static JSONObject title() { return create("title"); }
+    public static JSONObject legend() { return create("legend"); }
 }

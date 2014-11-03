@@ -26,6 +26,7 @@ import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.util.JSONUtil;
 import com.jennifer.ui.util.Option;
 import com.jennifer.ui.util.OptionArray;
+import com.jennifer.ui.util.StringUtil;
 import com.jennifer.ui.util.dom.Transform;
 import com.jennifer.ui.util.scale.LinearScale;
 import org.json.JSONArray;
@@ -222,7 +223,7 @@ public class RangeGrid extends Grid {
         initDomain();
 
         int width = chart.width(), height = chart.height();
-        scale.domain(options.array("domain"));
+        scale.domain(JSONUtil.clone(options.array("domain")));
 
         if (orient == Orient.LEFT || orient == Orient.RIGHT) {
             this.scale.range((OptionArray)new OptionArray().put(height).put(0));
@@ -289,6 +290,16 @@ public class RangeGrid extends Grid {
                         max = _max;
                     if (min > _min)
                         min = _min;
+                } else {
+                    // caculate string
+                    double value = StringUtil.parseDouble(key, series);
+
+                    if (max < value) {
+                        max = value;
+                    }
+                    if (min > value)
+                        min = value;
+
                 }
 
             }

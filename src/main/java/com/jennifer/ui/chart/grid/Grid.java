@@ -53,7 +53,7 @@ public abstract class Grid extends AbstractDraw {
     }
 
     public Grid(Orient orient, ChartBuilder chart, JSONObject options) {
-        this(orient, chart, JSONUtil.extend(options));
+        this(orient, chart, JSONUtil.clone(options));
     }
 
     public void init() {

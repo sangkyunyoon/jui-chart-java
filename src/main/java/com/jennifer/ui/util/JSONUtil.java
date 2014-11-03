@@ -106,6 +106,11 @@ public class JSONUtil {
         return new Option(obj.toString());
     }
 
+    public static OptionArray clone(JSONArray array) {
+        if (array == null) return new OptionArray();
+        return new OptionArray(array.toString());
+    }
+
     public static OptionArray toOptionArray(String str[]) {
         OptionArray o = new OptionArray();
         for(int i = 0, len = str.length; i < len; i++) {

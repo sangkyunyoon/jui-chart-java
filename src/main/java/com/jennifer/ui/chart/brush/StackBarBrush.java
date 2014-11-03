@@ -24,6 +24,7 @@ package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.grid.Grid;
+import com.jennifer.ui.util.JSONUtil;
 import com.jennifer.ui.util.Option;
 import com.jennifer.ui.util.OptionArray;
 import com.jennifer.ui.util.dom.Transform;
@@ -65,7 +66,7 @@ public class StackBarBrush extends Brush {
         y = (Grid)options.get("y");
 
         count = chart.data().length();
-        target = (OptionArray) options.array("target");
+        target = JSONUtil.clone(options.array("target"));
 
         height = y.rangeBand();
         barWidth = height - outerPadding * 2;

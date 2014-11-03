@@ -27,6 +27,7 @@ import com.jennifer.ui.util.dom.Polygon;
 import com.jennifer.ui.util.dom.Polyline;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Created by Jayden on 2014-10-24.
@@ -56,6 +57,10 @@ public class DomUtil {
 
     public static Transform el(String tagName, Option attr) {
         return new Transform(tagName, attr);
+    }
+
+    public static Transform el(String tagName, JSONObject attr) {
+        return new Transform(tagName, JSONUtil.clone(attr));
     }
 
     public DomUtil(String tagName) {

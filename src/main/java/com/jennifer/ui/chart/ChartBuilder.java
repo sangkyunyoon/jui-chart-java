@@ -25,6 +25,8 @@ package com.jennifer.ui.chart;
 import com.jennifer.ui.chart.brush.EqualizerBrush;
 import com.jennifer.ui.chart.brush.*;
 import com.jennifer.ui.chart.grid.*;
+import com.jennifer.ui.chart.widget.LegendWidget;
+import com.jennifer.ui.chart.widget.TitleWidget;
 import com.jennifer.ui.util.*;
 import com.jennifer.ui.util.dom.Svg;
 import com.jennifer.ui.util.dom.Transform;
@@ -123,7 +125,8 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     private void initWidget() {
-
+        addWidget("title", TitleWidget.class);
+        addWidget("legend", LegendWidget.class);
 
     }
 
@@ -449,6 +452,7 @@ public class ChartBuilder extends AbstractDraw {
         OptionArray list = new OptionArray();
 
         if (brush != null) {
+
             if (brush instanceof String) {
                 Option o = new Option();
                 o.put("type", (String)brush);
@@ -457,6 +461,8 @@ public class ChartBuilder extends AbstractDraw {
                 list.put(brush);
             } else if (brush instanceof OptionArray){
                 list = (OptionArray)brush;
+            } else if (brush instanceof JSONArray) {
+                list = JSONUtil.clone((JSONArray) brush);
             }
 
             for(int i = 0, len = list.length(); i < len; i++) {
@@ -500,8 +506,11 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     private void drawObject(String type) {
+
         if (builderOptions.has(type) && !builderOptions.isNull(type)) {
             OptionArray list = (OptionArray) builderOptions.array(type);
+
+            System.out.println(list);
 
             for(int i = 0, len = list.length(); i < len; i++) {
                 JSONObject obj = list.object(i);
@@ -510,7 +519,7 @@ public class ChartBuilder extends AbstractDraw {
 
                 Option drawObject;
                 if ("widget".equals(type)) {
-                    drawObject = JSONUtil.clone(builderOptions.array("brush").getJSONObject(i));
+                    drawObject = JSONUtil.clone(builderOptions.array(type).getJSONObject(i));
                 } else {
                     drawObject = JSONUtil.clone(obj);
                 }
@@ -561,11 +570,8 @@ public class ChartBuilder extends AbstractDraw {
 
                  obj.put("x", scaleX);
              } else {
-                 if (drawObject.has("x")) {
-                     scaleX = (Grid) scales.array("x").get(drawObject.I("x"));
-                 } else {
-                     scaleX = (Grid) scales.array("x").get(0);
-                 }
+
+                 scaleX = (Grid) scales.array("x").get(drawObject.optInt("x", 0));
 
                  obj.put("x", scaleX);
              }
@@ -575,11 +581,7 @@ public class ChartBuilder extends AbstractDraw {
 
                  obj.put("y", scaleY);
              } else {
-                 if (drawObject.has("y")) {
-                     scaleY = (Grid) scales.array("y").get(drawObject.I("y"));
-                 } else {
-                     scaleY = (Grid) scales.array("y").get(0);
-                 }
+                 scaleY = (Grid) scales.array("y").get(drawObject.optInt("y", 0));
 
                  obj.put("y", scaleY);
              }
@@ -746,6 +748,14 @@ public class ChartBuilder extends AbstractDraw {
         return bobject("series");
     }
 
+    public OptionArray brush() {
+        return barray("brush");
+    }
+
+    public Option brush(int index) {
+        return JSONUtil.clone(barray("brush").object(index));
+    }
+
     public Option series(String key) {
         return (Option) series().object(key);
     }
@@ -755,7 +765,7 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     public double themeDouble(String key) {
-        return Double.valueOf(theme(key)).doubleValue();
+        return Double.parseDouble(theme(key).replaceAll("px", ""));
     }
 
     public String theme(String key) {
@@ -806,6 +816,5 @@ public class ChartBuilder extends AbstractDraw {
     public Transform defs() {
         return defs;
     }
-
 
 }

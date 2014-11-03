@@ -22,7 +22,11 @@
 
 package com.jennifer.ui.util;
 
+import org.json.JSONObject;
+
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Jayden on 2014-10-24.
@@ -45,5 +49,37 @@ public class StringUtil {
 
     public static String createId(String key) {
         return  key  + "-" + System.currentTimeMillis() + "-" + (Math.round(Math.random() * 100) % 100);
+    }
+
+    public static double parseDouble(String key, Option series) {
+
+        // setting
+        String[] names = JSONObject.getNames(series);
+        for(String name : names) {
+            if (series.object(name).has("max")) {
+                key = key.replace("{" + name + "}", series.object(name).getDouble("max")+"");
+            }
+        }
+
+        // caculate
+        String[] list = key.split(" ");
+
+        double value = Double.parseDouble(list[0]);
+
+        for (int i = 1; i < list.length; i+=2) {
+            String operator = list[i];
+
+            if (operator.startsWith("+")) {
+                value += Double.parseDouble(list[i+1]);
+            } else if (operator.startsWith("/")) {
+                value /= Double.parseDouble(list[i+1]);
+            } else if (operator.startsWith("-")) {
+                value -= Double.parseDouble(list[i+1]);
+            } else if (operator.startsWith("*")) {
+                value *= Double.parseDouble(list[i+1]);
+            }
+        }
+
+        return value;
     }
 }
