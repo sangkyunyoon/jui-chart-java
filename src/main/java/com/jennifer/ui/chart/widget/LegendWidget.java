@@ -55,7 +55,7 @@ public class LegendWidget extends Widget {
 
     @Override
     public void drawBefore() {
-        root = el("g", opt().put("class", "widget legend"));
+        root = el("g");
 
         brush = JSONUtil.clone(options.optJSONArray("brush"));
 
@@ -88,7 +88,7 @@ public class LegendWidget extends Widget {
                 double h = obj.height();
                 Transform icon = (Transform)obj.get("icon");
 
-                root.append(icon);
+                //root.append(icon);
                 icon.translate(x, y);
 
                 if ("bottom".equals(position) || "top".equals(position)) {
@@ -160,7 +160,7 @@ public class LegendWidget extends Widget {
                 text = chart.series(target).optString("text", target);
             }
 
-            double rectWidth = fontWidth * text.length();
+            double rectWidth = (fontWidth - 4) * text.length();
             double width = Math.min(rectWidth, fontHeight);
             double height = width;
 
@@ -176,7 +176,7 @@ public class LegendWidget extends Widget {
 
             group.text(opt()
                 .x(width + 4)
-                .y(11)
+                .y(fontHeight - 3) // 3 is top, bottom font margin
                 .fontFamily(chart.theme("fontFamily"))
                 .fontSize(chart.theme("legendFontSize"))
                 .fill(chart.theme("legendFontColor"))

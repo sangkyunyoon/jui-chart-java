@@ -24,6 +24,7 @@ package com.jennifer.ui.util;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +41,18 @@ public class StringUtil {
             b.append(splitter).append(str[i]);
         }
 
-        return b.toString();
+        return b.toString().trim();
+    }
+
+    public static String join(ArrayList<String> result, String splitter) {
+        StringBuilder b = new StringBuilder();
+        b.append(result.get(0));
+
+        for(int i = 1, len = result.size(); i < len; i++) {
+            b.append(splitter).append(result.get(i));
+        }
+
+        return b.toString().trim();
     }
 
     public static String createId() {
@@ -82,4 +94,6 @@ public class StringUtil {
 
         return value;
     }
+
+
 }

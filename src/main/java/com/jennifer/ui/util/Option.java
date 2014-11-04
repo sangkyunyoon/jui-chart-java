@@ -56,6 +56,7 @@ public class Option extends JSONObject {
     public Option strokeWidth(String i) { return (Option)put("stroke-width", i); }
     public Option strokeOpacity(double o ) { return (Option)put("stroke-opacity", o); }
     public Option fillOpacity(String o) { return (Option)put("fill-opacity", o); }
+    public Option fillOpacity(double o) { return (Option)put("fill-opacity", o); }
     public Option textAnchor(String anchor) { return (Option)put("text-anchor", anchor); }
     public Option value(double value) { return (Option)put("value", value); }
     public Option clipPath(String url) { return (Option)put("clip-path", url); }

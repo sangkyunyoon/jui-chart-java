@@ -33,6 +33,9 @@ import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -455,10 +458,12 @@ public class ChartBuilder extends AbstractDraw {
 
             if (brush instanceof String) {
                 Option o = new Option();
-                o.put("type", (String)brush);
+                o.put("type", brush);
                 list.put(o);
             } else if (brush instanceof Option) {
                 list.put(brush);
+            } else if (brush instanceof JSONObject) {
+                list.put(JSONUtil.clone((JSONObject)brush));
             } else if (brush instanceof OptionArray){
                 list = (OptionArray)brush;
             } else if (brush instanceof JSONArray) {
@@ -470,7 +475,7 @@ public class ChartBuilder extends AbstractDraw {
                 if (b.isNull("target")) {
                     b.put("target", series_list);
                 } else if (b.get("target") instanceof String) {
-                    b.put("target", (OptionArray)new OptionArray().put(b.getString("target")));
+                    b.put("target", new OptionArray().put(b.getString("target")));
                 }
             }
         }
@@ -510,8 +515,6 @@ public class ChartBuilder extends AbstractDraw {
         if (builderOptions.has(type) && !builderOptions.isNull(type)) {
             OptionArray list = (OptionArray) builderOptions.array(type);
 
-            System.out.println(list);
-
             for(int i = 0, len = list.length(); i < len; i++) {
                 JSONObject obj = list.object(i);
                 String objType = obj.getString("type");
@@ -535,8 +538,11 @@ public class ChartBuilder extends AbstractDraw {
                     Option result = (Option)drawable.render();
 
                     Transform root = (Transform)result.get("root");
+                    root.addClass(type + " " + objType);
 
                     this.root.append(root);
+
+
 
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
@@ -560,42 +566,24 @@ public class ChartBuilder extends AbstractDraw {
         Option scales = (Option) builderOptions.object("scales");
 
         if (scales.has("x") || scales.has("x1")) {
-
-            Grid scaleX;
-            Grid scaleY;
-            Grid scaleC;
-
              if (drawObject.has("x1") && drawObject.getInt("x1")  > -1) {
-                 scaleX = (Grid) scales.array("x1").get(drawObject.I("x1"));
-
-                 obj.put("x", scaleX);
+                 obj.put("x", scales.array("x1").get(drawObject.I("x1")));
              } else {
-
-                 scaleX = (Grid) scales.array("x").get(drawObject.optInt("x", 0));
-
-                 obj.put("x", scaleX);
+                 obj.put("x", scales.array("x").get(drawObject.optInt("x", 0)));
              }
-
-             if (drawObject.has("y1") && drawObject.I("y1")  > -1) {
-                 scaleY = (Grid) scales.array("y1").get(drawObject.I("y1"));
-
-                 obj.put("y", scaleY);
-             } else {
-                 scaleY = (Grid) scales.array("y").get(drawObject.optInt("y", 0));
-
-                 obj.put("y", scaleY);
-             }
-
-
-             if (drawObject.has("c") && drawObject.I("c")  > -1) {
-                 scaleC = (Grid) scales.array("c").get(drawObject.I("c"));
-
-                 obj.put("c", scaleC);
-
-             }
-
         }
 
+        if (scales.has("y") || scales.has("y1")) {
+            if (drawObject.has("y1") && drawObject.I("y1")  > -1) {
+                obj.put("y", scales.array("y1").get(drawObject.I("y1")));
+            } else {
+                obj.put("y", scales.array("y").get(drawObject.optInt("y", 0)));
+            }
+        }
+
+        if (scales.has("c")) {
+            obj.put("c", scales.array("c").get(drawObject.optInt("c", 0)));
+        }
 
     }
 
@@ -609,12 +597,12 @@ public class ChartBuilder extends AbstractDraw {
 
     private void drawGrid() {
         Option grid = (Option) builderOptions.object("grid");
+
         if (grid != null) {
 
             // create default cusotm grid
             if (grid.has("type")) {
-                grid = opt();
-                grid.put("c", new OptionArray().put(grid));
+                grid = (Option)opt().put("c", new OptionArray().put(JSONUtil.clone(grid)));
             }
 
             if (!builderOptions.has("scales")) {
@@ -659,6 +647,7 @@ public class ChartBuilder extends AbstractDraw {
                 for(int keyIndex = 0, gridLen = gridObject.length(); keyIndex < gridLen; keyIndex++) {
 
                     Option g = (Option) gridObject.object(keyIndex);
+
 
                     Class cls = grids.get(g.string("type"));
                     Grid newGrid = null;
@@ -817,4 +806,17 @@ public class ChartBuilder extends AbstractDraw {
         return defs;
     }
 
+    public void writeFile(String saveFilename) {
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(saveFilename));
+
+            out.write(this.render());
+
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+    }
 }

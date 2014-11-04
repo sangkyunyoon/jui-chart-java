@@ -29,6 +29,9 @@ import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * Created by Jayden on 2014-10-24.
  */
@@ -456,5 +459,65 @@ public class DomUtil {
         }
 
         return this;
+    }
+
+    public DomUtil addClass(String s) {
+        String[] list = attrs.optString("class").split(" ");
+        String[] listEx = s.split(" ");
+        ArrayList<String> result = new ArrayList<String>();
+
+        HashMap<String, Boolean> map = new HashMap<String, Boolean>();
+        for(String key : list) {
+            map.put(key, new Boolean(true));
+        }
+
+        for(String key : listEx) {
+            map.put(key, new Boolean(true));
+        }
+
+        for (String key : map.keySet()) {
+            result.add(key);
+        }
+
+        put("class", StringUtil.join(result, " "));
+
+        return this;
+
+    }
+
+    public DomUtil removeClass(String s) {
+        String[] list = attrs.optString("class").split(" ");
+        String[] listEx = s.split(" ");
+        ArrayList<String> result = new ArrayList<String>();
+
+        HashMap<String, Boolean> map = new HashMap<String, Boolean>();
+        for(String key : list) {
+            map.put(key, new Boolean(true));
+        }
+
+        for(String key : listEx) {
+            map.remove(key);
+        }
+
+        for (String key : map.keySet()) {
+            result.add(key);
+        }
+
+        put("class", StringUtil.join(result, " "));
+
+        return this;
+
+    }
+
+    public boolean hasClass(String cls) {
+        String[] list = attrs.optString("class").split(" ");
+
+        for(String key : list) {
+            if (key.equals(cls)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -50,12 +50,7 @@ public class BlockGrid extends Grid {
     }
 
     public BlockGrid(Orient orient, ChartBuilder chart, JSONObject options) {
-
         super(orient, chart, options);
-
-
-        ;
-
     }
 
 
@@ -291,7 +286,7 @@ public class BlockGrid extends Grid {
         this.bar = 6;
     }
 
-    private void initDomain() {
+    protected void initDomain() {
 
         if (has("target") && !has("domain")) {
 
