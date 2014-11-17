@@ -29,8 +29,6 @@ import com.jennifer.ui.util.dom.Polygon;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONObject;
 
-import java.util.Objects;
-
 import static com.jennifer.ui.util.DomUtil.el;
 import static com.jennifer.ui.util.Option.opt;
 

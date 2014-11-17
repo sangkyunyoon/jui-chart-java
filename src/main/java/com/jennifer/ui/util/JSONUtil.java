@@ -27,9 +27,11 @@ import org.json.JSONObject;
 import com.jennifer.ui.util.Option;
 import com.jennifer.ui.util.OptionArray;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 
 import static com.jennifer.ui.util.Option.opt;
 
@@ -120,13 +122,17 @@ public class JSONUtil {
     }
 
     public static Option loadJSONFile(String filename) {
-        return new Option(readFile("src/main/java/com/jennifer/ui/" + filename));
+
+        return new Option(readFile("com/jennifer/ui/" + filename));
     }
 
     public static String readFile(String filename)
     {
         String content = null;
-        File file = new File(filename); //for ex foo.txt
+        System.out.println(filename);
+        System.out.println(JSONUtil.class.getResource(filename));
+        System.out.println(JSONUtil.class.getResource(filename).getFile());
+        File file = new File(JSONUtil.class.getResource(filename).getFile()); //for ex foo.txt
         try {
             FileReader reader = new FileReader(file);
             char[] chars = new char[(int) file.length()];

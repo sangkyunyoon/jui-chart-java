@@ -10,9 +10,9 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.jennifer.chart</groupId>
-    <artifactId>jennifer.chart</artifactId>
-    <version>0.1</version>
+    <groupId>com.jennifersoft.chart</groupId>
+    <artifactId>chart</artifactId>
+    <version>0.4</version>
     <packaging>jar</packaging>
 
     <name>Jennifer Simple SVG Chart</name>
@@ -49,6 +49,19 @@
     </distributionManagement>
 
     <build>
+
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.json</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -59,9 +72,18 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
-                <version>0.9</version>
+                <version>0.10</version>
                 <configuration>
                     <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
                     <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->

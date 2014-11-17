@@ -63,8 +63,8 @@ import static com.jennifer.ui.util.Option.opt;
  */
 public class ChartBuilder extends AbstractDraw {
 
-    private final Option options;
-    private final Option builderOptions = opt();
+    private Option options;
+    private Option builderOptions = opt();
     private HashMap<String, Class> grids = new HashMap<String, Class>();
     private HashMap<String, Class> brushes = new HashMap<String, Class>();
     private HashMap<String, Class> widgets = new HashMap<String, Class>();
@@ -88,6 +88,10 @@ public class ChartBuilder extends AbstractDraw {
 
     public ChartBuilder(JSONObject jsonObject) {
         this(JSONUtil.clone(jsonObject));
+    }
+
+    public void setOptions(Option options) {
+        this.options = options;
     }
 
     private void init() {
@@ -174,6 +178,7 @@ public class ChartBuilder extends AbstractDraw {
         addTheme("jennifer", JSONUtil.loadJSONFile("chart/theme/jennifer.json"));
         addTheme("dark", JSONUtil.loadJSONFile("chart/theme/dark.json"));
         addTheme("gradient", JSONUtil.loadJSONFile("chart/theme/gradient.json"));
+        addTheme("pastel", JSONUtil.loadJSONFile("chart/theme/pastel.json"));
     }
 
     private void addTheme(String name, Option themeObj) {
