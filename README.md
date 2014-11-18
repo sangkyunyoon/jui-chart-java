@@ -12,7 +12,7 @@ reference to https://github.com/seogi1004/jui
     <dependency>
         <groupId>com.jennifersoft.chart</groupId>
         <artifactId>chart</artifactId>
-        <version>0.4</version>
+        <version>0.1</version>
         <type>jar</type>
         <scope>provided</scope>			
     </dependency>
