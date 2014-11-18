@@ -1,7 +1,7 @@
 jennifer-chart
 ==============
 
-implements simple svg Jennifer chart for java
+implements Jennifer simple SVG chart for java
 
 # Maven 
 ```xml
