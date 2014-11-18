@@ -29,8 +29,17 @@ implements simple svg Jennifer chart for java
 
 ```
 
+# Features
+* implements JUI chart's most brushes
+* use JSONObject as option 
+* 5 Grids, 25 Brushes, 2 Widgets 
+
+
 # Sample 
 ```java
+
+// Option is equals JSONObject  
+// OptionArray is equals JSONArray  
 
 Option chartOpt = new Option();
 //chartOpt.put("theme", "dark");
