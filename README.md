@@ -3,6 +3,9 @@ jennifer-chart
 
 implements Jennifer simple SVG chart for java
 
+reference to https://github.com/seogi1004/jui
+
+
 # Maven 
 ```xml
 <dependencies>
