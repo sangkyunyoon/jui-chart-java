@@ -49,4 +49,11 @@ public class Polyline extends Transform {
 
         return super.render();
     }
+    @Override
+    public String render(int tabIndex, int tabSize) {
+
+        put("points", join(orders, "-"));
+
+        return super.render(tabIndex, tabSize);
+    }
 }

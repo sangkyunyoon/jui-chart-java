@@ -64,6 +64,10 @@ public class Transform extends DomUtil {
     }
 
     public String render() {
+        return render(0, 4);
+    }
+
+    public String render(int tabIndex, int tabSize) {
 
         OptionArray list = new OptionArray();
         JSONArray names = orders.names();
@@ -81,7 +85,7 @@ public class Transform extends DomUtil {
 
         }
 
-        return super.render();
+        return super.render(tabIndex, tabSize);
     }
 
 }

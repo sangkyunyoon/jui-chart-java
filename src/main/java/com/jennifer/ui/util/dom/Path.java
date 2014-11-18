@@ -96,4 +96,11 @@ public class Path extends Transform {
 
         return super.render();
     }
+
+    public String render(int tabIndex, int tabSize) {
+
+        put("d", join(orders, " "));
+
+        return super.render(tabIndex, tabSize);
+    }
 }

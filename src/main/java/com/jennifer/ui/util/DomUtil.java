@@ -183,9 +183,24 @@ public class DomUtil {
     }
 
     public String render() {
+        return render(0);
+    }
+
+    public String render(int tabIndex) {
+        return render(tabIndex, 4);
+    }
+
+    public String render(int tabIndex, int tabSize) {
+
+        String tab = "";
+
+        for(int i = 0; i < tabIndex; i++) {
+            tab += "\t";
+        }
+
         StringBuffer str = new StringBuffer();
 
-        str.append("<" + tagName );
+        str.append(tab + "<" + tagName );
         str.append(collapseAttr());
         if (children.length() == 0) {
             if (!text.equals("")) {
@@ -197,9 +212,20 @@ public class DomUtil {
 
         } else {
             str.append(">\n");
-            str.append(collapseChildren());
+            str.append(collapseChildren(tabIndex+1, tabSize));
             str.append(text);
-            str.append("</" + tagName + ">");
+            str.append(tab + "</" + tagName + ">");
+        }
+
+        return str.toString();
+    }
+
+    private String collapseChildren(int tabIndex, int tabSize) {
+        StringBuffer str = new StringBuffer();
+
+        for(int i = 0, len = children.length(); i < len; i++) {
+            DomUtil dom = (DomUtil)children.get(i);
+            str.append(dom.render(tabIndex, tabSize) + "\n");
         }
 
         return str.toString();

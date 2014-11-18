@@ -50,4 +50,11 @@ public class Polygon extends Transform {
 
         return super.render();
     }
+
+    public String render(int tabIndex, int tabSize) {
+
+        put("points", join(orders, "-"));
+
+        return super.render(tabIndex, tabSize);
+    }
 }

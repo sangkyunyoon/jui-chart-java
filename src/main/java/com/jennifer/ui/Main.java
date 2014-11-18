@@ -9,8 +9,8 @@ import com.jennifer.ui.util.*;
 public class Main {
 
     public static void main(String[] args) {
-        String filename = "/resources/" + args[0] + ".json";
-        String saveFilename = "/resources/" + args[0] + ".svg";
+        String filename = "resources/" + args[0] + ".json";
+        String saveFilename = "resources/" + args[0] + ".svg";
         ChartBuilder chart = new ChartBuilder(new Option(JSONUtil.readFile(filename)));
         System.out.println(chart.render());
     }

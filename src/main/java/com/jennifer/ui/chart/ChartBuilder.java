@@ -603,7 +603,7 @@ public class ChartBuilder extends AbstractDraw {
     private void drawGrid() {
         Option grid = (Option) builderOptions.object("grid");
 
-        if (grid != null) {
+        if (grid != null && grid.names().length() > 0) {
 
             // create default cusotm grid
             if (grid.has("type")) {
@@ -615,7 +615,6 @@ public class ChartBuilder extends AbstractDraw {
             }
 
             Option scales = (Option) builderOptions.object("scales");
-
 
             JSONArray keys = grid.names();
 

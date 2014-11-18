@@ -24,14 +24,10 @@ package com.jennifer.ui.util;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.jennifer.ui.util.Option;
-import com.jennifer.ui.util.OptionArray;
 
-import java.awt.*;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
+import java.util.Enumeration;
 
 import static com.jennifer.ui.util.Option.opt;
 
@@ -129,16 +125,17 @@ public class JSONUtil {
     public static String readFile(String filename)
     {
         String content = null;
-        System.out.println(filename);
-        System.out.println(JSONUtil.class.getResource(filename));
-        System.out.println(JSONUtil.class.getResource(filename).getFile());
-        File file = new File(JSONUtil.class.getResource(filename).getFile()); //for ex foo.txt
+
+        InputStream url  = JSONUtil.class.getResourceAsStream("/" + filename);
+
         try {
-            FileReader reader = new FileReader(file);
-            char[] chars = new char[(int) file.length()];
-            reader.read(chars);
-            content = new String(chars);
-            reader.close();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(url));
+            String line = null;
+            StringBuilder sb = new StringBuilder();
+            while( (line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            content = sb.toString();
         } catch (IOException e) {
             e.printStackTrace();
         }
