@@ -70,7 +70,7 @@ public class ColumnBrush extends Brush {
         zeroY = y.get(0);
         count = chart.data().length();
 
-        target = options.getJSONArray("target");
+        target = options.target();
 
         width = x.rangeBand();
         half_width = width - outerPadding*2;

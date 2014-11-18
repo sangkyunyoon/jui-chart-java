@@ -186,9 +186,8 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     private void initPadding() {
-        builderOptions.put("width", options.optInt("width", 400));
-        builderOptions.put("height", options.optInt("height", 400));
-
+        builderOptions.width(options.optInt("width", 400));
+        builderOptions.height(options.optInt("height", 400));
 
         // default Option
         if (this.options.has("padding")) {
@@ -196,11 +195,7 @@ public class ChartBuilder extends AbstractDraw {
             Object padding = this.options.get("padding");
 
             if (padding instanceof String && "empty".equals((String)padding)) {
-                Option o = new Option();
-                o.put("left", 0);
-                o.put("right", 0);
-                o.put("bottom", 0);
-                o.put("top", 0);
+                Option o = new Option().left(0).right(0).top(0).bottom(0);
                 this.builderOptions.put("padding", o);
             } else {
                 JSONObject source = (JSONObject)padding;
@@ -214,11 +209,7 @@ public class ChartBuilder extends AbstractDraw {
             }
 
         } else {
-            Option o = new Option();
-            o.put("left", 50);
-            o.put("right", 50);
-            o.put("bottom", 50);
-            o.put("top", 50);
+            Option o = new Option().left(50).right(50).top(50).bottom(50);
             this.builderOptions.put("padding", o);
         }
     }
@@ -255,12 +246,7 @@ public class ChartBuilder extends AbstractDraw {
 
         Option area = new Option();
 
-        area.put("width", width);
-        area.put("height", height);
-        area.put("x", x);
-        area.put("y", y);
-        area.put("x2", x2);
-        area.put("y2", y2);
+        area.width(width).height(height).x(x).y(y).x2(x2).y2(y2);
 
         this.builderOptions.put("area", area);
 
@@ -712,11 +698,9 @@ public class ChartBuilder extends AbstractDraw {
         this.defs = (Transform) this.root.defs();
         this.clipId = StringUtil.createId("clip-id");
 
-        Option o = new Option();
-        o.put("id", this.clipId);
+        Option o = new Option().id(this.clipId);
 
-        Option rect = new Option();
-        rect.put("x", 0).put("y", 0).put("width", width()).put("height", height());
+        Option rect = new Option().x(0).y(0).width(width()).height(height());
 
         this.defs.clipPath(o).rect(rect);
 

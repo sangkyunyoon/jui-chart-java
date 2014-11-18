@@ -57,7 +57,7 @@ public class LegendWidget extends Widget {
     public void drawBefore() {
         root = el("g");
 
-        brush = JSONUtil.clone(options.optJSONArray("brush"));
+        brush = JSONUtil.clone(options.brush());
 
         if (brush.length() == 0) {
             brush.put(0);
@@ -65,7 +65,7 @@ public class LegendWidget extends Widget {
 
         position = options.optString("position", "bottom");
         align = options.optString("align", "center");
-        key = options.optString("key");
+        key = options.key();
         fontWidth = chart.themeDouble("legendFontSize");
         fontHeight = fontWidth;
     }

@@ -297,7 +297,7 @@ public class BlockGrid extends Grid {
             int end = data.length() - 1;
             int step = 1;
 
-            boolean reverse = options.optBoolean("reverse", false);
+            boolean reverse = options.reverse();
 
             if (reverse) {
                 start = data.length() - 1;
@@ -309,8 +309,7 @@ public class BlockGrid extends Grid {
                 domain.put(((Option)data.object(i)).string(options.string("target")));
             }
 
-            options.put("domain", domain);
-            options.put("step", options.optInt("step", 10));
+            options.domain(domain).step(options.optInt("step", 10));
             options.put("max", options.optInt("max", 100));
 
         }

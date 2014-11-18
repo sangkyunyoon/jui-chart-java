@@ -73,6 +73,34 @@ public class Option extends JSONObject {
     public Option rx(double r) { return (Option)put("rx", r); }
     public Option ry(double r) { return (Option)put("ry", r); }
 
+    // chart options setter
+    public Option target(String target) { return target((OptionArray)new OptionArray().put(target)); }
+    public Option target(OptionArray target) { return (Option) put("target", target) ; }
+    public Option align(String align) { return (Option)put("align", align); }
+    public Option text(String text) { return (Option)put("text", text); }
+    public Option type(String type) { return (Option)put("type", type); }
+    public Option line(boolean hasLine) { return (Option)put("line", hasLine); }
+    public Option theme(Option theme) { return (Option)put("theme", theme); }
+    public Option domain(OptionArray domain) { return (Option)put("domain", domain); }
+    public Option brush(int index) { return brush((OptionArray) new OptionArray().put(index)); }
+    public Option brush(OptionArray brush) { return (Option)put("brush", brush); }
+    public Option position(String position) { return (Option)put("position", position); }
+    public Option key(String key) { return (Option)put("key", key); }
+    public Option size(int size) { return (Option)put("size", size); }
+    public Option dx(int dx) { return (Option)put("dx", dx); }
+    public Option dy(int dy) { return (Option)put("dy", dy); }
+    public Option reverse(boolean reverse) { return (Option)put("reverse", reverse); }
+    public Option step(int step) { return (Option)put("step", step); }
+    public Option step(OptionArray step) { return (Option)put("step", step); }
+    public Option realtime(boolean realtime) { return (Option)put("realtime", realtime); }
+
+    public Option left(int left) { return (Option)put("left", left); }
+    public Option right(int right) { return (Option)put("right", right); }
+    public Option top(int top) { return (Option)put("top", top); }
+    public Option bottom(int bottom) { return (Option)put("bottom", bottom); }
+    public Option id(String id) { return (Option)put("id", id); }
+
+
     // Getter
     public double value() { return getDouble("value"); }
     public double x() { return getDouble("x"); }
@@ -95,6 +123,17 @@ public class Option extends JSONObject {
     public double rx() { return getDouble("rx"); }
     public double ry() { return getDouble("ry"); }
     public double fillOpacity() { return getDouble("fill-opacity"); }
+
+    // chart options getter
+    public boolean realtime() {return optBoolean("realtime", false); }
+    public boolean reverse() {return optBoolean("reverse", false); }
+    public boolean line() {return optBoolean("line", false); }
+    public boolean full() {return optBoolean("full", false); }
+    public String id() {return getString("id"); }
+    public String key() {return optString("key"); }
+    public OptionArray domain() { return (OptionArray) get("domain"); }
+    public OptionArray brush() { return (OptionArray) optJSONArray("brush"); }
+    public OptionArray target() { return (OptionArray) get("target"); }
 
     public JSONObject object(String key) { return optJSONObject(key); }
     public JSONArray array(String key) { return optJSONArray(key); }

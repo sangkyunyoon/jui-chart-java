@@ -53,19 +53,13 @@ public class DateGrid extends Grid {
         scale = new TimeScale();
     }
 
-    public boolean full() {
-        return options.optBoolean("full", false);
-    }
-
     protected void drawTop(Transform root) {
         int full_height = chart.height();
 
-        boolean hasLine = options.optBoolean("line", false);
-        boolean hasFull = options.optBoolean("full", false);
+        boolean hasLine = options.line();
 
         if (!hasLine) {
-            Option o = opt();
-            o.put("x2", chart.width());
+            Option o = opt().x2(chart.width());
             root.append(this.axisLine(o));
         }
 
@@ -73,16 +67,11 @@ public class DateGrid extends Grid {
 
             Transform axis = root.group().translate(this.values.getDouble(i), 0);
 
-            Option lineOpt = opt();
-            lineOpt.put("y2",hasLine ? full_height : -bar);
+            Option lineOpt = opt().y2(hasLine ? full_height : -bar);
 
             axis.append(line(lineOpt));
 
-            Option textOpt = opt();
-            textOpt.put("x", 0);
-            textOpt.put("y", -bar - 4);
-            textOpt.put("text-anchor", "middle");
-            textOpt.put("fill", chart.theme("gridFontColor"));
+            Option textOpt = opt().x(0).y(-bar - 4).textAnchor("middle").fill(chart.theme("gridFontColor"));
 
             axis.append(chart.text(textOpt, getFormatString(ticks.getLong(i))));
         }
@@ -92,8 +81,7 @@ public class DateGrid extends Grid {
     protected void drawBottom(Transform root) {
         int full_height = chart.height();
 
-        boolean hasLine = options.optBoolean("line", false);
-        boolean hasFull = options.optBoolean("full", false);
+        boolean hasLine = options.line();
 
         if (!hasLine) {
             Option o = opt();
@@ -123,8 +111,7 @@ public class DateGrid extends Grid {
     protected void drawLeft(Transform root) {
         int full_width = chart.width();
 
-        boolean hasLine = options.optBoolean("line", false);
-        boolean hasFull = options.optBoolean("full", false);
+        boolean hasLine = options.line();
 
         if (!hasLine) {
             Option o = opt();
@@ -154,12 +141,10 @@ public class DateGrid extends Grid {
     protected void drawRight(Transform root) {
         int full_width = chart.width();
 
-        boolean hasLine = options.optBoolean("line", false);
-        boolean hasFull = options.optBoolean("full", false);
+        boolean hasLine = options.line();
 
         if (!hasLine) {
-            Option o = opt();
-            o.put("y2", chart.height());
+            Option o = opt().y2(chart.height());
             root.append(this.axisLine(o));
         }
 
@@ -207,7 +192,7 @@ public class DateGrid extends Grid {
 
         timeScale.domain(options.array("domain")).rangeRound(range);
 
-        boolean realtime = options.optBoolean("realtime", false);
+        boolean realtime = options.realtime();
         OptionArray step = (OptionArray) options.array("step");
 
         if (realtime) {
@@ -281,9 +266,9 @@ public class DateGrid extends Grid {
 
             domain.put(min).put(max);
 
-            options.put("domain", domain);
+            options.domain(domain);
 
-            if (options.optBoolean("reverse", false)) {
+            if (options.reverse()) {
                 JSONUtil.reverse(domain);
             }
         }

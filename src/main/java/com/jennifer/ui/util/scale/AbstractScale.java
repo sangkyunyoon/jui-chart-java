@@ -63,27 +63,22 @@ public abstract class AbstractScale implements Scale {
         return 0;
     }
 
-    @Override
     public double max() {
         return Math.max(domain.getDouble(0), domain.getDouble(domain.length()-1));
     }
 
-    @Override
     public double min() {
         return Math.min(domain.getDouble(0), domain.getDouble(domain.length() - 1));
     }
 
-    @Override
     public double rangeBand() {
         return _rangeBand;
     }
 
-    @Override
     public double rate(double value, double max) {
         return get(max() * (value / max));
     }
 
-    @Override
     public double invert(double y) {
         return 0;
     }
