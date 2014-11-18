@@ -34,7 +34,7 @@ reference to https://github.com/seogi1004/jui
 
 # Features
 * pure java svg library
-* implements JUI chart's most brushes
+* implements JUI chart's most features (https://github.com/seogi1004/jui)
 * use JSONObject as option 
 * 5 Grids, 25 Brushes, 2 Widgets 
 
