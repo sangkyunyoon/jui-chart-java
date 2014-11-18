@@ -195,49 +195,48 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     private void initWidget() {
-        addWidget("title", TitleWidget.class);
-        addWidget("legend", LegendWidget.class);
+        plugin("widget", "title", TitleWidget.class);
+        plugin("widget", "legend", LegendWidget.class);
 
     }
 
     private void initBrush() {
-        addBrush("area",                AreaBrush.class);
-        addBrush("bar",                 BarBrush.class);
-        addBrush("bargauge",            BarGaugeBrush.class);
-        addBrush("bubble",              BubbleBrush.class);
-        addBrush("candlestick",         CandleStickBrush.class);
-        addBrush("circlegauge",         CircleGaugeBrush.class);
-        addBrush("column",              ColumnBrush.class);
-        addBrush("donut",               DonutBrush.class);
-        addBrush("equalizer",           EqualizerBrush.class);
-        addBrush("fillgauge",           FillGaugeBrush.class);
-        addBrush("fullgauge",           FullGaugeBrush.class);
-        addBrush("fullstack",           FullStackBrush.class);
-        addBrush("gauge",               GagueBrush.class);
-        addBrush("line",                LineBrush.class);
-        addBrush("ohlc",                OhlcBrush.class);
-        addBrush("path",                PathBrush.class);
-        addBrush("pie",                 PieBrush.class);
-        addBrush("scatter",             ScatterBrush.class);
-        addBrush("scatterpath",         ScatterPathBrush.class);
-        addBrush("stackarea",           StackAreaBrush.class);
-        addBrush("stackbar",            StackBarBrush.class);
-        addBrush("stackcolumn",         StackColumnBrush.class);
-        addBrush("stackgauge",          StackGagueBrush.class);
-        addBrush("stackline",           StackLineBrush.class);
-        addBrush("stackscatter",        StackScatterBrush.class);
+        plugin("brush", "area", AreaBrush.class);
+        plugin("brush", "bar", BarBrush.class);
+        plugin("brush", "bargauge", BarGaugeBrush.class);
+        plugin("brush", "bubble", BubbleBrush.class);
+        plugin("brush", "candlestick", CandleStickBrush.class);
+        plugin("brush", "circlegauge", CircleGaugeBrush.class);
+        plugin("brush", "column", ColumnBrush.class);
+        plugin("brush", "donut", DonutBrush.class);
+        plugin("brush", "equalizer", EqualizerBrush.class);
+        plugin("brush", "fillgauge", FillGaugeBrush.class);
+        plugin("brush", "fullgauge", FullGaugeBrush.class);
+        plugin("brush", "fullstack", FullStackBrush.class);
+        plugin("brush", "gauge", GagueBrush.class);
+        plugin("brush", "line", LineBrush.class);
+        plugin("brush", "ohlc", OhlcBrush.class);
+        plugin("brush", "path", PathBrush.class);
+        plugin("brush", "pie", PieBrush.class);
+        plugin("brush", "scatter", ScatterBrush.class);
+        plugin("brush", "scatterpath", ScatterPathBrush.class);
+        plugin("brush", "stackarea", StackAreaBrush.class);
+        plugin("brush", "stackbar", StackBarBrush.class);
+        plugin("brush", "stackcolumn", StackColumnBrush.class);
+        plugin("brush", "stackgauge", StackGagueBrush.class);
+        plugin("brush", "stackline", StackLineBrush.class);
+        plugin("brush", "stackscatter", StackScatterBrush.class);
     }
 
     private void initGrid() {
-        addGrid("block", BlockGrid.class);
-        addGrid("range", RangeGrid.class);
-        addGrid("date", DateGrid.class);
-        addGrid("rule", RuleGrid.class);
-        addGrid("radar", RadarGrid.class);
+        plugin("grid", "block", BlockGrid.class);
+        plugin("grid", "range", RangeGrid.class);
+        plugin("grid", "date", DateGrid.class);
+        plugin("grid", "rule", RuleGrid.class);
+        plugin("grid", "radar", RadarGrid.class);
     }
 
     private void initTheme() {
-
         addTheme("jennifer", JSONUtil.loadJSONFile("chart/theme/jennifer.json"));
         addTheme("dark", JSONUtil.loadJSONFile("chart/theme/dark.json"));
         addTheme("gradient", JSONUtil.loadJSONFile("chart/theme/gradient.json"));
@@ -276,17 +275,14 @@ public class ChartBuilder extends AbstractDraw {
             this.builderOptions.put("padding", o);
         }
     }
-
-    private void addBrush(String key, Class brushClass) {
-        brushes.put(key, brushClass);
-    }
-
-    private void addWidget(String key, Class widgetClass) {
-        widgets.put(key, widgetClass);
-    }
-
-    private void addGrid(String key, Class gridClass) {
-        grids.put(key, gridClass);
+    public void plugin(String type, String name, Class cls) {
+        if ("brush".equals(type)) {
+            brushes.put(name, cls);
+        } else if ("widget".equals(type)) {
+            widgets.put(name, cls);
+        } else if ("grid".equals(type)) {
+            grids.put(name, cls);
+        }
     }
 
     public int i(String key) {
@@ -349,10 +345,6 @@ public class ChartBuilder extends AbstractDraw {
 
     public int padding(String key) {
         return builderOptions.object("padding").getInt(key);
-    }
-
-    public ChartBuilder addGrid(Grid grid) {
-        return this;
     }
 
     private Option cloneObject(String key) {
@@ -686,9 +678,6 @@ public class ChartBuilder extends AbstractDraw {
                 }
 
                 OptionArray scale = (OptionArray) scales.array(key);
-
-                System.out.println(key);
-                System.out.println(grid.get(key));
 
                 Object objGrid = grid.get(key);
 
