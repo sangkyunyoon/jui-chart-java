@@ -45,58 +45,43 @@ reference to https://github.com/seogi1004/jui
 // Option is equals JSONObject  
 // OptionArray is equals JSONArray  
 
+import com.jennifer.ui.chart.ChartBuilder;
+import com.jennifer.ui.util.Option;
+import com.jennifer.ui.util.OptionArray;
+import com.jennifer.ui.util.TimeUtil;
 
-// Setting Chart Options 
-Option chartOpt = new Option();
-//chartOpt.put("theme", "dark");
-chartOpt.put("width", "800");
-chartOpt.put("height", "800");
-chartOpt.put("grid", new Option());
-chartOpt.put("widget", new OptionArray());
-chartOpt.put("data", new OptionArray());
-chartOpt.put("brush", new OptionArray());
+public class ChartUtil {
+	
+	public ChartUtil() {
+		// TODO Auto-generated constructor stub
+		
+	}
+	
+	public static void main(String args[]) throws Exception {
+		
+        ChartBuilder chart = new ChartBuilder(800, 800);
 
-// grid
-Option grid = (Option) chartOpt.object("grid");
-grid.put("x", new Option());
-grid.put("y", new Option());
+        chart.grid("x", new Option().type("range").target("{value} + {value2}").step(10).line(true));
+        chart.grid("y", new Option().type("block").line(true).put("target","name"));
+        chart.widget(new Option().type("title").text("sample title"));
+        chart.widget(new Option().type("legend").align("start"));
+        chart.brush(new Option().type("stackbar").target(new OptionArray().put("value").put("value2")));
 
-Option x = (Option) grid.object("x");
-Option y = (Option) grid.object("y");
+        long now = System.currentTimeMillis();
+        for(int i = 0; i < 10; i++) {
+            Option d = new Option();
 
-x.put("type", "range").put("target", "{value} + {value2}").put("step", 10).put("line", true);
-y.put("type", "block").put("target", "name").put("line", true);
-// brush
+            d.put("name", "tab" + i);
+            d.put("value", i * 2 + 0.1);
+            d.put("value2", i * 3 + 5);
+            d.put("time", TimeUtil.add(now, "seconds", i));
 
-OptionArray brush = (OptionArray) chartOpt.array("brush");
-brush.put(Brush.stackbar().put("target", new OptionArray().put("value").put("value2")));
+            chart.add(d);
+        }
 
-OptionArray widget = (OptionArray) chartOpt.array("widget");
-widget.put(Widget.legend().put("align", "start"));
-widget.put(Widget.title().put("text", "sample title"));
-
-// data
-
-OptionArray data = (OptionArray) chartOpt.array("data");
-
-long now = System.currentTimeMillis();
-
-for(int i = 0; i < 10; i++) {
-    Option d = new Option();
-
-    d.put("name", "tab" + i);
-    d.put("value", i * 2 + 0.1);
-    d.put("value2", i * 3 + 5);
-    d.put("time", TimeUtil.add(now, "seconds", i));
-
-    data.put(d);
-}		
-
-// create chart builder 
-ChartBuilder chart = new ChartBuilder(chartOpt);
-
-// print svg code 
-System.out.println(chart.render());
+        System.out.println(chart.render());
+	}
+}
 
 ```
 
