@@ -77,8 +77,7 @@ public class FillGaugeBrush extends DonutBrush {
         outerRadius = w;
         clipId = StringUtil.createId("fill-gauge");
 
-        Option o = opt();
-        o.put("id", clipId);
+        Option o = opt().id(clipId);
         Transform clip = (Transform) chart.defs().clipPath(o);
 
         Option rectOpt = opt();
