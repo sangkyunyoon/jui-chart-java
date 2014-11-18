@@ -25,8 +25,7 @@ package com.jennifer.ui.chart;
 import com.jennifer.ui.chart.brush.EqualizerBrush;
 import com.jennifer.ui.chart.brush.*;
 import com.jennifer.ui.chart.grid.*;
-import com.jennifer.ui.chart.widget.LegendWidget;
-import com.jennifer.ui.chart.widget.TitleWidget;
+import com.jennifer.ui.chart.widget.*;
 import com.jennifer.ui.util.*;
 import com.jennifer.ui.util.dom.Svg;
 import com.jennifer.ui.util.dom.Transform;
@@ -79,19 +78,41 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     public ChartBuilder(Option o) {
-        this.options = o;
+        this.setOptions(o);
 
         init();
-
-        caculate();
     }
 
     public ChartBuilder(JSONObject jsonObject) {
         this(JSONUtil.clone(jsonObject));
     }
 
+    public ChartBuilder(int width, int height) {
+        this(opt().width(width).height(height));
+    }
+
+    public ChartBuilder(int width, int height, String theme) {
+        this(opt().width(width).height(height).put("theme", theme));
+    }
+
     public void setOptions(Option options) {
         this.options = options;
+
+        if (!this.options.has("brush")) {
+            this.options.put("brush", new OptionArray());
+        }
+
+        if (!this.options.has("widget")) {
+            this.options.put("widget", new OptionArray());
+        }
+
+        if (!this.options.has("data")) {
+            this.options.put("data", new OptionArray());
+        }
+
+        if (!this.options.has("grid")) {
+            this.options.put("grid", new Option());
+        }
     }
 
     private void init() {
@@ -121,6 +142,48 @@ public class ChartBuilder extends AbstractDraw {
         }
 
     }
+
+    public ChartBuilder grid(String axis, JSONObject o) {
+        return grid(axis, JSONUtil.clone(o));
+    }
+
+    public ChartBuilder grid(String axis, Option o) {
+
+        Option grid = (Option) options.object("grid");
+
+        if (!grid.has(axis)) {
+            grid.put(axis, new OptionArray());
+        }
+
+        OptionArray array = (OptionArray) grid.array(axis);
+        array.put(o);
+
+        return this;
+    }
+
+    public ChartBuilder brush(JSONObject o) {
+        return brush(JSONUtil.clone(o));
+    }
+
+    public ChartBuilder brush(Option o) {
+        OptionArray brush = (OptionArray)options.get("brush");
+
+        brush.put(o);
+
+        return this;
+    }
+
+    public ChartBuilder widget(JSONObject o) {
+        return widget(JSONUtil.clone(o));
+    }
+    public ChartBuilder widget(Option o) {
+        OptionArray widget = (OptionArray)options.get("widget");
+
+        widget.put(o);
+
+        return this;
+    }
+
 
     private void initSvg() {
         Option o = new Option();
@@ -624,20 +687,25 @@ public class ChartBuilder extends AbstractDraw {
 
                 OptionArray scale = (OptionArray) scales.array(key);
 
-                if (!(grid.get(key) instanceof OptionArray)) {
+                System.out.println(key);
+                System.out.println(grid.get(key));
+
+                Object objGrid = grid.get(key);
+
+                if (!(objGrid instanceof OptionArray) && !(objGrid instanceof JSONArray)) {
                     OptionArray o = new OptionArray();
                     o.put(JSONUtil.clone(grid.object(key)));
 
                     grid.put(key, o);
+                } else if (objGrid instanceof JSONArray) {
+                    grid.put(key, JSONUtil.clone((JSONArray)objGrid));
                 }
 
                 OptionArray gridObject = (OptionArray) grid.array(key);
 
-
                 for(int keyIndex = 0, gridLen = gridObject.length(); keyIndex < gridLen; keyIndex++) {
 
-                    Option g = (Option) gridObject.object(keyIndex);
-
+                    Option g = JSONUtil.clone(gridObject.object(keyIndex));
 
                     Class cls = grids.get(g.string("type"));
                     Grid newGrid = null;
@@ -706,6 +774,19 @@ public class ChartBuilder extends AbstractDraw {
 
     }
 
+    public ChartBuilder add(Option o) {
+        options.array("data").put(o);
+        return this;
+    }
+
+    public ChartBuilder data(OptionArray data) {
+        options.put("data", data);
+        return this;
+    }
+
+    public ChartBuilder data(JSONArray data) {
+        return data(JSONUtil.clone(data));
+    }
     public OptionArray data() {
         return barray("data");
     }

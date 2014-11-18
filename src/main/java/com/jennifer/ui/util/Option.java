@@ -76,6 +76,7 @@ public class Option extends JSONObject {
     // chart options setter
     public Option target(String target) { return target((OptionArray)new OptionArray().put(target)); }
     public Option target(OptionArray target) { return (Option) put("target", target) ; }
+    public Option target(JSONArray target) { return (Option) put("target", JSONUtil.clone(target)) ; }
     public Option align(String align) { return (Option)put("align", align); }
     public Option text(String text) { return (Option)put("text", text); }
     public Option type(String type) { return (Option)put("type", type); }
