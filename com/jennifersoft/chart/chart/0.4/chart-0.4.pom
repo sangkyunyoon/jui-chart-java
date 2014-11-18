@@ -58,7 +58,10 @@
                 </includes>
             </resource>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>src/main/</directory>
+                <includes>
+                    <include>resources/*.json</include>
+                </includes>
             </resource>
         </resources>
 
