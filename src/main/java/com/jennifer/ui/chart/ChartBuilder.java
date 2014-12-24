@@ -115,6 +115,78 @@ public class ChartBuilder extends AbstractDraw {
         }
     }
 
+    public Option getOptions() {
+        return this.options;
+    }
+
+    private Object getPathObject(String key, Object opt) {
+
+        if (opt instanceof JSONObject) {
+            return ((JSONObject)opt).opt(key);
+        } else if (opt instanceof JSONArray) {
+            return ((JSONArray)opt).opt(Integer.parseInt(key));
+        } else {
+            return null;
+        }
+    }
+
+    private Object getPathObject(int index, JSONArray opt) {
+        Object o = opt.opt(index);
+        if (o != null) {
+            return o;
+        } else {
+            return null;
+        }
+    }
+
+    public ChartBuilder set(String jsonPath, Object value) {
+        String[] path = jsonPath.split(".");
+
+        // path 형태로 설정한다.
+        // chart.set("grid.y.unit", new Object);  하면 실제로 grid.y.unit 속성에 object 객체를 설정한다.
+
+        Object start = this.options;
+        for(int i = 0; i < path.length - 1; i++) {
+            Object o =  getPathObject(path[i], start);
+
+            if (o != null) {
+                start = o;
+            }
+        }
+
+        if (start instanceof JSONObject) {
+            ((JSONObject)start).put(path[path.length-1], value);
+        } else if (start instanceof JSONArray) {
+            ((JSONArray)start).put(Integer.parseInt(path[path.length-1]), value);
+        }
+
+        return this;
+    }
+
+    public Object get(String jsonPath) {
+        String[] path = jsonPath.split(".");
+
+        // path 형태로 설정한다.
+        // chart.set("grid.y.unit", new Object);  하면 실제로 grid.y.unit 속성에 object 객체를 설정한다.
+
+        Object start = this.options;
+        for(int i = 0; i < path.length - 2; i++) {
+            Object o =  getPathObject(path[i], start);
+
+            if (o != null) {
+                start = o;
+            }
+        }
+
+        if (start instanceof JSONObject) {
+            return ((JSONObject)start).get(path[path.length-1]);
+        } else if (start instanceof JSONArray) {
+            return ((JSONArray)start).put(Integer.parseInt(path[path.length-1]));
+        }
+
+        return null;
+    }
+
     private void init() {
 
         initPadding();
@@ -141,6 +213,17 @@ public class ChartBuilder extends AbstractDraw {
 
         }
 
+    }
+
+    public ChartBuilder gridDateFormat(String axis, int index, String key, ChartDateFormat value) {
+        JSONObject grid  = options.getJSONObject("grid");
+
+        if (grid.has(axis)) {
+            JSONObject o = grid.getJSONArray(axis).optJSONObject(index);
+            o.put(key, value);
+        }
+
+        return this;
     }
 
     public ChartBuilder grid(String axis, JSONObject o) {
@@ -461,7 +544,7 @@ public class ChartBuilder extends AbstractDraw {
                     series.put(key, new Option());
                 }
 
-                Option obj = (Option) series.object(key);
+                Option obj = JSONUtil.clone(series.object(key));
 
                 Object valueObject = row.get(key);
 
@@ -484,6 +567,8 @@ public class ChartBuilder extends AbstractDraw {
                     if (value < obj.getLong("min")) obj.put("min", value);
                     if (value > obj.getLong("max")) obj.put("max", value);
                 }
+
+                series.put(key, obj);
             }
         }
         // series_list

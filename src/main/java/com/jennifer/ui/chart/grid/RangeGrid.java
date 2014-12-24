@@ -284,6 +284,7 @@ public class RangeGrid extends Grid {
                 String key = target.getString(i);
 
                 if(series.has(key)) {
+
                     double _max = series.object(key).getDouble("max");
                     double _min = series.object(key).getDouble("min");
                     if (max < _max)

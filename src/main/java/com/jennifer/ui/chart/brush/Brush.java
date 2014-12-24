@@ -129,7 +129,7 @@ public abstract class Brush extends AbstractDraw {
         Grid y = (Grid)this.options.get("y");
 
         OptionArray xy = new OptionArray();
-        OptionArray target = (OptionArray)options.array("target");
+        OptionArray target = JSONUtil.clone(options.array("target"));
 
         for(int i = 0, len = data.length(); i < len; i++) {
             double startX = x.get(i);
@@ -140,7 +140,7 @@ public abstract class Brush extends AbstractDraw {
                 double value = obj.D(key);
                 Option series = chart.series(key);
 
-                if (!xy.isNull(j)) {
+                if (xy.isNull(j)) {
 
                     Option o = new Option();
                     o.put("x", new JSONArray());
@@ -148,7 +148,6 @@ public abstract class Brush extends AbstractDraw {
                     o.put("value", new JSONArray());
                     o.put("min", new JSONArray());
                     o.put("max", new JSONArray());
-
                     xy.put(j, o);
                 }
 

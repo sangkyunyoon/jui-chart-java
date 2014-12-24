@@ -193,7 +193,7 @@ public class DateGrid extends Grid {
         timeScale.domain(options.array("domain")).rangeRound(range);
 
         boolean realtime = options.realtime();
-        OptionArray step = (OptionArray) options.array("step");
+        OptionArray step = JSONUtil.clone(options.array("step"));
 
         if (realtime) {
             this.ticks = timeScale.realTicks(step.string(0), step.I(1));

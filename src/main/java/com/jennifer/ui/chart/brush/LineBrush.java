@@ -23,6 +23,7 @@
 package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.ChartBuilder;
+import com.jennifer.ui.util.JSONUtil;
 import com.jennifer.ui.util.Option;
 import com.jennifer.ui.util.OptionArray;
 import com.jennifer.ui.util.dom.Path;
@@ -70,12 +71,13 @@ public class LineBrush extends Brush {
     }
 
     protected Path createLine(Option pos, int index) {
-        OptionArray x = (OptionArray) pos.array("x");
-        OptionArray y = (OptionArray) pos.array("y");
+        OptionArray x = JSONUtil.clone(pos.array("x"));
+        OptionArray y = JSONUtil.clone(pos.array("y"));
 
-        Path p = (Path)el("path", opt()
+        Path p = new Path(opt()
             .stroke(color(index))
             .strokeWidth(chart.theme("lineBorderWidth"))
+            .fill("transparent")
         );
 
         p.MoveTo(x.D(0), y.D(0));
@@ -95,7 +97,7 @@ public class LineBrush extends Brush {
                );
             }
         } else {
-            for (int i = 0, len = x.length() -1; i < len; i++) {
+            for (int i = 0, len = x.length() -1; i < len-1; i++) {
                 if(Brush.SYMBOL_STEP.equals(symbol)) {
                     p.LineTo(x.D(i), y.D(i + 1));
                 }

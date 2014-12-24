@@ -22,10 +22,7 @@
 
 package com.jennifer.ui.util.scale;
 
-import com.jennifer.ui.util.Option;
-import com.jennifer.ui.util.OptionArray;
-import com.jennifer.ui.util.Time;
-import com.jennifer.ui.util.TimeUtil;
+import com.jennifer.ui.util.*;
 import org.json.JSONArray;
 
 import java.util.Calendar;
@@ -59,7 +56,7 @@ public class TimeScale extends LinearScale {
     }
 
     public Scale domain(JSONArray domain) {
-        return domain((OptionArray)domain);
+        return domain(JSONUtil.clone(domain));
     }
 
     public double get(Date d) {
