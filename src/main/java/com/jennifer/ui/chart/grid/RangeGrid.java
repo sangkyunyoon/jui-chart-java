@@ -23,10 +23,7 @@
 package com.jennifer.ui.chart.grid;
 
 import com.jennifer.ui.chart.ChartBuilder;
-import com.jennifer.ui.util.JSONUtil;
-import com.jennifer.ui.util.Option;
-import com.jennifer.ui.util.OptionArray;
-import com.jennifer.ui.util.StringUtil;
+import com.jennifer.ui.util.*;
 import com.jennifer.ui.util.dom.Transform;
 import com.jennifer.ui.util.scale.LinearScale;
 import org.json.JSONArray;
@@ -267,6 +264,13 @@ public class RangeGrid extends Grid {
 
         if (has("target") && !has("domain")) {
 
+            double size = 0;
+            if (orient == Orient.LEFT || orient == Orient.RIGHT) {
+                size = chart.height();
+            } else {
+                size = chart.width();
+            }
+
             if (options.get("target") instanceof String) {
                 OptionArray list = new OptionArray();
                 list.put(options.string("target"));
@@ -309,7 +313,15 @@ public class RangeGrid extends Grid {
             options.put("min", min);
             options.put("step", options.optInt("step", 10));
 
-            double unit = options.optDouble("unit", Math.ceil((max - min) / options.D("step")));
+            double unit = 0;
+
+            if (options.get("unit") instanceof ChartUnit) {
+                ChartUnit chartUnit = (ChartUnit)options.get("unit");
+                unit = chartUnit.getUnit(Math.abs(max - min), size);
+            } else {
+                unit = options.optDouble("unit", Math.ceil((max - min) / options.D("step")));
+            }
+
 
             double start = 0;
             while (start < max) {

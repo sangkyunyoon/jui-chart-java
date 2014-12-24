@@ -170,7 +170,12 @@ public class DateGrid extends Grid {
     private String getFormatString(long d) {
         String text;
         if (options.has("format")) {
-            text = TimeUtil.format(d, options.string("format"));
+            if (options.get("format") instanceof ChartDateFormat) {
+                text = ((ChartDateFormat)options.get("format")).format(d);
+            } else {
+                text = TimeUtil.format(d, options.string("format"));
+            }
+
         } else {
             text = TimeUtil.format(d, options.array("step"));
         }
