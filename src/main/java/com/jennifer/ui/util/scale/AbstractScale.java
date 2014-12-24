@@ -22,6 +22,7 @@
 
 package com.jennifer.ui.util.scale;
 
+import com.jennifer.ui.util.JSONUtil;
 import com.jennifer.ui.util.OptionArray;
 import org.json.JSONArray;
 
@@ -97,8 +98,7 @@ public abstract class AbstractScale implements Scale {
     }
 
     public Scale domain(JSONArray domain) {
-        this.domain = (OptionArray)domain;
-        return this;
+        return domain(JSONUtil.clone(domain));
     }
 
     public Scale range(OptionArray range) {
@@ -107,8 +107,7 @@ public abstract class AbstractScale implements Scale {
     }
 
     public Scale range(JSONArray range) {
-        this.range = (OptionArray)range;
-        return this;
+        return range(JSONUtil.clone(range));
     }
 
     public Scale setKey(String key) {

@@ -61,9 +61,9 @@ public class StackColumnBrush extends Brush {
 
     @Override
     public void drawBefore() {
-        root = el("g").translate(chart.x(), chart.y());
+        root = el("g", opt().put("class", "brush stack column")).translate(chart.x(), chart.y());
 
-        outerPadding = options.optInt("outerPadding", 2);
+        outerPadding = options.optInt("outerPadding", 0);
 
         x = (Grid)options.get("x");
         y = (Grid)options.get("y");
@@ -76,20 +76,26 @@ public class StackColumnBrush extends Brush {
         width = x.rangeBand();
         barWidth  = width - outerPadding*2;
 
+        if (barWidth < 0) {
+            barWidth = width;
+        }
+
+
     }
 
     @Override
     public Object draw() {
-        double startY = y.get(0);
+
         for (int i = 0; i < count; i++) {
             Transform group = root.group();
-
-            double startX = x.get(i) - barWidth / 2;
             double value = 0;
+            double startX = x.get(i) - barWidth / 2;
+            double startY = y.get(0);
 
             for(int j = 0, jLen = target.length() ;j < jLen; j++) {
                 double yValue = chart.dataDouble(i, target.getString(j)) + value;
                 double endY = y.get(yValue);
+
 
                 group.rect(opt()
                         .x(startX)

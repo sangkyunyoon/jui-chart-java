@@ -21,5 +21,12 @@ public class Main {
         //System.out.println(chart.render());
         chart.writeFile("line.html");
 
+
+        /**
+         * 작업하던거 넣고
+         *
+         */
+
+
     }
 }

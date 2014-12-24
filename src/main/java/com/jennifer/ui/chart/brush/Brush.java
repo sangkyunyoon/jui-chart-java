@@ -208,4 +208,6 @@ public abstract class Brush extends AbstractDraw {
     public static JSONObject area() { return create("area"); }
     public static JSONObject column() { return create("column"); }
     public static JSONObject stackbar() { return create("stackbar"); }
+
+    public static JSONObject stackcolumn() { return create("stackcolumn"); }
 }

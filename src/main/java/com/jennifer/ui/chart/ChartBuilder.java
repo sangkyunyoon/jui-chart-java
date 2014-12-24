@@ -62,6 +62,7 @@ import static com.jennifer.ui.util.Option.opt;
  */
 public class ChartBuilder extends AbstractDraw {
 
+    public static final String JSONPATH_REGEX = "\\.";
     private Option options;
     private Option builderOptions = opt();
     private HashMap<String, Class> grids = new HashMap<String, Class>();
@@ -75,6 +76,10 @@ public class ChartBuilder extends AbstractDraw {
 
     public ChartBuilder() {
         this(opt());
+    }
+
+    public ChartBuilder(String json) {
+        this(new Option(json));
     }
 
     public ChartBuilder(Option o) {
@@ -139,49 +144,57 @@ public class ChartBuilder extends AbstractDraw {
         }
     }
 
-    public ChartBuilder set(String jsonPath, Object value) {
-        String[] path = jsonPath.split(".");
+    public ChartBuilder set(String jsonPath, Object value) throws ChartException {
+        String[] path = jsonPath.split(JSONPATH_REGEX);
 
         // path 형태로 설정한다.
         // chart.set("grid.y.unit", new Object);  하면 실제로 grid.y.unit 속성에 object 객체를 설정한다.
 
         Object start = this.options;
-        for(int i = 0; i < path.length - 1; i++) {
+        int i = 0;
+        for(; i < path.length - 1; i++) {
             Object o =  getPathObject(path[i], start);
 
             if (o != null) {
                 start = o;
+            } else  {
+                throw new ChartException(path[i] + " is null");
             }
         }
 
         if (start instanceof JSONObject) {
-            ((JSONObject)start).put(path[path.length-1], value);
+            ((JSONObject)start).put(path[i], value);
         } else if (start instanceof JSONArray) {
-            ((JSONArray)start).put(Integer.parseInt(path[path.length-1]), value);
+            ((JSONArray)start).put(Integer.parseInt(path[i]), value);
         }
 
         return this;
     }
 
     public Object get(String jsonPath) {
-        String[] path = jsonPath.split(".");
+        String[] path = jsonPath.split(JSONPATH_REGEX);
 
         // path 형태로 설정한다.
         // chart.set("grid.y.unit", new Object);  하면 실제로 grid.y.unit 속성에 object 객체를 설정한다.
 
         Object start = this.options;
-        for(int i = 0; i < path.length - 2; i++) {
+        int i = 0;
+        for(; i < path.length - 1; i++) {
             Object o =  getPathObject(path[i], start);
 
             if (o != null) {
                 start = o;
+            } else {
+                break;
             }
         }
 
         if (start instanceof JSONObject) {
-            return ((JSONObject)start).get(path[path.length-1]);
+            return ((JSONObject)start).get(path[i]);
         } else if (start instanceof JSONArray) {
-            return ((JSONArray)start).put(Integer.parseInt(path[path.length-1]));
+            return ((JSONArray)start).put(Integer.parseInt(path[i]));
+        } else if (start != null) {
+            return start;
         }
 
         return null;
@@ -672,8 +685,6 @@ public class ChartBuilder extends AbstractDraw {
                     root.addClass(type + " " + objType);
 
                     this.root.append(root);
-
-
 
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
