@@ -61,8 +61,6 @@ import static com.jennifer.ui.util.Option.opt;
  * Created by yuni on 2014-10-23.
  */
 public class ChartBuilder extends AbstractDraw {
-
-    public static final String JSONPATH_REGEX = "\\.";
     private Option options;
     private Option builderOptions = opt();
     private HashMap<String, Class> grids = new HashMap<String, Class>();
@@ -124,80 +122,13 @@ public class ChartBuilder extends AbstractDraw {
         return this.options;
     }
 
-    private Object getPathObject(String key, Object opt) {
 
-        if (opt instanceof JSONObject) {
-            return ((JSONObject)opt).opt(key);
-        } else if (opt instanceof JSONArray) {
-            return ((JSONArray)opt).opt(Integer.parseInt(key));
-        } else {
-            return null;
-        }
-    }
-
-    private Object getPathObject(int index, JSONArray opt) {
-        Object o = opt.opt(index);
-        if (o != null) {
-            return o;
-        } else {
-            return null;
-        }
-    }
-
-    public ChartBuilder set(String jsonPath, Object value) throws ChartException {
-        String[] path = jsonPath.split(JSONPATH_REGEX);
-
-        // path 형태로 설정한다.
-        // chart.set("grid.y.unit", new Object);  하면 실제로 grid.y.unit 속성에 object 객체를 설정한다.
-
-        Object start = this.options;
-        int i = 0;
-        for(; i < path.length - 1; i++) {
-            Object o =  getPathObject(path[i], start);
-
-            if (o != null) {
-                start = o;
-            } else  {
-                throw new ChartException(path[i] + " is null");
-            }
-        }
-
-        if (start instanceof JSONObject) {
-            ((JSONObject)start).put(path[i], value);
-        } else if (start instanceof JSONArray) {
-            ((JSONArray)start).put(Integer.parseInt(path[i]), value);
-        }
-
-        return this;
+    public boolean set(String jsonPath, Object value) {
+        return JSONUtil.set(this.options, jsonPath, value);
     }
 
     public Object get(String jsonPath) {
-        String[] path = jsonPath.split(JSONPATH_REGEX);
-
-        // path 형태로 설정한다.
-        // chart.set("grid.y.unit", new Object);  하면 실제로 grid.y.unit 속성에 object 객체를 설정한다.
-
-        Object start = this.options;
-        int i = 0;
-        for(; i < path.length - 1; i++) {
-            Object o =  getPathObject(path[i], start);
-
-            if (o != null) {
-                start = o;
-            } else {
-                break;
-            }
-        }
-
-        if (start instanceof JSONObject) {
-            return ((JSONObject)start).get(path[i]);
-        } else if (start instanceof JSONArray) {
-            return ((JSONArray)start).put(Integer.parseInt(path[i]));
-        } else if (start != null) {
-            return start;
-        }
-
-        return null;
+        return JSONUtil.get(this.options, jsonPath);
     }
 
     private void init() {

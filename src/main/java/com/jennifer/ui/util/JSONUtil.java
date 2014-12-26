@@ -36,6 +36,8 @@ import static com.jennifer.ui.util.Option.opt;
  */
 public class JSONUtil {
 
+    private static final java.lang.String JSONPATH_REGEX = "\\.";
+
     public static Option extend(Option o, Option attr) {
         Option newObj = opt();
 
@@ -156,6 +158,73 @@ public class JSONUtil {
     public static String format(String s, Option row) {
         // TODO: implements json format string
         return s;
+    }
+
+
+    private static Object getPathObject(String key, Object opt) {
+
+        if (opt instanceof JSONObject) {
+            return ((JSONObject)opt).opt(key);
+        } else if (opt instanceof JSONArray) {
+            return ((JSONArray)opt).opt(Integer.parseInt(key));
+        } else {
+            return null;
+        }
+    }
+
+    public static boolean set(JSONObject options, String jsonPath, Object value)  {
+        String[] path = jsonPath.split(JSONPATH_REGEX);
+
+        // path 형태로 설정한다.
+        // chart.set("grid.y.unit", new Object);  하면 실제로 grid.y.unit 속성에 object 객체를 설정한다.
+
+        Object start = options;
+        int i = 0;
+        for(; i < path.length - 1; i++) {
+            Object o =  getPathObject(path[i], start);
+
+            if (o != null) {
+                start = o;
+            } else  {
+                return false;
+            }
+        }
+
+        if (start instanceof JSONObject) {
+            ((JSONObject)start).put(path[i], value);
+            return true;
+        } else if (start instanceof JSONArray) {
+            ((JSONArray)start).put(Integer.parseInt(path[i]), value);
+            return true;
+        }
+
+        return false;
+    }
+
+    public static  Object get(JSONObject options, String jsonPath) {
+        String[] path = jsonPath.split(JSONPATH_REGEX);
+
+        Object start = options;
+        int i = 0;
+        for(; i < path.length - 1; i++) {
+            Object o =  getPathObject(path[i], start);
+
+            if (o != null) {
+                start = o;
+            } else {
+                break;
+            }
+        }
+
+        if (start instanceof JSONObject) {
+            return ((JSONObject)start).get(path[i]);
+        } else if (start instanceof JSONArray) {
+            return ((JSONArray)start).put(Integer.parseInt(path[i]));
+        } else if (start != null) {
+            return start;
+        }
+
+        return null;
     }
 
 }
