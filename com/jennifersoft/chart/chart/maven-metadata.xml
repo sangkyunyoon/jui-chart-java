@@ -3,10 +3,11 @@
   <groupId>com.jennifersoft.chart</groupId>
   <artifactId>chart</artifactId>
   <versioning>
-    <release>0.1</release>
+    <release>0.2</release>
     <versions>
       <version>0.1</version>
+      <version>0.2</version>
     </versions>
-    <lastUpdated>20141226020643</lastUpdated>
+    <lastUpdated>20141226031304</lastUpdated>
   </versioning>
 </metadata>
