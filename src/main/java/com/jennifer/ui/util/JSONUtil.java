@@ -99,11 +99,23 @@ public class JSONUtil {
     }
 
     public static Option clone(JSONObject obj) {
-        return new Option(obj.toString());
+
+        if(obj == null) return null;
+        Option o = new Option();
+
+        String[] names = JSONObject.getNames(obj);
+
+        if (names == null) return null;
+
+        for(String name : names) {
+            o.put(name, obj.get(name));
+        }
+
+        return o;
     }
 
     public static Option clone(Option obj) {
-        return new Option(obj.toString());
+        return clone((JSONObject) obj);
     }
 
     public static OptionArray clone(JSONArray array) {

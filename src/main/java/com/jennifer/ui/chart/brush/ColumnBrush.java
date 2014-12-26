@@ -30,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static com.jennifer.ui.util.DomUtil.el;
+import static com.jennifer.ui.util.Option.opt;
 
 /**
  * Created by Jayden on 2014-10-27.
@@ -87,6 +88,7 @@ public class ColumnBrush extends Brush {
             Transform group = root.group();
 
             for(int j = 0, len = target.length(); j < len; j++) {
+
                 double startY = y.get(chart.dataDouble(i, target.getString(j)));
                 double h = Math.abs(zeroY - startY);
 
@@ -105,6 +107,6 @@ public class ColumnBrush extends Brush {
 
         }
 
-        return new JSONObject().put("root", root);
+        return opt().put("root", root);
     }
 }

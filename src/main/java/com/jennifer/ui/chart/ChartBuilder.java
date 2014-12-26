@@ -400,10 +400,11 @@ public class ChartBuilder extends AbstractDraw {
         return options.opt(key);
     }
 
-    public String color(int index, JSONArray colors) {
-        return color(index, (OptionArray)colors);
-    }
     public String color(int index, OptionArray colors) {
+        return color(index, (JSONArray)colors);
+    }
+
+    public String color(int index, JSONArray colors) {
         String color = null;
 
         if (colors != null) {
@@ -489,6 +490,8 @@ public class ChartBuilder extends AbstractDraw {
                 }
 
                 Option obj = JSONUtil.clone(series.object(key));
+
+                if (obj == null) continue;
 
                 Object valueObject = row.get(key);
 

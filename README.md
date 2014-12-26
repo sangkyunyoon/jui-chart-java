@@ -59,27 +59,66 @@ public class ChartUtil {
 	
 	public static void main(String args[]) throws Exception {
 		
-        ChartBuilder chart = new ChartBuilder(800, 800);
-
-        chart.grid("x", new Option().type("range").target("{value} + {value2}").step(10).line(true));
-        chart.grid("y", new Option().type("block").line(true).put("target","name"));
-        chart.widget(new Option().type("title").text("sample title"));
-        chart.widget(new Option().type("legend").align("start"));
-        chart.brush(new Option().type("stackbar").target(new OptionArray().put("value").put("value2")));
-
-        long now = System.currentTimeMillis();
-        for(int i = 0; i < 10; i++) {
-            Option d = new Option();
-
-            d.put("name", "tab" + i);
-            d.put("value", i * 2 + 0.1);
-            d.put("value2", i * 3 + 5);
-            d.put("time", TimeUtil.add(now, "seconds", i));
-
-            chart.add(d);
-        }
-
-        System.out.println(chart.render());
+        String json = "{" +
+        				"width: 756," +
+        				"height : 220," +
+        				"padding : { top: 40 }," +
+        				"data : [] ," +
+        		        "grid : {" +
+        		        "   x : { " +
+        		        "       type : 'block'," +
+        		        "       target : 'start'," +
+        		        "       line : true," +
+        		        "		innerPadding : 10 " +
+        		        "    }," +
+        		        "   y : { " +
+        		        "       type : 'range'," +
+        		        "       target : ''," +
+        		        "       unit : 100 " +
+        		        "   }" +
+        		        "}," +
+        		        "brush : {" +
+        		        "   type : 'column'," +
+        		        "   target : ''," +
+        		        "	colors : ['#19345b', '#5b3299', '#3f7cf4', '#47b2ac', '#badbac', '#3f5ca8', '#a9d8f8', '#ffc000', '#555d69', '#64b044']" +
+        		        "}," +
+        		        "widget : { type : 'title', text : '' }" +
+        		        "}";			
+        		        
+        		JSONArray list = new JSONArray();
+        		
+        		// create data list 
+        		//list.put(...);
+        		
+        		ChartBuilder chart = new ChartBuilder(json);
+        		chart.set("data", list);
+        		chart.set("grid.y.target", "count");
+        		chart.set("brush.target", "count");
+        		chart.set("widget.text", o.getString("title"));
+        		
+        		final long range = etime - stime; 
+        		chart.set("grid.x.format", new ChartDateFormat() {
+        		    public String format(long l) {
+        		        if(range <= TemplateTimeUtil.ONE_DAY) {
+        		            return TemplateTimeUtil.format(l, "HH:mm");
+        		        } else if(range <= TemplateTimeUtil.ONE_DAY * 3) {
+        		            return TemplateTimeUtil.format(l, "MM-dd HH");
+        		        } else {
+        		            return TemplateTimeUtil.format(l, "MM-dd");
+        		        }
+        		    }
+        		});
+        
+        		
+        		chart.set("grid.y.unit", new ChartUnit() {
+        			public double getUnit(double max, double size) {
+        				return ClientUtilities.getSplitUnit(max, (int) size);
+        			}
+        		});
+        		
+        		
+        		//TODO : 파일 변환이 필요함 
+        		System.out.println(chart.render());
 	}
 }
 

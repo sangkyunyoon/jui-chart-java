@@ -287,26 +287,12 @@ public class RangeGrid extends Grid {
             for (int i = 0, len = target.length(); i < len; i++) {
                 String key = target.getString(i);
 
-                if(series.has(key)) {
+                for(int j = 0, jLen = chart.data().length(); j < jLen; j++) {
+                    double value  = chart.dataDouble(j, key);
 
-                    double _max = series.object(key).getDouble("max");
-                    double _min = series.object(key).getDouble("min");
-                    if (max < _max)
-                        max = _max;
-                    if (min > _min)
-                        min = _min;
-                } else {
-                    // caculate string
-                    double value = StringUtil.parseDouble(key, series);
-
-                    if (max < value) {
-                        max = value;
-                    }
-                    if (min > value)
-                        min = value;
-
+                    if (value > max) max = value;
+                    else if (value < min) min = value;
                 }
-
             }
 
             options.put("max", max);

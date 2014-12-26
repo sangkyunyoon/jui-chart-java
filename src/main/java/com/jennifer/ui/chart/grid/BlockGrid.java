@@ -23,6 +23,8 @@
 package com.jennifer.ui.chart.grid;
 
 import com.jennifer.ui.chart.ChartBuilder;
+import com.jennifer.ui.util.ChartDateFormat;
+import com.jennifer.ui.util.ChartStringFormat;
 import com.jennifer.ui.util.Option;
 import com.jennifer.ui.util.OptionArray;
 import com.jennifer.ui.util.scale.OrdinalScale;
@@ -73,8 +75,7 @@ public class BlockGrid extends Grid {
 
         for (int i = 0, len = this.points.length(); i < len; i++) {
 
-            //TODO: support format string
-            String domain = this.domain.string(i);
+            String domain = getFormatString(this.domain.string(i));
 
             if ("".equals(domain)) {
                 continue;
@@ -122,8 +123,7 @@ public class BlockGrid extends Grid {
 
         for (int i = 0, len = this.points.length(); i < len; i++) {
 
-            //TODO: support format string
-            String domain = this.domain.string(i);
+            String domain = getFormatString(this.domain.string(i));
 
             if ("".equals(domain)) {
                 continue;
@@ -172,8 +172,7 @@ public class BlockGrid extends Grid {
 
         for (int i = 0, len = this.points.length(); i < len; i++) {
 
-            //TODO: support format string
-            String domain = this.domain.string(i);
+            String domain = getFormatString(this.domain.string(i));
 
             if ("".equals(domain)) {
                 continue;
@@ -205,6 +204,17 @@ public class BlockGrid extends Grid {
         }
     }
 
+    protected String getFormatString(String value) {
+
+        if (options.get("format") instanceof ChartDateFormat) {
+            ChartDateFormat format = (ChartDateFormat)options.get("format");
+            return format.format(Long.parseLong(value));
+
+        } else {
+            return value.toString();
+        }
+    }
+
 
     protected void drawRight(Transform root) {
         int full_width = chart.width();
@@ -220,8 +230,7 @@ public class BlockGrid extends Grid {
 
         for (int i = 0, len = this.points.length(); i < len; i++) {
 
-            //TODO: support format string
-            String domain = this.domain.string(i);
+            String domain = getFormatString(this.domain.string(i));
 
             if ("".equals(domain)) {
                 continue;
@@ -306,7 +315,7 @@ public class BlockGrid extends Grid {
             }
 
             for(int i = start; ((reverse) ? i >= end : i <= end); i += step) {
-                domain.put(((Option)data.object(i)).string(options.string("target")));
+                domain.put(((Option)data.object(i)).get(options.string("target")).toString());
             }
 
             options.domain(domain).step(options.optInt("step", 10));
