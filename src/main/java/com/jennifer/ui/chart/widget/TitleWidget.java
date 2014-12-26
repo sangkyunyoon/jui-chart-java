@@ -24,12 +24,12 @@ package com.jennifer.ui.chart.widget;
 
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.grid.Orient;
-import com.jennifer.ui.util.Option;
+
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONObject;
 
 import static com.jennifer.ui.util.DomUtil.el;
-import static com.jennifer.ui.util.Option.opt;
+
 
 /**
  * Created by Jayden on 2014-11-03.
@@ -42,10 +42,6 @@ public class TitleWidget extends Widget {
     private double dx;
     private double dy;
     private double size;
-
-    public TitleWidget(ChartBuilder chart, Option options) {
-        super(chart, options);
-    }
 
     public TitleWidget(ChartBuilder chart, JSONObject options) {
         super(chart, options);
@@ -73,7 +69,7 @@ public class TitleWidget extends Widget {
             drawTitle();
         }
 
-        return opt().put("root", root);
+        return new JSONObject().put("root", root);
     }
 
     private void drawTitle() {
@@ -83,29 +79,29 @@ public class TitleWidget extends Widget {
         String anchor = "middle";
 
         if ("bottom".equals(position)) {
-            y = chart.y2() + chart.padding("bottom") - size;
+            y = chart.area("y2") + chart.padding("bottom") - size;
         } else {
             y = size;
         }
 
         if ("center".equals(align)) {
-            x = chart.x() + chart.width()/2.0;
+            x = chart.area("x") + chart.area("width")/2.0;
             anchor = "middle";
         } else if ("left".equals(align)) {
-            x = chart.x();
+            x = chart.area("x");
             anchor = "start";
         } else {
-            x = chart.x2();
+            x = chart.area("x2");
             anchor = "end";
         }
 
-        root.text(opt()
-            .x(x + dx)
-            .y(y + dy)
-            .textAnchor(anchor)
-            .fontFamily(chart.theme("fontFamily"))
-            .fontSize(chart.theme("titleFontSize"))
-            .fill(chart.theme("titleFontColor"))
+        root.text(new JSONObject()
+            .put("x", x + dx)
+            .put("y", y + dy)
+            .put("text-anchor",anchor)
+            .put("font-family", chart.theme("fontFamily"))
+            .put("font-size", chart.theme("titleFontSize"))
+            .put("fill",chart.theme("titleFontColor"))
         ).textNode(text);
     }
 }

@@ -24,14 +24,14 @@ package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.grid.Grid;
-import com.jennifer.ui.util.Option;
-import com.jennifer.ui.util.OptionArray;
+
+
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static com.jennifer.ui.util.DomUtil.el;
-import static com.jennifer.ui.util.Option.opt;
+
 
 /**
  * Created by Jayden on 2014-10-27.
@@ -48,10 +48,6 @@ public class FullStackBrush extends Brush {
     private double barWidth;
     private boolean hasText;
 
-    public FullStackBrush(ChartBuilder chart, Option options) {
-        super(chart, options);
-    }
-
     public FullStackBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
     }
@@ -59,7 +55,7 @@ public class FullStackBrush extends Brush {
     @Override
     public void drawBefore() {
 
-        root = el("g").translate(chart.x(), chart.y());
+        root = el("g").translate(chart.area("x"), chart.area("y"));
 
         outerPadding = options.optInt("outerPadding", 15);
 
@@ -78,13 +74,13 @@ public class FullStackBrush extends Brush {
 
     @Override
     public Object draw() {
-        int chart_height = chart.height();
-        JSONArray target = options.array("target");
+        int chart_height = chart.area("height");
+        JSONArray target = options.getJSONArray( "target");
 
         for (int i = 0; i < count; i++) {
             double startX = x.get(i) - barWidth / 2;
             double sum = 0;
-            OptionArray list = new OptionArray();
+            JSONArray list = new JSONArray();
 
             for (int j = 0, jLen = target.length(); j < jLen; j++) {
                 double height = chart.dataDouble(i, target.getString(j));
@@ -98,17 +94,17 @@ public class FullStackBrush extends Brush {
             for (int j = list.length() - 1; j >= 0; j--) {
                 double height = chart_height - y.rate(list.getDouble(j) , sum);
 
-                root.rect(opt()
-                        .x(startX)
-                        .y(startY)
-                        .width(barWidth)
-                        .height(height)
-                        .fill(color(j))
+                root.rect(new JSONObject()
+                        .put("x", startX)
+                        .put("y", startY)
+                        .put("width", barWidth)
+                        .put("height", height)
+                        .put("fill",color(j))
                 );
 
                 if (hasText) {
                     double percent = Math.round((list.getDouble(j)/sum)*max);
-                    root.text(opt().x(startX + barWidth/2).y(startY + height/2 + 8).textAnchor("middle")).textNode(((current - percent < 0 ) ? current+"" : percent) + "%");
+                    root.text(new JSONObject().put("x", startX + barWidth/2).put("y", startY + height/2 + 8).put("text-anchor","middle")).textNode(((current - percent < 0 ) ? current+"" : percent) + "%");
 
                     current -= percent;
                 }
@@ -117,6 +113,6 @@ public class FullStackBrush extends Brush {
             }
         }
 
-        return opt().put("root", root);
+        return new JSONObject().put("root", root);
     }
 }

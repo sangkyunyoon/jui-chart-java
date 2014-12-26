@@ -24,14 +24,14 @@ package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.grid.Grid;
-import com.jennifer.ui.util.Option;
+
 import com.jennifer.ui.util.dom.Path;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static com.jennifer.ui.util.DomUtil.el;
-import static com.jennifer.ui.util.Option.opt;
+
 
 /**
  * Created by Jayden on 2014-10-27.
@@ -43,17 +43,13 @@ public class PathBrush extends Brush {
     private int count;
     private Grid c;
 
-    public PathBrush(ChartBuilder chart, Option options) {
-        super(chart, options);
-    }
-
     public PathBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
     }
 
     @Override
     public void drawBefore() {
-        root = el("g").translate(chart.x(), chart.y());
+        root = el("g").translate(chart.area("x"), chart.area("y"));
         count = chart.data().length();
 
         c = (Grid)options.get("c");
@@ -62,33 +58,33 @@ public class PathBrush extends Brush {
     @Override
     public Object draw() {
 
-        JSONArray target = options.array("target");
+        JSONArray target = options.getJSONArray( "target");
 
         for(int ti = 0, len = target.length(); ti < len; ti++) {
             String color = color(ti);
 
-            Path path = root.path(opt()
-                    .fill(color)
-                    .fillOpacity(chart.theme("pathOpacity"))
-                    .stroke(color)
-                    .strokeWidth(chart.theme("pathBorderWidth"))
+            Path path = root.path(new JSONObject()
+                    .put("fill",color)
+                    .put("fill-opacity",chart.theme("pathOpacity"))
+                    .put("stroke", color)
+                    .put("stroke-width",chart.theme("pathBorderWidth"))
             );
 
 
             for (int i = 0; i < count; i++) {
                 double value = chart.dataDouble(i, target.getString(ti));
-                Option obj = c.get(i, value);
+                JSONObject obj = c.get(i, value);
 
                 if (i == 0) {
-                    path.MoveTo(obj.x(), obj.y());
+                    path.MoveTo(obj.getDouble("x"), obj.getDouble("y"));
                 } else {
-                    path.LineTo(obj.x(), obj.y());
+                    path.LineTo(obj.getDouble("x"), obj.getDouble("y"));
                 }
             }
 
             path.Close();
         }
 
-        return opt().put("root", root);
+        return new JSONObject().put("root", root);
     }
 }

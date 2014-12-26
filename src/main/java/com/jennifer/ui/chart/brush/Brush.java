@@ -26,8 +26,6 @@ import com.jennifer.ui.chart.AbstractDraw;
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.grid.Grid;
 import com.jennifer.ui.util.JSONUtil;
-import com.jennifer.ui.util.Option;
-import com.jennifer.ui.util.OptionArray;
 import com.jennifer.ui.util.dom.Path;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,43 +39,38 @@ public abstract class Brush extends AbstractDraw {
     public static final String SYMBOL_STEP = "step";
 
     protected ChartBuilder chart;
-    protected Option options;
+    protected JSONObject options;
 
-    public Brush(ChartBuilder chart, Option options) {
+    public Brush(ChartBuilder chart, JSONObject options) {
         this.chart = chart;
         this.options = options;
     }
 
-    public Brush(ChartBuilder chart, JSONObject options) {
-        this.chart = chart;
-        this.options = JSONUtil.extend(options);
-    }
-
-    public Option curvePoints(OptionArray K) {
-        Option result = new Option();
-        OptionArray p1 = new OptionArray();
-        OptionArray p2 = new OptionArray();
+    public JSONObject curvePoints(JSONArray K) {
+        JSONObject result = new JSONObject();
+        JSONArray p1 = new JSONArray();
+        JSONArray p2 = new JSONArray();
 
         int n = K.length() - 1;
 
         /* rhs vector*/
-        OptionArray a = new OptionArray();
-        OptionArray b = new OptionArray();
-        OptionArray c = new OptionArray();
-        OptionArray r = new OptionArray();
+        JSONArray a = new JSONArray();
+        JSONArray b = new JSONArray();
+        JSONArray c = new JSONArray();
+        JSONArray r = new JSONArray();
 
         /*left most segment */
         a.put(0, 0);
         b.put(0, 2);
         c.put(0, 1);
-        r.put(0, K.D(0) + 2 * K.D(1));
+        r.put(0, K.getDouble(0) + 2 * K.getDouble(1));
 
         /* internal segments */
         for(int  i = 1; i < n - 1; i++) {
             a.put(i, 1);
             b.put(i, 4);
             c.put(i, 1);
-            r.put(i, 4* K.D(i) + 2 * K.D(i + 1));
+            r.put(i, 4* K.getDouble(i) + 2 * K.getDouble(i + 1));
         }
 
         /*right segment*/
@@ -122,27 +115,27 @@ public abstract class Brush extends AbstractDraw {
         return range * per + minRadius;
     }
 
-    public OptionArray getXY () {
-        OptionArray data = chart.data();
+    public JSONArray getXY () {
+        JSONArray data = chart.data();
 
         Grid x = (Grid)this.options.get("x");
         Grid y = (Grid)this.options.get("y");
 
-        OptionArray xy = new OptionArray();
-        OptionArray target = JSONUtil.clone(options.array("target"));
+        JSONArray xy = new JSONArray();
+        JSONArray target = JSONUtil.clone(options.getJSONArray( "target"));
 
         for(int i = 0, len = data.length(); i < len; i++) {
             double startX = x.get(i);
-            Option obj = (Option)data.object(i);
+            JSONObject obj = data.getJSONObject( i);
 
             for (int j = 0, jLen = target.length(); j < jLen; j++) {
                 String key = target.getString(j);
-                double value = obj.D(key);
-                Option series = chart.series(key);
+                double value = obj.getDouble(key);
+                JSONObject series = chart.series(key);
 
                 if (xy.isNull(j)) {
 
-                    Option o = new Option();
+                    JSONObject o = new JSONObject();
                     o.put("x", new JSONArray());
                     o.put("y", new JSONArray());
                     o.put("value", new JSONArray());
@@ -151,13 +144,13 @@ public abstract class Brush extends AbstractDraw {
                     xy.put(j, o);
                 }
 
-                Option axis = (Option)xy.object(j);
+                JSONObject axis = xy.getJSONObject( j);
 
-                axis.array("x").put(startX);
-                axis.array("y").put(y.get(value));
-                axis.array("value").put(value);
-                axis.array("min").put(value == series.getDouble("min"));
-                axis.array("max").put(value == series.getDouble("max"));
+                axis.getJSONArray( "x").put(startX);
+                axis.getJSONArray( "y").put(y.get(value));
+                axis.getJSONArray( "value").put(value);
+                axis.getJSONArray( "min").put(value == series.getDouble("min"));
+                axis.getJSONArray( "max").put(value == series.getDouble("max"));
             }
         }
 
@@ -165,28 +158,28 @@ public abstract class Brush extends AbstractDraw {
         return xy;
     }
 
-    public OptionArray getStackXY() {
-        OptionArray xy = getXY();
+    public JSONArray getStackXY() {
+        JSONArray xy = getXY();
 
         Grid x = (Grid)this.options.get("x");
         Grid y = (Grid)this.options.get("y");
 
-        OptionArray data = chart.data();
-        OptionArray target = (OptionArray)options.array("target");
+        JSONArray data = chart.data();
+        JSONArray target = (JSONArray)options.getJSONArray( "target");
 
         for(int i = 0, len = data.length(); i < len; i++) {
-            Option obj = (Option)data.object(i);
+            JSONObject obj = data.getJSONObject( i);
             double valueSum = 0;
 
             for (int j = 0, jLen = target.length(); j < jLen; j++) {
-                String key = target.string(j);
-                double value = obj.D(key);
+                String key = target.getString(j);
+                double value = obj.getDouble(key);
 
                 if(j > 0) {
-                    valueSum += obj.D(target.string(j - 1));
+                    valueSum += obj.getDouble(target.getString(j - 1));
                 }
 
-                ((Option)xy.object(j)).array("y").put(i, y.get(value + valueSum));
+                (xy.getJSONObject( j)).getJSONArray( "y").put(i, y.get(value + valueSum));
             }
         }
 
@@ -194,7 +187,7 @@ public abstract class Brush extends AbstractDraw {
     }
 
     public String color(int i) {
-        return chart.color(i, options.array("colors"));
+        return chart.color(i, options.getJSONArray( "colors"));
     }
 
     /**

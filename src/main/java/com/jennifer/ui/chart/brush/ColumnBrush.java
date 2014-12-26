@@ -24,13 +24,13 @@ package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.grid.Grid;
-import com.jennifer.ui.util.Option;
+
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static com.jennifer.ui.util.DomUtil.el;
-import static com.jennifer.ui.util.Option.opt;
+
 
 /**
  * Created by Jayden on 2014-10-27.
@@ -49,9 +49,6 @@ public class ColumnBrush extends Brush {
     private double columnWidth;
 
 
-    public ColumnBrush(ChartBuilder chart, Option options) {
-        super(chart, options);
-    }
     public ColumnBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
     }
@@ -60,7 +57,7 @@ public class ColumnBrush extends Brush {
     @Override
     public void drawBefore() {
 
-        root = el("g").translate(chart.x(), chart.y());
+        root = el("g").translate(chart.area("x"), chart.area("y"));
 
         outerPadding = options.optInt("outerPadding", 2);
         innerPadding = options.optInt("innerPadding", 1);
@@ -71,7 +68,7 @@ public class ColumnBrush extends Brush {
         zeroY = y.get(0);
         count = chart.data().length();
 
-        target = options.target();
+        target = options.getJSONArray("target") ;
 
         width = x.rangeBand();
         half_width = width - outerPadding*2;
@@ -92,11 +89,11 @@ public class ColumnBrush extends Brush {
                 double startY = y.get(chart.dataDouble(i, target.getString(j)));
                 double h = Math.abs(zeroY - startY);
 
-                Option o = new Option().x(startX).height(h).width(columnWidth).fill(this.color(j));
+                JSONObject o = new JSONObject().put("x", startX).put("height", h).put("width", columnWidth).put("fill",this.color(j));
                 if (startY <= zeroY) {
-                    o.y(startY);
+                    o.put("y", startY);
                 } else {
-                    o.y(zeroY);
+                    o.put("y", zeroY);
                 }
 
                 group.rect(o);
@@ -107,6 +104,6 @@ public class ColumnBrush extends Brush {
 
         }
 
-        return opt().put("root", root);
+        return new JSONObject().put("root", root);
     }
 }

@@ -24,7 +24,7 @@ package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.grid.Grid;
-import com.jennifer.ui.util.Option;
+
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,17 +47,15 @@ public class BarBrush extends Brush {
     private JSONArray target;
     private double barHeight;
 
-    public BarBrush(ChartBuilder chart, Option options) {
-        super(chart, options);
-    }
     public BarBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
     }
 
+
     @Override
     public void drawBefore() {
 
-        root = el("g").translate(chart.x(), chart.y());
+        root = el("g").translate(chart.area("x"), chart.area("y"));
 
         outerPadding = options.optInt("outerPadding", 2);
         innerPadding = options.optInt("innerPadding", 1);
@@ -88,11 +86,11 @@ public class BarBrush extends Brush {
                 double startX = x.get(chart.dataDouble(i, target.getString(j)));
                 double w = Math.abs(zeroX - startX);
 
-                Option o = new Option().y(startY).height(barHeight).width(w).fill(color(j));
+                JSONObject o = new JSONObject().put("y", startY).put("height", barHeight).put("width", w).put("fill",color(j));
                 if (startX >= zeroX) {
-                    o.x(zeroX);
+                    o.put("x", zeroX);
                 } else {
-                    o.x(zeroX - w);
+                    o.put("x", zeroX - w);
                 }
 
                 group.rect(o);

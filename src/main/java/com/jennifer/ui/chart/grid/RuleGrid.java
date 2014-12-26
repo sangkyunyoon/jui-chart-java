@@ -23,7 +23,7 @@
 package com.jennifer.ui.chart.grid;
 
 import com.jennifer.ui.chart.ChartBuilder;
-import com.jennifer.ui.util.Option;
+
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONObject;
 
@@ -35,10 +35,6 @@ public class RuleGrid extends RangeGrid {
     private boolean hideZero;
     private boolean center;
 
-    public RuleGrid(Orient orient, ChartBuilder chart, Option options) {
-        super(orient, chart, options);
-    }
-
     public RuleGrid(Orient orient, ChartBuilder chart, JSONObject options) {
         super(orient, chart, options);
     }
@@ -46,17 +42,17 @@ public class RuleGrid extends RangeGrid {
 
     @Override
     protected void drawTop(Transform root) {
-        int width = chart.width();
-        int height = chart.height();
+        int width = chart.area("width");
+        int height = chart.area("height");
         double half_width = (double)width/2;
         double half_height = (double)height/2;
 
         double centerPosition = center ? half_height : 0;
 
-        Option o = new Option();
+        JSONObject o = new JSONObject();
         o.put("y1", centerPosition);
         o.put("y2", centerPosition);
-        o.put("x2", chart.width());
+        o.put("x2", chart.area("width"));
         root.append(this.axisLine(o));
 
         double min = this.scale.min();
@@ -67,7 +63,7 @@ public class RuleGrid extends RangeGrid {
 
             Transform axis = root.group().translate(this.values.getDouble(i), centerPosition );
 
-            Option lineOpt = new Option();
+            JSONObject lineOpt = new JSONObject();
             lineOpt.put("y1",center ? -bar : 0);
             lineOpt.put("y2",bar);
             lineOpt.put("stroke", chart.theme("gridAxisBorderColor"));
@@ -76,7 +72,7 @@ public class RuleGrid extends RangeGrid {
             axis.append(line(lineOpt));
 
             if (!isZero || (isZero && !hideZero)) {
-                Option textOpt = new Option();
+                JSONObject textOpt = new JSONObject();
                 textOpt.put("x", 0);
                 textOpt.put("y", bar*2 + 4);
                 textOpt.put("text-anchor", "middle");
@@ -90,17 +86,17 @@ public class RuleGrid extends RangeGrid {
 
     @Override
     protected void drawBottom(Transform root) {
-        int width = chart.width();
-        int height = chart.height();
+        int width = chart.area("width");
+        int height = chart.area("height");
         double half_width = (double)width/2;
         double half_height = (double)height/2;
 
         double centerPosition = center ? -half_height : 0;
 
-        Option o = new Option();
+        JSONObject o = new JSONObject();
         o.put("y1", centerPosition);
         o.put("y2", centerPosition);
-        o.put("x2", chart.width());
+        o.put("x2", chart.area("width"));
         root.append(this.axisLine(o));
 
         double min = this.scale.min();
@@ -111,7 +107,7 @@ public class RuleGrid extends RangeGrid {
 
             Transform axis = root.group().translate(this.values.getDouble(i), centerPosition );
 
-            Option lineOpt = new Option();
+            JSONObject lineOpt = new JSONObject();
             lineOpt.put("y1",center ? -bar : 0);
             lineOpt.put("y2",center ? bar : -bar);
             lineOpt.put("stroke", chart.theme("gridAxisBorderColor"));
@@ -120,7 +116,7 @@ public class RuleGrid extends RangeGrid {
             axis.append(line(lineOpt));
 
             if (!isZero || (isZero && !hideZero)) {
-                Option textOpt = new Option();
+                JSONObject textOpt = new JSONObject();
                 textOpt.put("x", 0);
                 textOpt.put("y", -bar*2);
                 textOpt.put("text-anchor", "middle");
@@ -134,17 +130,17 @@ public class RuleGrid extends RangeGrid {
 
     @Override
     protected void drawLeft(Transform root) {
-        int width = chart.width();
-        int height = chart.height();
+        int width = chart.area("width");
+        int height = chart.area("height");
         double half_width = (double)width/2;
         double half_height = (double)height/2;
 
         double centerPosition = center ? half_width : 0;
 
-        Option o = new Option();
+        JSONObject o = new JSONObject();
         o.put("x1", centerPosition);
         o.put("x2", centerPosition);
-        o.put("y2", chart.height());
+        o.put("y2", chart.area("height"));
         root.append(this.axisLine(o));
 
         double min = this.scale.min();
@@ -155,7 +151,7 @@ public class RuleGrid extends RangeGrid {
 
             Transform axis = root.group().translate(centerPosition, this.values.getDouble(i));
 
-            Option lineOpt = new Option();
+            JSONObject lineOpt = new JSONObject();
             lineOpt.put("x1",center ? -bar : 0);
             lineOpt.put("x2",bar);
             lineOpt.put("stroke", chart.theme("gridAxisBorderColor"));
@@ -164,7 +160,7 @@ public class RuleGrid extends RangeGrid {
             axis.append(line(lineOpt));
 
             if (!isZero || (isZero && !hideZero)) {
-                Option textOpt = new Option();
+                JSONObject textOpt = new JSONObject();
                 textOpt.put("x", 2*bar);
                 textOpt.put("y", bar-2);
                 textOpt.put("text-anchor", "start");
@@ -179,17 +175,17 @@ public class RuleGrid extends RangeGrid {
 
     @Override
     protected void drawRight(Transform root) {
-        int width = chart.width();
-        int height = chart.height();
+        int width = chart.area("width");
+        int height = chart.area("height");
         double half_width = (double)width/2;
         double half_height = (double)height/2;
 
         double centerPosition = center ? -half_width : 0;
 
-        Option o = new Option();
+        JSONObject o = new JSONObject();
         o.put("x1", centerPosition);
         o.put("x2", centerPosition);
-        o.put("y2", chart.width());
+        o.put("y2", chart.area("width"));
         root.append(this.axisLine(o));
 
         double min = this.scale.min();
@@ -200,7 +196,7 @@ public class RuleGrid extends RangeGrid {
 
             Transform axis = root.group().translate(centerPosition, this.values.getDouble(i));
 
-            Option lineOpt = new Option();
+            JSONObject lineOpt = new JSONObject();
             lineOpt.put("x1",center ? -bar : 0);
             lineOpt.put("x2",center ? bar : -bar);
             lineOpt.put("stroke", chart.theme("gridAxisBorderColor"));
@@ -209,7 +205,7 @@ public class RuleGrid extends RangeGrid {
             axis.append(line(lineOpt));
 
             if (!isZero || (isZero && !hideZero)) {
-                Option textOpt = new Option();
+                JSONObject textOpt = new JSONObject();
                 textOpt.put("x", -bar - 4 );
                 textOpt.put("y", bar-2);
                 textOpt.put("text-anchor", "middle");

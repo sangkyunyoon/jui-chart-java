@@ -42,12 +42,10 @@ reference to https://github.com/seogi1004/jui
 # Sample 
 ```java
 
-// Option is equals JSONObject  
-// OptionArray is equals JSONArray  
+// JSONObject is equals JSONObject
+// JSONArray is equals JSONArray
 
 import com.jennifer.ui.chart.ChartBuilder;
-import com.jennifer.ui.util.Option;
-import com.jennifer.ui.util.OptionArray;
 import com.jennifer.ui.util.TimeUtil;
 
 public class ChartUtil {

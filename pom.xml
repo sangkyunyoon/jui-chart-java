@@ -12,7 +12,7 @@
 
     <groupId>com.jennifersoft.chart</groupId>
     <artifactId>chart</artifactId>
-    <version>0.3</version>
+    <version>0.4</version>
     <packaging>jar</packaging>
 
     <name>Jennifer Simple SVG Chart</name>
@@ -130,7 +130,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.5</version>
         </dependency>
 
     </dependencies>

@@ -31,7 +31,7 @@ import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 
-import static com.jennifer.ui.util.Option.opt;
+
 
 /**
  * Created by Jayden on 2014-10-24.
@@ -39,15 +39,11 @@ import static com.jennifer.ui.util.Option.opt;
 public class RangeGrid extends Grid {
     protected int step;
     protected boolean nice;
-    protected OptionArray ticks;
+    protected JSONArray ticks;
     protected int bar;
 
-    protected OptionArray values;
+    protected JSONArray values;
     protected String DEFAULT_FORMAT = "###";  // DecimalFormat
-
-    public RangeGrid(Orient orient, ChartBuilder chart, Option options) {
-        super(orient, chart, options);
-    }
 
     public RangeGrid(Orient orient, ChartBuilder chart, JSONObject options) {
         super(orient, chart, options);
@@ -60,12 +56,12 @@ public class RangeGrid extends Grid {
 
     @Override
     protected void drawTop(Transform root) {
-        int full_height = chart.height();
+        int full_height = chart.area("height");
 
         boolean hasLine = options.optBoolean("line", false);
 
         if (!hasLine) {
-            root.append(this.axisLine(opt().x2(chart.width())));
+            root.append(this.axisLine(new JSONObject().put("x2", chart.area("width"))));
         }
 
         double min = this.scale.min();
@@ -76,14 +72,14 @@ public class RangeGrid extends Grid {
 
             Transform axis = root.group().translate(this.values.getDouble(i), 0);
 
-            Option lineOpt = new Option();
+            JSONObject lineOpt = new JSONObject();
             lineOpt.put("y2",hasLine ? full_height : -bar);
             lineOpt.put("stroke", chart.theme(isZero, "gridActiveBorderColor", "gridAxisBorderColor"));
             lineOpt.put("stroke-width", chart.theme(isZero, "gridActiveBorderWidth", "gridBorderWidth"));
 
             axis.append(line(lineOpt));
 
-            Option textOpt = new Option();
+            JSONObject textOpt = new JSONObject();
             textOpt.put("x", 0);
             textOpt.put("y", -bar - 4);
             textOpt.put("text-anchor", "middle");
@@ -95,13 +91,13 @@ public class RangeGrid extends Grid {
 
     @Override
     protected void drawBottom(Transform root) {
-        int full_height = chart.height();
+        int full_height = chart.area("height");
 
         boolean hasLine = options.optBoolean("line", false);
 
         if (!hasLine) {
-            Option o = new Option();
-            o.put("x2", chart.width());
+            JSONObject o = new JSONObject();
+            o.put("x2", chart.area("width"));
             root.append(this.axisLine(o));
         }
 
@@ -113,14 +109,14 @@ public class RangeGrid extends Grid {
 
             Transform axis = root.group().translate(this.values.getDouble(i), 0);
 
-            Option lineOpt = new Option();
+            JSONObject lineOpt = new JSONObject();
             lineOpt.put("y2",hasLine ? -full_height : bar);
             lineOpt.put("stroke", chart.theme(isZero, "gridActiveBorderColor", "gridAxisBorderColor"));
             lineOpt.put("stroke-width", chart.theme(isZero, "gridActiveBorderWidth", "gridBorderWidth"));
 
             axis.append(line(lineOpt));
 
-            Option textOpt = new Option();
+            JSONObject textOpt = new JSONObject();
             textOpt.put("x", 0);
             textOpt.put("y", bar * 3);
             textOpt.put("text-anchor", "middle");
@@ -133,13 +129,13 @@ public class RangeGrid extends Grid {
 
     @Override
     protected void drawLeft(Transform root) {
-        int full_width = chart.width();
+        int full_width = chart.area("width");
 
         boolean hasLine = options.optBoolean("line", false);
 
         if (!hasLine) {
-            Option o = new Option();
-            o.put("y2", chart.height());
+            JSONObject o = new JSONObject();
+            o.put("y2", chart.area("height"));
             root.append(this.axisLine(o));
         }
 
@@ -151,7 +147,7 @@ public class RangeGrid extends Grid {
 
             Transform axis = root.group().translate(0, values.getDouble(i));
 
-            Option lineOpt = new Option();
+            JSONObject lineOpt = new JSONObject();
             lineOpt.put("x2",hasLine ? full_width : -bar);
             lineOpt.put("stroke", chart.theme(isZero, "gridActiveBorderColor", "gridAxisBorderColor"));
             lineOpt.put("stroke-width", chart.theme(isZero, "gridActiveBorderWidth", "gridBorderWidth"));
@@ -160,7 +156,7 @@ public class RangeGrid extends Grid {
 
             if (!options.optBoolean("hideText", false)) {
 
-                Option textOpt = new Option();
+                JSONObject textOpt = new JSONObject();
                 textOpt.put("x", -bar -4 );
                 textOpt.put("y", bar);
                 textOpt.put("text-anchor", "end");
@@ -176,13 +172,13 @@ public class RangeGrid extends Grid {
 
     @Override
     protected void drawRight(Transform root) {
-        int full_width = chart.width();
+        int full_width = chart.area("width");
 
         boolean hasLine = options.optBoolean("line", false);
 
         if (!hasLine) {
-            Option o = new Option();
-            o.put("y2", chart.height());
+            JSONObject o = new JSONObject();
+            o.put("y2", chart.area("height"));
             root.append(this.axisLine(o));
         }
 
@@ -194,7 +190,7 @@ public class RangeGrid extends Grid {
 
             Transform axis = root.group().translate(0, values.getDouble(i));
 
-            Option lineOpt = new Option();
+            JSONObject lineOpt = new JSONObject();
             lineOpt.put("x2",hasLine ? -full_width : bar);
             lineOpt.put("stroke", chart.theme(isZero, "gridActiveBorderColor", "gridAxisBorderColor"));
             lineOpt.put("stroke-width", chart.theme(isZero, "gridActiveBorderWidth", "gridBorderWidth"));
@@ -203,7 +199,7 @@ public class RangeGrid extends Grid {
 
             if (!options.optBoolean("hideText", false)) {
 
-                Option textOpt = new Option();
+                JSONObject textOpt = new JSONObject();
                 textOpt.put("x", bar + 4 );
                 textOpt.put("y", bar);
                 textOpt.put("text-anchor", "start");
@@ -219,13 +215,13 @@ public class RangeGrid extends Grid {
     public void drawBefore() {
         initDomain();
 
-        int width = chart.width(), height = chart.height();
-        scale.domain(JSONUtil.clone(options.array("domain")));
+        int width = chart.area("width"), height = chart.area("height");
+        scale.domain(JSONUtil.clone(options.getJSONArray( "domain")));
 
         if (orient == Orient.LEFT || orient == Orient.RIGHT) {
-            this.scale.range((OptionArray)new OptionArray().put(height).put(0));
+            this.scale.range((JSONArray)new JSONArray().put(height).put(0));
         } else {
-            this.scale.range((OptionArray)new OptionArray().put(0).put(width));
+            this.scale.range((JSONArray)new JSONArray().put(0).put(width));
         }
 
         this.step = options.optInt("step", 10);
@@ -233,7 +229,7 @@ public class RangeGrid extends Grid {
         this.ticks = ((LinearScale)scale).ticks(this.step, this.nice);
         this.bar = 6;
 
-        this.values = new OptionArray();
+        this.values = new JSONArray();
 
         for (int i = 0, len = ticks.length(); i < len; i++) {
             this.values.put(this.scale.get(this.ticks.getDouble(i)));
@@ -266,23 +262,23 @@ public class RangeGrid extends Grid {
 
             double size = 0;
             if (orient == Orient.LEFT || orient == Orient.RIGHT) {
-                size = chart.height();
+                size = chart.area("height");
             } else {
-                size = chart.width();
+                size = chart.area("width");
             }
 
             if (options.get("target") instanceof String) {
-                OptionArray list = new OptionArray();
-                list.put(options.string("target"));
+                JSONArray list = new JSONArray();
+                list.put(options.getString("target"));
                 options.put("target", list);
             }
 
             double max = options.optDouble("max", 0);
             double min = options.optDouble("min", 0);
 
-            JSONArray target = options.array("target");
-            OptionArray domain = new OptionArray();
-            Option series = chart.series();
+            JSONArray target = options.getJSONArray( "target");
+            JSONArray domain = new JSONArray();
+            JSONObject series = chart.series();
 
             for (int i = 0, len = target.length(); i < len; i++) {
                 String key = target.getString(i);
@@ -305,7 +301,7 @@ public class RangeGrid extends Grid {
                 ChartUnit chartUnit = (ChartUnit)options.get("unit");
                 unit = chartUnit.getUnit(Math.abs(max - min), size);
             } else {
-                unit = options.optDouble("unit", Math.ceil((max - min) / options.D("step")));
+                unit = options.optDouble("unit", Math.ceil((max - min) / options.getDouble("step")));
             }
 
 

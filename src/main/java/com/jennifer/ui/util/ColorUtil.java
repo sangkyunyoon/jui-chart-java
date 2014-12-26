@@ -28,7 +28,6 @@ import org.json.JSONObject;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.jennifer.ui.util.Option.opt;
 
 /**
  * Created by yuni on 2014-10-26.
@@ -64,10 +63,10 @@ public class ColorUtil {
         if (!m.matches()) return color;
 
         String type = m.group(1).trim();
-        Option attr = parseAttr(type, m.group(2).trim());
-        OptionArray stops = parseStop(m.group(3).trim());
+        JSONObject attr = parseAttr(type, m.group(2).trim());
+        JSONArray stops = parseStop(m.group(3).trim());
 
-        Option o = new Option();
+        JSONObject o = new JSONObject();
         o.put("type", type);
 
         o = JSONUtil.extend(o, attr);
@@ -78,15 +77,15 @@ public class ColorUtil {
         return o;
     }
 
-    private static OptionArray parseStop(String str) {
-        OptionArray list = new OptionArray();
+    private static JSONArray parseStop(String str) {
+        JSONArray list = new JSONArray();
         String[] stop_list = str.split(SPLITTER);
         for(String stop : stop_list) {
             String[] arr = stop.trim().split(STOP_SPLITTER);
 
             if (arr.length == 0) continue;
 
-            Option o = opt();
+            JSONObject o = new JSONObject();
             list.put(o);
             if (arr.length == 1) {
                 o.put("stop-color", arr[0]);
@@ -100,7 +99,7 @@ public class ColorUtil {
         int start = -1;
         int end = -1;
         for(int i = 0, len = list.length(); i < len; i++) {
-            Option stop = (Option) list.object(i);
+            JSONObject stop = list.getJSONObject(i);
 
             if (i == 0) {
                 if (!stop.has("offset")) stop.put("offset", 0);
@@ -115,15 +114,15 @@ public class ColorUtil {
 
                 int count = end - start;
 
-                double endOffset = list.object(end).getDouble("offset");
-                double startOffset = list.object(start).getDouble("offset");
+                double endOffset = list.getJSONObject(end).getDouble("offset");
+                double startOffset = list.getJSONObject(start).getDouble("offset");
 
                 double dist  = endOffset - startOffset;
                 double value = dist / count;
 
                 double offset = startOffset + value;
                 for(int index = start + 1; index < end; index++) {
-                    list.object(index).put("offset", offset);
+                    list.getJSONObject(index).put("offset", offset);
 
                     offset += value;
                 }
@@ -136,8 +135,8 @@ public class ColorUtil {
         return list;
     }
 
-    private static Option parseAttr(String type, String direction) {
-        Option o = opt();
+    private static JSONObject parseAttr(String type, String direction) {
+        JSONObject o = new JSONObject();
 
         if (GRADIENT_LINEAR.equals(type)) {
              if ("".equals(direction)) {
@@ -166,22 +165,22 @@ public class ColorUtil {
                 String[] arr = direction.split(DIRECTION_SPLITTER);
 
                 if (arr.length == 4) {
-                    OptionArray list = new OptionArray();
+                    JSONArray list = new JSONArray();
                     for(int i = 0, len = arr.length; i < len; i++) {
                         list.put(i, arr[i]);
                     }
 
-                    o.put("x1", list.D(0)).put("y1", list.D(1)).put("x2", list.D(2)).put("y2", list.D(3));
+                    o.put("x1", list.getDouble(0)).put("y1", list.getDouble(1)).put("x2", list.getDouble(2)).put("y2", list.getDouble(3));
                 }
             }
         } else {
             String[] arr = direction.split(DIRECTION_SPLITTER);
-            OptionArray list = new OptionArray();
+            JSONArray list = new JSONArray();
             for(int i = 0, len = arr.length; i < len; i++) {
                 list.put(i, arr[i]);
             }
 
-            o.put("cx", list.D(0)).put("cy", list.D(1)).put("r", list.D(2)).put("fx", list.D(3)).put("fy", list.D(4));
+            o.put("cx", list.getDouble(0)).put("cy", list.getDouble(1)).put("r", list.getDouble(2)).put("fx", list.getDouble(3)).put("fy", list.getDouble(4));
         }
 
         return o;

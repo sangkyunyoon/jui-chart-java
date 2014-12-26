@@ -25,13 +25,13 @@ package com.jennifer.ui.chart.brush;
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.grid.Grid;
 import com.jennifer.ui.util.MathUtil;
-import com.jennifer.ui.util.Option;
+
 import com.jennifer.ui.util.dom.Path;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONObject;
 
 import static com.jennifer.ui.util.DomUtil.el;
-import static com.jennifer.ui.util.Option.opt;
+
 
 /**
  * Created by Jayden on 2014-10-27.
@@ -54,19 +54,16 @@ public class GagueBrush extends DonutBrush {
     private double outerRadius;
     private double innerRadius;
 
-    public GagueBrush(ChartBuilder chart, Option options) {
-        super(chart, options);
-    }
-
     public GagueBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
     }
 
+
     @Override
     public void drawBefore() {
-        root = el("g").translate(chart.x(), chart.y());
+        root = el("g").translate(chart.area("x"), chart.area("y"));
 
-        int width = chart.width(), height = chart.height();
+        int width = chart.area("width"), height = chart.area("height");
         int min = width;
 
         if (height < min) {
@@ -104,11 +101,11 @@ public class GagueBrush extends DonutBrush {
             endAngle = 359.99999;
         }
 
-        Transform g = this.drawDonut(centerX, centerY, innerRadius, outerRadius, startAngle + currentAngle, endAngle - currentAngle, opt().fill(chart.theme("gaugeBackgroundColor")));
+        Transform g = this.drawDonut(centerX, centerY, innerRadius, outerRadius, startAngle + currentAngle, endAngle - currentAngle, new JSONObject().put("fill",chart.theme("gaugeBackgroundColor")));
 
         root.append(g);
 
-        g = this.drawDonut(centerX, centerY, innerRadius, outerRadius, startAngle, currentAngle, opt().fill(color(0)));
+        g = this.drawDonut(centerX, centerY, innerRadius, outerRadius, startAngle, currentAngle, new JSONObject().put("fill",color(0)));
 
         root.append(g);
 
@@ -120,31 +117,31 @@ public class GagueBrush extends DonutBrush {
         g = createText(startAngle, endAngle, min, max, value);
         root.append(g);
 
-        return opt().put("root", root);
+        return new JSONObject().put("root", root);
     }
 
     private Transform createText(double startAngle, double endAngle, double min, double max, double value) {
         Transform g = el("g").translate(centerX, centerY);
 
-        g.text(opt()
-            .x(0)
-            .y((arrow) ? 70 : 10)
-            .textAnchor("middel")
-            .fontFamily(chart.theme("fontFamily"))
-            .fontSize("3em")
-            .fontWeight(1000)
-            .fill(color(0))
+        g.text(new JSONObject()
+            .put("x", 0)
+            .put("y", (arrow) ? 70 : 10)
+            .put("text-anchor","middel")
+            .put("font-family", chart.theme("fontFamily"))
+            .put("font-size", "3em")
+            .put("font-weight", 1000)
+            .put("fill",color(0))
         ).textNode(value+"");
 
         if (!"".equals(unitText)) {
-            g.text(opt()
-                .x(0)
-                .y(100)
-                .textAnchor("middel")
-                .fontFamily(chart.theme("fontFamily"))
-                .fontSize("1.5em")
-                .fontWeight(500)
-                .fill(chart.theme("gaugeFontColor"))
+            g.text(new JSONObject()
+                .put("x", 0)
+                .put("y", 100)
+                .put("text-anchor","middel")
+                .put("font-family", chart.theme("fontFamily"))
+                .put("font-size", "1.5em")
+                .put("font-weight", 500)
+                .put("fill",chart.theme("gaugeFontColor"))
             ).textNode(unitText);
         }
 
@@ -153,17 +150,17 @@ public class GagueBrush extends DonutBrush {
         double startY = -outerRadius;
 
         // min
-        Option obj = MathUtil.rotate(startX, startY, MathUtil.radian(startAngle));
+        JSONObject obj = MathUtil.rotate(startX, startY, MathUtil.radian(startAngle));
 
-        startX = obj.x();
-        startY = obj.y();
+        startX = obj.getDouble("x");
+        startY = obj.getDouble("y");
 
-        g.text(opt()
-            .x(obj.x() + 30)
-            .y(obj.y() + 20)
-            .textAnchor("middel")
-            .fontFamily(chart.theme("fontFamily"))
-            .fill(chart.theme("gaugeFontColor"))
+        g.text(new JSONObject()
+            .put("x", obj.getDouble("x") + 30)
+            .put("y", obj.getDouble("y") + 20)
+            .put("text-anchor","middel")
+            .put("font-family", chart.theme("fontFamily"))
+            .put("fill",chart.theme("gaugeFontColor"))
         ).textNode(min+"");
 
 
@@ -171,12 +168,12 @@ public class GagueBrush extends DonutBrush {
         // outer arc 에 대한 지점 설정
         obj = MathUtil.rotate(startX, startY, MathUtil.radian(endAngle));
 
-        g.text(opt()
-            .x(obj.x() + 30)
-            .y(obj.y() + 20)
-            .textAnchor("middel")
-            .fontFamily(chart.theme("fontFamily"))
-            .fill(chart.theme("gaugeFontColor"))
+        g.text(new JSONObject()
+            .put("x", obj.getDouble("x") + 30)
+            .put("y", obj.getDouble("y") + 20)
+            .put("text-anchor","middel")
+            .put("font-family", chart.theme("fontFamily"))
+            .put("fill",chart.theme("gaugeFontColor"))
         ).textNode(max+"");
 
         return g;
@@ -188,10 +185,10 @@ public class GagueBrush extends DonutBrush {
         double startX = 0;
         double startY = -(outerRadius + 5);
 
-        Path path = g.path(opt()
-            .stroke(chart.theme("gaugeArrowColor"))
-            .strokeWidth(0.2)
-            .fill(chart.theme("gaugeArrowColor"))
+        Path path = g.path(new JSONObject()
+            .put("stroke", chart.theme("gaugeArrowColor"))
+            .put("stroke-width",0.2)
+            .put("fill",chart.theme("gaugeArrowColor"))
         );
 
         path.MoveTo(startX, startY);
@@ -203,8 +200,8 @@ public class GagueBrush extends DonutBrush {
         path.rotate(startAngle);
         path.rotate(endAngle + startAngle);
 
-        g.circle(opt().cx(0).cy(0).r(5).fill(chart.theme("gaugeArrowColor")));
-        g.circle(opt().cx(0).cy(0).r(2).fill(chart.theme("gaugeArrowColor")));
+        g.circle(new JSONObject().put("cx",0).put("cy",0).put("r",5).put("fill",chart.theme("gaugeArrowColor")));
+        g.circle(new JSONObject().put("cx",0).put("cy",0).put("r",2).put("fill",chart.theme("gaugeArrowColor")));
 
         return g;
     }

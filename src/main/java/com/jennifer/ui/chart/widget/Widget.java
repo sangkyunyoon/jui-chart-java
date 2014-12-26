@@ -26,23 +26,19 @@ import com.jennifer.ui.chart.AbstractDraw;
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.grid.Orient;
 import com.jennifer.ui.util.JSONUtil;
-import com.jennifer.ui.util.Option;
+
 import org.json.JSONObject;
 
 public abstract class Widget extends AbstractDraw {
 
     protected ChartBuilder chart;
-    protected Option options;
+    protected JSONObject options;
 
-    public Widget(ChartBuilder chart, Option options) {
+    public Widget(ChartBuilder chart, JSONObject options) {
         this.chart = chart;
         this.options = options;
 
         init();
-    }
-
-    public Widget(ChartBuilder chart, JSONObject options) {
-        this(chart, JSONUtil.clone(options));
     }
 
     public void init() {

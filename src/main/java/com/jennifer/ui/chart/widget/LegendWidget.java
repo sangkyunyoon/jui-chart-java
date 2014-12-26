@@ -25,29 +25,26 @@ package com.jennifer.ui.chart.widget;
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.grid.Orient;
 import com.jennifer.ui.util.JSONUtil;
-import com.jennifer.ui.util.Option;
-import com.jennifer.ui.util.OptionArray;
+
+
 import com.jennifer.ui.util.dom.Transform;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static com.jennifer.ui.util.DomUtil.el;
-import static com.jennifer.ui.util.Option.opt;
+
 
 /**
  * Created by Jayden on 2014-11-03.
  */
 public class LegendWidget extends Widget {
     private Transform root;
-    private OptionArray brush;
+    private JSONArray brush;
     private String position;
     private String align;
     private String key;
     private double fontWidth;
     private double fontHeight;
-
-    public LegendWidget(ChartBuilder chart, Option options) {
-        super(chart, options);
-    }
 
     public LegendWidget(ChartBuilder chart, JSONObject options) {
         super(chart, options);
@@ -57,7 +54,7 @@ public class LegendWidget extends Widget {
     public void drawBefore() {
         root = el("g");
 
-        brush = JSONUtil.clone(options.brush());
+        brush = JSONUtil.clone(options.getJSONArray("brush"));
 
         if (brush.length() == 0) {
             brush.put(0);
@@ -65,7 +62,7 @@ public class LegendWidget extends Widget {
 
         position = options.optString("position", "bottom");
         align = options.optString("align", "center");
-        key = options.key();
+        key = options.getString("key");
         fontWidth = chart.themeDouble("legendFontSize");
         fontHeight = fontWidth;
     }
@@ -77,15 +74,15 @@ public class LegendWidget extends Widget {
 
         for (int i = 0, len = brush.length(); i < len; i++) {
             int index = brush.getInt(i);
-            Option brushObject = chart.brush(index);
+            JSONObject brushObject = chart.brush(index);
 
-            OptionArray arr = getLegendIcon(brushObject);
+            JSONArray arr = getLegendIcon(brushObject);
 
             for (int k = 0, kLen = arr.length(); k < kLen; k++) {
-                Option obj = (Option) arr.object(k);
+                JSONObject obj =  arr.getJSONObject( k);
 
-                double w = obj.width();
-                double h = obj.height();
+                double w = obj.getDouble("width");
+                double h = obj.getDouble("height");
                 Transform icon = (Transform)obj.get("icon");
 
                 //root.append(icon);
@@ -112,37 +109,37 @@ public class LegendWidget extends Widget {
 
 
         if ("bottom".equals(position) || "top".equals(position)) {
-            y = ("bottom".equals(position)) ? chart.y2() + chart.padding("bottom") - max_height : chart.y() - chart.padding("top");
+            y = ("bottom".equals(position)) ? chart.area("y2") + chart.padding("bottom") - max_height : chart.area("y") - chart.padding("top");
 
             if ("start".equals(align)) {
-                x = chart.x();
+                x = chart.area("x");
             } else if ("center".equals(align)) {
-                x = chart.x() + (chart.width() / 2.0 - total_width / 2.0);
+                x = chart.area("x") + (chart.area("width") / 2.0 - total_width / 2.0);
             } else if ("end".equals(align)) {
-                x = chart.x2() - total_width;
+                x = chart.area("x2") - total_width;
             }
 
         } else {
-            x = ("left".equals(position)) ? chart.x() - chart.padding("left") : chart.x2() + chart.padding("right") - max_width;
+            x = ("left".equals(position)) ? chart.area("x") - chart.padding("left") : chart.area("x2") + chart.padding("right") - max_width;
 
             if ("start".equals(align)) {
-                y = chart.y();
+                y = chart.area("y");
             } else if ("center".equals(align)) {
-                y = chart.y() + (chart.height() / 2.0 - total_height / 2.0);
+                y = chart.area("y") + (chart.area("height") / 2.0 - total_height / 2.0);
             } else if ("end".equals(align)) {
-                y = chart.y2() - total_height;
+                y = chart.area("y2") - total_height;
             }
 
         }
 
         root.translate(x, y);
 
-        return opt().put("root", root);
+        return new JSONObject().put("root", root);
     }
 
-    private OptionArray getLegendIcon(Option brushObject) {
-        OptionArray arr = new OptionArray();
-        OptionArray data = JSONUtil.clone(brushObject.array("target"));
+    private JSONArray getLegendIcon(JSONObject brushObject) {
+        JSONArray arr = new JSONArray();
+        JSONArray data = JSONUtil.clone(brushObject.getJSONArray("target"));
 
         if (key != null && key.length() > 0) {
             data = chart.data();
@@ -154,7 +151,7 @@ public class LegendWidget extends Widget {
             String text = "";
 
             if (key != null && key.length() > 0) {
-                text = chart.series(key).optString("text",  data.object(i).getString(key));
+                text = chart.series(key).optString("text",  data.getJSONObject(i).getString(key));
             } else {
                 String target = data.getString(i);
                 text = chart.series(target).optString("text", target);
@@ -164,28 +161,28 @@ public class LegendWidget extends Widget {
             double width = Math.min(rectWidth, fontHeight);
             double height = width;
 
-            Transform group = root.group((Option) opt().put("class", "legend icon"));
+            Transform group = root.group( new JSONObject().put("class", "legend icon"));
 
-            Transform rect = group.rect(opt()
-                    .x(0)
-                    .y(0)
-                    .width(width)
-                    .height(height)
-                    .fill(chart.color(i, brushObject.optJSONArray("colors")))
+            Transform rect = group.rect(new JSONObject()
+                    .put("x", 0)
+                    .put("y", 0)
+                    .put("width", width)
+                    .put("height", height)
+                    .put("fill", chart.color(i, brushObject.optJSONArray("colors")))
             );
 
-            group.text(opt()
-                .x(width + 4)
-                .y(fontHeight - 3) // 3 is top, bottom font margin
-                .fontFamily(chart.theme("fontFamily"))
-                .fontSize(chart.theme("legendFontSize"))
-                .fill(chart.theme("legendFontColor"))
-                .textAnchor("start")
+            group.text(new JSONObject()
+                .put("x", width + 4)
+                .put("y", fontHeight - 3) // 3 is top, bottom font margin
+                .put("font-family", chart.theme("fontFamily"))
+                .put("font-size", chart.theme("legendFontSize"))
+                .put("fill", chart.theme("legendFontColor"))
+                .put("text-anchor", "start")
             ).textNode(text);
 
-            arr.put(opt()
-                .width(width + 4 + rectWidth + (i == count - 1 ? 0 : 10))
-                .height(height + 4)
+            arr.put(new JSONObject()
+                .put("width", width + 4 + rectWidth + (i == count - 1 ? 0 : 10))
+                .put("height", height + 4)
                 .put("icon", group)
 
             );

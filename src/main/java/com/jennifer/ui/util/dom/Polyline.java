@@ -22,13 +22,15 @@
 
 package com.jennifer.ui.util.dom;
 
-import com.jennifer.ui.util.Option;
-import com.jennifer.ui.util.OptionArray;
+
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class Polyline extends Transform {
-    private OptionArray orders = new OptionArray();
+    private JSONArray orders = new JSONArray();
 
-    public Polyline(Option o) {
+    public Polyline(JSONObject o) {
         super("polyline", o);
     }
 

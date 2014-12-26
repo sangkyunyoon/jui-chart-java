@@ -23,7 +23,6 @@
 package com.jennifer.ui.util.scale;
 
 import com.jennifer.ui.util.MathUtil;
-import com.jennifer.ui.util.OptionArray;
 import org.json.JSONArray;
 
 /**
@@ -41,7 +40,7 @@ public class LinearScale extends AbstractScale {
         super();
     }
 
-    public LinearScale(OptionArray domain, OptionArray range) {
+    public LinearScale(JSONArray domain, JSONArray range) {
         super(domain, range);
     }
 
@@ -49,7 +48,7 @@ public class LinearScale extends AbstractScale {
         int index = -1;
         int target;
 
-        OptionArray domain = domain();
+        JSONArray domain = domain();
         
         for (int i = 0, len = domain.length(); i < len; i++) {
 
@@ -73,7 +72,7 @@ public class LinearScale extends AbstractScale {
             }
         }
 
-        OptionArray range = range();
+        JSONArray range = range();
 
         if (range.length() == 0) {
             if (index == 0) {
@@ -148,7 +147,7 @@ public class LinearScale extends AbstractScale {
 
     }
 
-    public LinearScale rangeRound(OptionArray range) {
+    public LinearScale rangeRound(JSONArray range) {
         _round = true;
 
         return (LinearScale)this.range(range);
@@ -158,24 +157,24 @@ public class LinearScale extends AbstractScale {
         return new LinearScale(this.range(), this.domain()).get(y);
     }
 
-    public OptionArray ticks() {
+    public JSONArray ticks() {
         return ticks(10, false, 10000000);
     }
 
-    public OptionArray ticks(int count, boolean isNice) {
+    public JSONArray ticks(int count, boolean isNice) {
         return ticks(count, isNice, 10000000);
     }
 
-    public OptionArray ticks(int count, boolean isNice, int intNumber) {
-        OptionArray list = new OptionArray();
+    public JSONArray ticks(int count, boolean isNice, int intNumber) {
+        JSONArray list = new JSONArray();
 
-        OptionArray domain = domain();
+        JSONArray domain = domain();
 
         if (domain.getDouble(0) == 0 && domain.getDouble(1) == 0) {
-            return new OptionArray();
+            return new JSONArray();
         }
 
-        OptionArray arr = MathUtil.nice(domain.getDouble(0), domain.getDouble(1), count, isNice );
+        JSONArray arr = MathUtil.nice(domain.getDouble(0), domain.getDouble(1), count, isNice );
 
         double min = arr.getDouble(0);
         double max = arr.getDouble(1);

@@ -23,6 +23,9 @@
 package com.jennifer.ui.util;
 
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 /**
  * Created by yuni on 2014-10-24.
  */
@@ -35,8 +38,8 @@ public class MathUtil {
         return x * Math.sin(radian) + y * Math.cos(radian);
     }
 
-    public static Option rotate(double x, double y, double radian) {
-        return new Option().x(rotateX(x, y, radian)).y(rotateY(x, y, radian));
+    public static JSONObject rotate(double x, double y, double radian) {
+        return new JSONObject().put("x", rotateX(x, y, radian)).put("y", rotateY(x, y, radian));
     }
 
     public static double radian (double degree) {
@@ -87,7 +90,7 @@ public class MathUtil {
       return niceNum(range, false);
     }
 
-    public static OptionArray nice(double min, double max, double ticks, boolean isNice) {
+    public static JSONArray nice(double min, double max, double ticks, boolean isNice) {
 
         double _max;
         double _min;
@@ -113,6 +116,6 @@ public class MathUtil {
         _niceMax = (isNice) ? Math.floor(_max / _tickSpacing) * _tickSpacing : _max;
 
 
-        return (OptionArray)new OptionArray().put(_niceMin).put(_niceMax).put(_range).put(_tickSpacing);
+        return new JSONArray().put(_niceMin).put(_niceMax).put(_range).put(_tickSpacing);
     }
 }

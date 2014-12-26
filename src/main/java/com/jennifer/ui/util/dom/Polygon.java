@@ -22,14 +22,14 @@
 
 package com.jennifer.ui.util.dom;
 
-import com.jennifer.ui.util.Option;
-import com.jennifer.ui.util.OptionArray;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class Polygon extends Transform {
 
-    private OptionArray orders = new OptionArray();
+    private JSONArray orders = new JSONArray();
 
-    public Polygon(Option o) {
+    public Polygon(JSONObject o) {
         super("polygon", o);
     }
 

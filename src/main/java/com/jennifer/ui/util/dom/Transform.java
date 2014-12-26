@@ -24,18 +24,17 @@ package com.jennifer.ui.util.dom;
 
 import com.jennifer.ui.util.DomUtil;
 import com.jennifer.ui.util.JSONUtil;
-import com.jennifer.ui.util.Option;
-import com.jennifer.ui.util.OptionArray;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Created by Jayden on 2014-10-27.
  */
 public class Transform extends DomUtil {
 
-    private Option orders = new Option();
+    private JSONObject orders = new JSONObject();
 
-    public Transform(String tagName, Option attr) {
+    public Transform(String tagName, JSONObject attr) {
         super(tagName, attr);
     }
 
@@ -69,7 +68,7 @@ public class Transform extends DomUtil {
 
     public String render(int tabIndex, int tabSize) {
 
-        OptionArray list = new OptionArray();
+        JSONArray list = new JSONArray();
         JSONArray names = orders.names();
 
         if (names != null) {
@@ -77,7 +76,7 @@ public class Transform extends DomUtil {
                 String key = names.getString(i);
 
                 if (orders.has(key)) {
-                    list.put(key + "(" + orders.string(key) + ")");
+                    list.put(key + "(" + orders.getString(key) + ")");
                 }
             }
 

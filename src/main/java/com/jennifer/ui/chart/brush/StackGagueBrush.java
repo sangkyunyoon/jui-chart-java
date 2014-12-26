@@ -23,12 +23,12 @@
 package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.ChartBuilder;
-import com.jennifer.ui.util.Option;
+
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONObject;
 
 import static com.jennifer.ui.util.DomUtil.el;
-import static com.jennifer.ui.util.Option.opt;
+
 
 /**
  * Created by Jayden on 2014-10-27.
@@ -49,17 +49,13 @@ public class StackGagueBrush extends DonutBrush {
     private double cut;
     private String title;
 
-    public StackGagueBrush(ChartBuilder chart, Option options) {
-        super(chart, options);
-    }
-
     public StackGagueBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
     }
 
     @Override
     public void drawBefore() {
-        int width = chart.width(), height = chart.height();
+        int width = chart.area("width"), height = chart.area("height");
         int min = width;
 
         if (height < min) {
@@ -71,7 +67,7 @@ public class StackGagueBrush extends DonutBrush {
         centerY = height / 2.0;
         outerRadius = w;
 
-        root = el("g").translate(chart.x(), chart.y());
+        root = el("g").translate(chart.area("x"), chart.area("y"));
 
         this.min =  options.optDouble("min", 0);
         this.max =  options.optDouble("max", 100);
@@ -99,26 +95,26 @@ public class StackGagueBrush extends DonutBrush {
 
 
             // 빈 공간 그리기
-            Transform g = this.drawDonut(centerX, centerY, innerRadius, outerRadius, startAngle + currentAngle, endAngle - currentAngle, opt()
-                .fill(chart.theme("gaugeBackgroundColor"))
+            Transform g = this.drawDonut(centerX, centerY, innerRadius, outerRadius, startAngle + currentAngle, endAngle - currentAngle, new JSONObject()
+                .put("fill",chart.theme("gaugeBackgroundColor"))
             );
 
             root.append(g);
 
             // 채워진 공간 그리기
-            g = this.drawDonut(centerX, centerY, innerRadius, outerRadius, startAngle, currentAngle, opt()
-                            .fill(color(i))
+            g = this.drawDonut(centerX, centerY, innerRadius, outerRadius, startAngle, currentAngle, new JSONObject()
+                            .put("fill",color(i))
             , true);
 
             root.append(g);
 
 
-            Transform text = root.text(opt()
-                .x(centerX + 2)
-                .y(centerY + Math.abs(outerRadius) - 5)
-                .fill(color(i))
-                .fontSize("12px")
-                .fontWeight("bold")
+            Transform text = root.text(new JSONObject()
+                .put("x", centerX + 2)
+                .put("y", centerY + Math.abs(outerRadius) - 5)
+                .put("fill",color(i))
+                .put("font-size", "12px")
+                .put("font-weight", "bold")
             );
 
             if(chart.data(i).has(title)) {
@@ -130,6 +126,6 @@ public class StackGagueBrush extends DonutBrush {
             outerRadius -= size;
         }
 
-        return opt().put("root", root);
+        return new JSONObject().put("root", root);
     }
 }

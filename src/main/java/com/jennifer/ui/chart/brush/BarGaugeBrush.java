@@ -24,7 +24,7 @@ package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.grid.Grid;
-import com.jennifer.ui.util.Option;
+
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,9 +46,6 @@ public class BarGaugeBrush extends Brush {
     private String align;
     private boolean split;
 
-    public BarGaugeBrush(ChartBuilder chart, Option options) {
-        super(chart, options);
-    }
     public BarGaugeBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
     }
@@ -57,9 +54,9 @@ public class BarGaugeBrush extends Brush {
     @Override
     public void drawBefore() {
 
-        root = (Transform)el("g").translate(chart.x(), chart.y()).put("class", "brush bar gauge");
+        root = (Transform)el("g").translate(chart.area("x"), chart.area("y")).put("class", "brush bar gauge");
 
-        max = chart.width();
+        max = chart.area("width");
 
         x = 0;
         y = 0;
@@ -85,11 +82,11 @@ public class BarGaugeBrush extends Brush {
 
             String color = color(i);
 
-            Option o = new Option()
-                    .x(x)
-                    .y(y + size/2 + cut)
-                    .textAnchor("end")
-                    .fill(color);
+            JSONObject o = new JSONObject()
+                    .put("x", x)
+                    .put("y", y + size/2 + cut)
+                    .put("text-anchor","end")
+                    .put("fill",color);
 
             String text = "";
             if (data.has(options.getString("title"))) {
@@ -100,12 +97,12 @@ public class BarGaugeBrush extends Brush {
 
             group.append(chart.text(o, text));
 
-            Option rectOpt = new Option()
-                    .x(x + cut)
-                    .y(y)
-                    .width(max)
-                    .height(size)
-                    .fill(chart.theme("gaugeBackgroundColor"));
+            JSONObject rectOpt = new JSONObject()
+                    .put("x", x + cut)
+                    .put("y", y)
+                    .put("width", max)
+                    .put("height", size)
+                    .put("fill",chart.theme("gaugeBackgroundColor"));
             group.rect(rectOpt);
 
             double value = data.getDouble("value") * max / 100;
@@ -118,12 +115,12 @@ public class BarGaugeBrush extends Brush {
                 startX += max - value;
             }
 
-            Option rectOpt2 = new Option()
-                    .x(startX)
-                    .y(y)
-                    .width(value)
-                    .height(size)
-                    .fill(color);
+            JSONObject rectOpt2 = new JSONObject()
+                    .put("x", startX)
+                    .put("y", y)
+                    .put("width", value)
+                    .put("height", size)
+                    .put("fill",color);
 
             group.rect(rectOpt2);
 
@@ -149,11 +146,11 @@ public class BarGaugeBrush extends Brush {
                 }
             }
 
-            Option textOpt = new Option()
-                    .x(textX)
-                    .y(y + size/2 + cut)
-                    .textAnchor(textAlign)
-                    .fill(textColor);
+            JSONObject textOpt = new JSONObject()
+                    .put("x", textX)
+                    .put("y", y + size/2 + cut)
+                    .put("text-anchor",textAlign)
+                    .put("fill",textColor);
 
             group.append(chart.text(textOpt, data.getDouble("value") + "%"));
 

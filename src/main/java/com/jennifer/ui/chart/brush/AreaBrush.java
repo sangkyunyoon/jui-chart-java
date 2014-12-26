@@ -22,32 +22,26 @@
 package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.ChartBuilder;
-import com.jennifer.ui.util.Option;
-import com.jennifer.ui.util.OptionArray;
 import com.jennifer.ui.util.dom.Path;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static com.jennifer.ui.util.DomUtil.el;
-import static com.jennifer.ui.util.Option.opt;
 
 public class AreaBrush extends LineBrush {
 
     private Transform root;
     private int maxY;
 
-    public AreaBrush(ChartBuilder chart, Option options) {
-        super(chart, options);
-    }
     public AreaBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
     }
 
     @Override
     public void drawBefore() {
-        root = el("g").translate(chart.x(), chart.y());
-        maxY = chart.height();
+        root = el("g").translate(chart.area("x"), chart.area("y"));
+        maxY = chart.area("height");
     }
 
     @Override
@@ -55,15 +49,15 @@ public class AreaBrush extends LineBrush {
         return drawArea(this.getXY());
     }
 
-    protected Object drawArea(OptionArray path) {
+    protected Object drawArea(JSONArray path) {
         for(int k = 0, len = path.length(); k < len; k++) {
-            Option o = (Option) path.object(k);
+            JSONObject o =  path.getJSONObject(k);
 
             Path p = createLine(o, k);
-            OptionArray xList = (OptionArray) o.array("x");
+            JSONArray xList = (JSONArray) o.getJSONArray("x");
 
-            p.LineTo(xList.D(xList.length() - 1), maxY);
-            p.LineTo(xList.D(0), maxY);
+            p.LineTo(xList.getDouble(xList.length() - 1), maxY);
+            p.LineTo(xList.getDouble(0), maxY);
             p.Close();
 
             p.put("fill", color(k));
@@ -75,7 +69,7 @@ public class AreaBrush extends LineBrush {
 
         }
 
-        return opt().put("root", root);
+        return new JSONObject().put("root", root);
     }
 
 

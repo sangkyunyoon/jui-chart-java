@@ -23,7 +23,7 @@
 package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.ChartBuilder;
-import com.jennifer.ui.util.Option;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -32,10 +32,6 @@ import org.json.JSONObject;
  */
 public class StackScatterBrush extends ScatterBrush {
 
-
-    public StackScatterBrush(ChartBuilder chart, Option options) {
-        super(chart, options);
-    }
 
     public StackScatterBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);

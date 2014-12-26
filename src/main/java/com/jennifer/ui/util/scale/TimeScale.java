@@ -37,12 +37,12 @@ public class TimeScale extends LinearScale {
         super();
     }
 
-    public TimeScale(OptionArray domain, OptionArray range) {
+    public TimeScale(JSONArray domain, JSONArray range) {
         super(domain, range);
     }
 
 
-    public Scale domain(OptionArray domain) {
+    public Scale domain(JSONArray domain) {
 
         for(int i = 0, len = domain.length(); i < len; i++) {
             if (domain.get(i) instanceof Date) {
@@ -55,9 +55,6 @@ public class TimeScale extends LinearScale {
         return super.domain(domain);
     }
 
-    public Scale domain(JSONArray domain) {
-        return domain(JSONUtil.clone(domain));
-    }
 
     public double get(Date d) {
         return get((double)d.getTime());
@@ -68,20 +65,20 @@ public class TimeScale extends LinearScale {
     }
 
     public long maxLong() {
-        OptionArray domain = this.domain();
+        JSONArray domain = this.domain();
         return Math.max(domain.getLong(0), domain.getLong(domain.length() - 1));
     }
 
     public long minLong() {
-        OptionArray domain = this.domain();
+        JSONArray domain = this.domain();
         return Math.min(domain.getLong(0), domain.getLong(domain.length()-1));
     }
 
-    public OptionArray ticks(String type, int step) {
+    public JSONArray ticks(String type, int step) {
         long start = this.minLong();
         long end = this.maxLong();
 
-        OptionArray times = new OptionArray();
+        JSONArray times = new JSONArray();
 
         while(start < end) {
             times.put(start);
@@ -100,11 +97,11 @@ public class TimeScale extends LinearScale {
 
     }
 
-    public OptionArray realTicks(String type, int step) {
+    public JSONArray realTicks(String type, int step) {
         long start = this.minLong();
         long end = this.maxLong();
 
-        OptionArray times = new OptionArray();
+        JSONArray times = new JSONArray();
 
         Calendar c = Calendar.getInstance();
 

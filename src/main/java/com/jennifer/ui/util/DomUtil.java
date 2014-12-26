@@ -37,13 +37,13 @@ import java.util.HashMap;
  */
 public class DomUtil {
 
-    private Option attrs = new Option();
-    private Option styles = new Option();
+    private JSONObject attrs = new JSONObject();
+    private JSONObject styles = new JSONObject();
     private String tagName;
     private String text = "";
-    private OptionArray children = new OptionArray();
+    private JSONArray children = new JSONArray();
 
-    public DomUtil(String tagName, Option attr) {
+    public DomUtil(String tagName, JSONObject attr) {
         this(tagName);
         this.attrs = attr;
 
@@ -58,12 +58,8 @@ public class DomUtil {
         return new Transform(tagName);
     }
 
-    public static Transform el(String tagName, Option attr) {
-        return new Transform(tagName, attr);
-    }
-
     public static Transform el(String tagName, JSONObject attr) {
-        return new Transform(tagName, JSONUtil.clone(attr));
+        return new Transform(tagName, attr);
     }
 
     public DomUtil(String tagName) {
@@ -92,16 +88,15 @@ public class DomUtil {
     public int cssInt(String key) { return styles.getInt(key); }
     public double cssDouble(String key) { return styles.getDouble(key); }
 
-    public Option css() {
+    public JSONObject css() {
         return styles;
     }
 
-    public DomUtil css(Option o) {
+    public DomUtil css(JSONObject o) {
 
-        OptionArray names = (OptionArray) o.names();
+        String[] names  = JSONObject.getNames(o);
 
-        for(int i = 0, len = names.length(); i < len; i++) {
-            String key = names.getString(i);
+        for(String key : names){
             css(key, o.get(key));
         }
 
@@ -112,7 +107,7 @@ public class DomUtil {
         return append(new DomUtil(tagName));
     }
 
-    public DomUtil append(String tagName, Option o) {
+    public DomUtil append(String tagName, JSONObject o) {
         return append(new DomUtil(tagName, o));
     }
 
@@ -239,64 +234,64 @@ public class DomUtil {
      * util function
      */
 
-    public DomUtil defs(Option o) {
+    public DomUtil defs(JSONObject o) {
         return append(el("defs", o));
     }
-    public DomUtil marker(Option o) {
+    public DomUtil marker(JSONObject o) {
         return append(el("marker", o));
     }
-    public DomUtil symbol(Option o) {
+    public DomUtil symbol(JSONObject o) {
         return append(el("symbol", o));
     }
-    public DomUtil clipPath(Option o) {
+    public DomUtil clipPath(JSONObject o) {
         return append(el("clipPath", o));
     }
 
-    public Transform g(Option o) {
+    public Transform g(JSONObject o) {
         return (Transform)append(new Transform("g", o));
     }
 
-    public Transform group(Option o) {
+    public Transform group(JSONObject o) {
         return g(o);
     }
 
-    public Transform rect(Option o) {
+    public Transform rect(JSONObject o) {
         return (Transform)append(new Transform("rect", o));
     }
 
-    public Transform line(Option o) {
+    public Transform line(JSONObject o) {
         return (Transform)append(new Transform("line", o));
     }
 
-    public Transform circle(Option o) {
+    public Transform circle(JSONObject o) {
         return (Transform)append(new Transform("circle", o));
     }
 
-    public Transform text(Option o) {
+    public Transform text(JSONObject o) {
         return (Transform)append(new Transform("text", o));
     }
 
-    public Transform tspan(Option o) {
+    public Transform tspan(JSONObject o) {
         return (Transform)append(new Transform("tspan", o));
     }
 
-    public Transform ellipse(Option o) {
+    public Transform ellipse(JSONObject o) {
         return (Transform)append(new Transform("ellipse", o));
     }
 
-    public Transform image(Option o) {
+    public Transform image(JSONObject o) {
         return (Transform)append(new Transform("image", o));
     }
 
-    public Path path(Option o) {
+    public Path path(JSONObject o) {
         return (Path)append(new Path(o));
     }
 
-    public Polygon polygon(Option o) {
+    public Polygon polygon(JSONObject o) {
         return (Polygon)append(new Polygon(o));
     }
 
-    public Polyline polyline(Option o) {
+    public Polyline polyline(JSONObject o) {
         return (Polyline)append(new Polyline(o));
     }
 
@@ -307,19 +302,19 @@ public class DomUtil {
      * @param o
      * @return
      */
-    public DomUtil radialGradient(Option o) {
+    public DomUtil radialGradient(JSONObject o) {
         return append(el("radialGradient", o));
     }
-    public DomUtil linearGradient(Option o) {
+    public DomUtil linearGradient(JSONObject o) {
         return append(el("linearGradient", o));
     }
-    public DomUtil mask(Option o) {
+    public DomUtil mask(JSONObject o) {
         return append(el("mask", o));
     }
-    public DomUtil pattern(Option o) {
+    public DomUtil pattern(JSONObject o) {
         return append(el("pattern", o));
     }
-    public DomUtil stop(Option o) {
+    public DomUtil stop(JSONObject o) {
         return append(el("stop", o));
     }
 
@@ -327,25 +322,25 @@ public class DomUtil {
     /**
      * About Animation Element
      *
-     * @param {Option} o
+     * @param {JSONObject} o
      * @return
      */
-    public DomUtil animate (Option o) {
+    public DomUtil animate (JSONObject o) {
         return append(el("animate", o));
     }
-    public DomUtil animateColor (Option o) {
+    public DomUtil animateColor (JSONObject o) {
         return append(el("animateColor", o));
     }
-    public DomUtil animateMotion  (Option o) {
+    public DomUtil animateMotion  (JSONObject o) {
         return append(el("animateMotion", o));
     }
-    public DomUtil animateTransform (Option o) {
+    public DomUtil animateTransform (JSONObject o) {
         return append(el("animateTransform", o));
     }
-    public DomUtil mpath (Option o) {
+    public DomUtil mpath (JSONObject o) {
         return append(el("mpath", o));
     }
-    public DomUtil set (Option o) {
+    public DomUtil set (JSONObject o) {
         return append(el("set", o));
     }
 
@@ -437,7 +432,7 @@ public class DomUtil {
     }
 
 
-    public static String join(OptionArray list, String separator)  {
+    public static String join(JSONArray list, String separator)  {
         int len = list.length();
         StringBuilder sb = new StringBuilder();
 
@@ -454,7 +449,7 @@ public class DomUtil {
     /**
      * About Animation Element
      *
-     * @param {Option} o
+     * @param {JSONObject} o
      * @return
      */
     public DomUtil animate () {
@@ -476,12 +471,12 @@ public class DomUtil {
         return append(el("set"));
     }
 
-    public DomUtil attr(Option option) {
-        JSONArray list = option.names();
+    public DomUtil attr(JSONObject JSONObject) {
+        JSONArray list = JSONObject.names();
 
         for(int i = 0, len = list.length(); i < len; i++) {
             String key = list.getString(i);
-            put(key, option.get(key));
+            put(key, JSONObject.get(key));
         }
 
         return this;

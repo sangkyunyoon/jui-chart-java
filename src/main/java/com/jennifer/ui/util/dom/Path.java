@@ -22,13 +22,14 @@
 
 package com.jennifer.ui.util.dom;
 
-import com.jennifer.ui.util.Option;
-import com.jennifer.ui.util.OptionArray;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class Path extends Transform {
-    private OptionArray orders = new OptionArray();
+    private JSONArray orders = new JSONArray();
 
-    public Path(Option o) {
+    public Path(JSONObject o) {
         super("path", o);
     }
 

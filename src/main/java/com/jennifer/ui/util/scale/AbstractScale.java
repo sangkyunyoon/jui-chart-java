@@ -23,7 +23,6 @@
 package com.jennifer.ui.util.scale;
 
 import com.jennifer.ui.util.JSONUtil;
-import com.jennifer.ui.util.OptionArray;
 import org.json.JSONArray;
 
 /**
@@ -32,15 +31,15 @@ import org.json.JSONArray;
 public abstract class AbstractScale implements Scale {
     protected double _rangeBand;
     protected boolean _clamp;
-    private OptionArray domain = new OptionArray();
-    private OptionArray range = new OptionArray();
+    private JSONArray domain = new JSONArray();
+    private JSONArray range = new JSONArray();
     private String key;
 
     protected AbstractScale() {
         init();
     }
 
-    protected AbstractScale(OptionArray domain, OptionArray range) {
+    protected AbstractScale(JSONArray domain, JSONArray range) {
         this.domain = domain;
         this.range = range;
 
@@ -84,30 +83,22 @@ public abstract class AbstractScale implements Scale {
         return 0;
     }
 
-    public OptionArray domain() {
+    public JSONArray domain() {
         return domain;
     }
 
-    public OptionArray range() {
+    public JSONArray range() {
         return range;
     }
 
-    public Scale domain(OptionArray domain) {
+    public Scale domain(JSONArray domain) {
         this.domain = domain;
         return this;
     }
 
-    public Scale domain(JSONArray domain) {
-        return domain(JSONUtil.clone(domain));
-    }
-
-    public Scale range(OptionArray range) {
+    public Scale range(JSONArray range) {
         this.range = range;
         return this;
-    }
-
-    public Scale range(JSONArray range) {
-        return range(JSONUtil.clone(range));
     }
 
     public Scale setKey(String key) {
@@ -115,15 +106,15 @@ public abstract class AbstractScale implements Scale {
         return this;
     }
 
-    public Scale rangeBands(OptionArray interval, int i, int i1) {
+    public Scale rangeBands(JSONArray interval, int i, int i1) {
         return this;
     }
 
-    public Scale rangePoints(OptionArray interval, int i) {
+    public Scale rangePoints(JSONArray interval, int i) {
         return this;
     }
 
-    public Scale rangeRound(OptionArray range) {
+    public Scale rangeRound(JSONArray range) {
         return this;
     }
 }

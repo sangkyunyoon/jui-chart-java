@@ -24,15 +24,15 @@ package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.grid.Grid;
-import com.jennifer.ui.util.Option;
-import com.jennifer.ui.util.OptionArray;
+
+
 import com.jennifer.ui.util.dom.Path;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static com.jennifer.ui.util.DomUtil.el;
-import static com.jennifer.ui.util.Option.opt;
+
 
 /**
  * Created by Jayden on 2014-10-27.
@@ -50,10 +50,6 @@ public class StackColumnBrush extends Brush {
     private double width;
     private double barWidth;
 
-    public StackColumnBrush(ChartBuilder chart, Option options) {
-        super(chart, options);
-    }
-
     public StackColumnBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
     }
@@ -61,7 +57,7 @@ public class StackColumnBrush extends Brush {
 
     @Override
     public void drawBefore() {
-        root = el("g", opt().put("class", "brush stack column")).translate(chart.x(), chart.y());
+        root = el("g", new JSONObject().put("class", "brush stack column")).translate(chart.area("x"), chart.area("y"));
 
         outerPadding = options.optInt("outerPadding", 0);
 
@@ -97,12 +93,12 @@ public class StackColumnBrush extends Brush {
                 double endY = y.get(yValue);
 
 
-                group.rect(opt()
-                        .x(startX)
-                        .y(startY > endY ? endY : startY)
-                        .width(barWidth)
-                        .height(Math.abs(startY - endY))
-                        .fill(color(j))
+                group.rect(new JSONObject()
+                        .put("x", startX)
+                        .put("y", startY > endY ? endY : startY)
+                        .put("width", barWidth)
+                        .put("height", Math.abs(startY - endY))
+                        .put("fill",color(j))
                 );
 
                 startY = endY;
@@ -110,7 +106,7 @@ public class StackColumnBrush extends Brush {
             }
         }
 
-        return opt().put("root", root);
+        return new JSONObject().put("root", root);
     }
 
 }

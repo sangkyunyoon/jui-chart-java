@@ -1,6 +1,6 @@
 package com.jennifer.ui.chart;
 
-import com.jennifer.ui.util.Option;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -17,7 +17,7 @@ public class ChartBuilderTest {
         assertEquals(builder.get("height").toString(), "300");
 
 
-        builder.set("height", new Long(400));
+        builder.set("height", 400);
         assertEquals(builder.get("height").toString(), "400");
 
         builder.set("grid", new JSONObject());
@@ -37,6 +37,7 @@ public class ChartBuilderTest {
         list.getJSONObject(1).put("type", "date");
 
         assertEquals(builder.get("grid.y.1.type").toString(), "date");
+
 
 
     }

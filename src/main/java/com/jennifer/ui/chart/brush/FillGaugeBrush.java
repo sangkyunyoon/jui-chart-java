@@ -24,13 +24,13 @@ package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.grid.Grid;
-import com.jennifer.ui.util.Option;
+
 import com.jennifer.ui.util.StringUtil;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONObject;
 
 import static com.jennifer.ui.util.DomUtil.el;
-import static com.jennifer.ui.util.Option.opt;
+
 
 /**
  * Created by Jayden on 2014-10-27.
@@ -52,19 +52,15 @@ public class FillGaugeBrush extends DonutBrush {
     private String clipId;
     private Transform rect;
 
-    public FillGaugeBrush(ChartBuilder chart, Option options) {
-        super(chart, options);
-    }
-
     public FillGaugeBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
     }
-    
+
     @Override
     public void drawBefore() {
-        root = el("g").translate(chart.x(), chart.y());
+        root = el("g").translate(chart.area("x"), chart.area("y"));
 
-        int width = chart.width(), height = chart.height();
+        int width = chart.area("width"), height = chart.area("height");
         int min = width;
 
         if (height < min) {
@@ -77,11 +73,11 @@ public class FillGaugeBrush extends DonutBrush {
         outerRadius = w;
         clipId = StringUtil.createId("fill-gauge");
 
-        Option o = opt().id(clipId);
-        Transform clip = (Transform) chart.defs().clipPath(o);
+        JSONObject o = new JSONObject().put("id", clipId);
+        Transform clip = (Transform) chart.defs().put("clip-path", o);
 
-        Option rectOpt = opt();
-        rectOpt.x(0).y(0).width(0).height(0);
+        JSONObject rectOpt = new JSONObject();
+        rectOpt.put("x", 0).put("y", 0).put("width", 0).put("height", 0);
         rect = clip.rect(rectOpt);
 
         this.min = options.optDouble("min", 0);
@@ -98,16 +94,16 @@ public class FillGaugeBrush extends DonutBrush {
     private void setDirection(String direction) {
         double rate = (value - min) / (max - min);
 
-        double height = chart.height();
-        double width = chart.width() * rate;
+        double height = chart.area("height");
+        double width = chart.area("width") * rate;
         double x = 0;
         double y = 0;
 
         if ("vertical".equals(direction)) {
-            height = chart.height() * rate;
-            width = chart.width();
+            height = chart.area("height") * rate;
+            width = chart.area("width");
             x = 0;
-            y = chart.height() - height;
+            y = chart.area("height") - height;
         }
 
         rect.put("x", x).put("y", y).put("width", width).put("height", height);
@@ -119,38 +115,38 @@ public class FillGaugeBrush extends DonutBrush {
 
         if ("circle".equals(shape)) {
 
-            root.circle(opt()
-                .cx(centerX)
-                .cy(centerY)
-                .r(outerRadius)
-                .fill(chart.theme("gaugeBackgroundColor"))
+            root.circle(new JSONObject()
+                .put("cx",centerX)
+                .put("cy",centerY)
+                .put("r",outerRadius)
+                .put("fill",chart.theme("gaugeBackgroundColor"))
             );
 
-            root.circle(opt()
-                .cx(centerX)
-                .cy(centerY)
-                .r(outerRadius)
-                .fill(color(0))
-                .clipPath(chart.url(clipId))
+            root.circle(new JSONObject()
+                .put("cx",centerX)
+                .put("cy",centerY)
+                .put("r",outerRadius)
+                .put("fill",color(0))
+                .put("clip-path", chart.url(clipId))
             );
 
         } else if ("rect".equals(shape)) {
 
-            root.rect(opt()
-                .x(0)
-                .y(0)
-                .width(chart.width())
-                .height(chart.height())
-                .fill(chart.theme("gaugeBackgroundColor"))
+            root.rect(new JSONObject()
+                .put("x", 0)
+                .put("y", 0)
+                .put("width", chart.area("width"))
+                .put("height", chart.area("height"))
+                .put("fill",chart.theme("gaugeBackgroundColor"))
             );
 
-            root.rect(opt()
-                .x(0)
-                .y(0)
-                .width(chart.width())
-                .height(chart.height())
-                .fill(color(0))
-                .clipPath(chart.url(clipId))
+            root.rect(new JSONObject()
+                .put("x", 0)
+                .put("y", 0)
+                .put("width", chart.area("width"))
+                .put("height", chart.area("height"))
+                .put("fill",color(0))
+                .put("clip-path", chart.url(clipId))
             );
 
 
@@ -159,25 +155,25 @@ public class FillGaugeBrush extends DonutBrush {
                 // TODO: custom svg image load
             } else {
 
-                root.path(opt()
-                        .x(0)
-                        .y(0)
-                        .fill(chart.theme("gaugeBackgroundColor"))
-                        .d(path)
+                root.path(new JSONObject()
+                        .put("x", 0)
+                        .put("y", 0)
+                        .put("fill",chart.theme("gaugeBackgroundColor"))
+                        .put("d", path)
                 );
 
-                root.path(opt()
-                        .x(0)
-                        .y(0)
-                        .fill(color(0))
-                        .clipPath(chart.url(clipId))
-                        .d(path)
+                root.path(new JSONObject()
+                        .put("x", 0)
+                        .put("y", 0)
+                        .put("fill",color(0))
+                        .put("clip-path", chart.url(clipId))
+                        .put("d", path)
 
                 );
             }
         }
         
-        return opt().put("root", root);
+        return new JSONObject().put("root", root);
     }
 
 

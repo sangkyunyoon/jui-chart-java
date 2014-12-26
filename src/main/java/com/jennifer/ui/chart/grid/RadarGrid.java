@@ -24,8 +24,8 @@ package com.jennifer.ui.chart.grid;
 
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.util.MathUtil;
-import com.jennifer.ui.util.Option;
-import com.jennifer.ui.util.OptionArray;
+
+
 import com.jennifer.ui.util.dom.Path;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
@@ -34,7 +34,7 @@ import org.json.JSONObject;
 import java.text.DecimalFormat;
 
 import static com.jennifer.ui.util.DomUtil.el;
-import static com.jennifer.ui.util.Option.opt;
+
 
 /**
  * Created by Jayden on 2014-10-27.
@@ -58,10 +58,6 @@ public class RadarGrid extends BlockGrid{
 
     protected String DEFAULT_FORMAT = "###";  // DecimalFormat
 
-    public RadarGrid(Orient orient, ChartBuilder chart, Option options) {
-        super(orient, chart, options);
-    }
-
     public RadarGrid(Orient orient, ChartBuilder chart, JSONObject options) {
         super(orient, chart, options);
     }
@@ -70,7 +66,7 @@ public class RadarGrid extends BlockGrid{
     public void drawBefore() {
         initDomain();
 
-        int width = chart.width(), height = chart.height();
+        int width = chart.area("width"), height = chart.area("height");
         int min = width;
 
         if (height < min) {
@@ -78,14 +74,14 @@ public class RadarGrid extends BlockGrid{
         }
 
         // default value ;
-        domain = options.array("domain");
+        domain = options.getJSONArray( "domain");
         step = options.optInt("step", 10);
 
 
         // center
         w = min / 2.0;
-        centerX = chart.x() + width / 2.0;
-        centerY = chart.y() + height / 2.0;
+        centerX = chart.area("x") + width / 2.0;
+        centerY = chart.area("y") + height / 2.0;
         count = domain.length();
         unit = 2 * Math.PI / count;
         h = Math.abs(w) / step;
@@ -101,29 +97,29 @@ public class RadarGrid extends BlockGrid{
     public void drawCustom(Transform root) {
         this.root = root;
 
-        double width = chart.width(), height = chart.height();
+        double width = chart.area("width"), height = chart.area("height");
 
         double startY = -w;
         double startX = 0;
 
-        OptionArray position = new OptionArray();
+        JSONArray position = new JSONArray();
         for (int i = 0; i < count; i++) {
             double x2 = centerX + startX, y2 = centerY + startY;
 
-            root.line(opt()
-                .x1(centerX)
-                .y1(centerY)
-                 .x2(x2)
-                 .y2(y2)
-                 .stroke(chart.theme("gridAxisBorderColor"))
-                 .strokeWidth(chart.theme("gridBorderWidth"))
+            root.line(new JSONObject()
+                .put("x1",centerX)
+                .put("y1",centerY)
+                 .put("x2", x2)
+                 .put("y2", y2)
+                 .put("stroke", chart.theme("gridAxisBorderColor"))
+                 .put("stroke-width",chart.theme("gridBorderWidth"))
             );
 
-            position.put(opt()
-                .x1(centerX)
-                .y1(centerY)
-                .x2(x2)
-                .y2(y2)
+            position.put(new JSONObject()
+                .put("x1",centerX)
+                .put("y1",centerY)
+                .put("x2", x2)
+                .put("y2", y2)
             );
 
             double ty = y2, tx = x2;
@@ -146,18 +142,18 @@ public class RadarGrid extends BlockGrid{
             }
 
             if (!hideText) {
-                root.text(opt()
-                    .x(tx)
-                    .y(ty)
-                    .textAnchor(talign)
-                    .fill(chart.theme("gridFontColor"))
+                root.text(new JSONObject()
+                    .put("x", tx)
+                    .put("y", ty)
+                    .put("text-anchor",talign)
+                    .put("fill",chart.theme("gridFontColor"))
                 ).textNode(domain.getString(i));
             }
 
-            Option obj = MathUtil.rotate(startX, startY, unit);
+            JSONObject obj = MathUtil.rotate(startX, startY, unit);
 
-            startX = obj.x();
-            startY = obj.y();
+            startX = obj.getDouble("x");
+            startY = obj.getDouble("y");
 
         }
 
@@ -181,11 +177,11 @@ public class RadarGrid extends BlockGrid{
 
                 if (!hideText) {
 
-                    root.text(opt()
-                                    .x(centerX)
-                                    .y(centerY + (startY+5))
-                                    .fontSize(12)
-                                    .fill(chart.theme("gridFontColor"))
+                    root.text(new JSONObject()
+                                    .put("x", centerX)
+                                    .put("y", centerY + (startY+5))
+                                    .put("font-size", 12)
+                                    .put("fill",chart.theme("gridFontColor"))
                     ).textNode(getFormatString(max - stepBase));
                 }
                 startY += h;
@@ -195,54 +191,54 @@ public class RadarGrid extends BlockGrid{
     }
 
     private void drawCircle(double centerX, double  centerY, double x, double y, int count) {
-        root.circle(opt()
-            .cx(centerX)
-            .cy(centerY)
-            .r(Math.abs(y))
-            .fillOpacity(0)
-            .stroke(chart.theme("gridAxisBorderColor"))
-            .strokeWidth(chart.theme("gridBorderWidth"))
+        root.circle(new JSONObject()
+            .put("cx",centerX)
+            .put("cy",centerY)
+            .put("r",Math.abs(y))
+            .put("fill-opacity",0)
+            .put("stroke", chart.theme("gridAxisBorderColor"))
+            .put("stroke-width",chart.theme("gridBorderWidth"))
         );
     }
 
     private void drawRadial(double centerX, double  centerY, double x, double y, int count, double unit) {
         Transform group = root.group();
-        OptionArray points = new OptionArray();
+        JSONArray points = new JSONArray();
 
-        points.put(new OptionArray().put(centerX + x).put(centerY + y));
+        points.put(new JSONArray().put(centerX + x).put(centerY + y));
 
         double startX = x;
         double startY = y;
 
         for(int i = 0; i < count; i++) {
-            Option obj = MathUtil.rotate(startX, startY, unit);
+            JSONObject obj = MathUtil.rotate(startX, startY, unit);
 
-            startX = obj.x();
-            startY = obj.y();
+            startX = obj.getDouble("x");
+            startY = obj.getDouble("y");
 
-            points.put(new OptionArray().put(centerX + startX).put(centerY + startY));
+            points.put(new JSONArray().put(centerX + startX).put(centerY + startY));
         }
 
-        Path path = group.path(opt()
-            .fill("none")
-            .stroke(chart.theme("gridAxisBorderColor"))
-            .strokeWidth(chart.theme("gridBorderWidth"))
+        Path path = group.path(new JSONObject()
+            .put("fill","none")
+            .put("stroke", chart.theme("gridAxisBorderColor"))
+            .put("stroke-width",chart.theme("gridBorderWidth"))
         );
 
         for(int i = 0, len = points.length(); i < len; i++) {
-            OptionArray point = (OptionArray) points.array(i);
+            JSONArray point = (JSONArray) points.getJSONArray( i);
 
             if (i == 0) {
-                path.MoveTo(point.D(0), point.D(1));
+                path.MoveTo(point.getDouble(0), point.getDouble(1));
             } else {
-                path.LineTo(point.D(0), point.D(1));
+                path.LineTo(point.getDouble(0), point.getDouble(1));
             }
         }
 
-        path.LineTo(points.array(0).getDouble(0), points.array(0).getDouble(1));
+        path.LineTo(points.getJSONArray( 0).getDouble(0), points.getJSONArray( 0).getDouble(1));
     }
 
-    public Option get(int index, double value) {
+    public JSONObject get(int index, double value) {
 
         double rate = value / max;
 
@@ -251,9 +247,9 @@ public class RadarGrid extends BlockGrid{
 
         double y = -pos, x = 0;
 
-        Option o = MathUtil.rotate(x, y, unit * index);
+        JSONObject o = MathUtil.rotate(x, y, unit * index);
 
-        return opt().x(height + o.x()).y(height + o.y());
+        return new JSONObject().put("x", height + o.getDouble("x")).put("y", height + o.getDouble("y"));
     }
 
     public Object draw() {

@@ -63,13 +63,13 @@ public class StringUtil {
         return  key  + "-" + System.currentTimeMillis() + "-" + (Math.round(Math.random() * 100) % 100);
     }
 
-    public static double parseDouble(String key, Option series) {
+    public static double parseDouble(String key, JSONObject series) {
 
         // setting
         String[] names = JSONObject.getNames(series);
         for(String name : names) {
-            if (series.object(name).has("max")) {
-                key = key.replace("{" + name + "}", series.object(name).getDouble("max")+"");
+            if (series.getJSONObject( name).has("max")) {
+                key = key.replace("{" + name + "}", series.getJSONObject( name).getDouble("max")+"");
             }
         }
 

@@ -25,14 +25,14 @@ package com.jennifer.ui.chart.brush;
 import com.jennifer.ui.Main;
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.util.MathUtil;
-import com.jennifer.ui.util.Option;
+
 import com.jennifer.ui.util.dom.Path;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static com.jennifer.ui.util.DomUtil.el;
-import static com.jennifer.ui.util.Option.opt;
+
 
 /**
  * Created by Jayden on 2014-10-27.
@@ -50,18 +50,15 @@ public class DonutBrush extends Brush {
     private double innerRadius;
     private Transform root;
 
-    public DonutBrush(ChartBuilder chart, Option options) {
-        super(chart, options);
-    }
     public DonutBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
     }
 
     @Override
     public void drawBefore() {
-        root = el("g").translate(chart.x(), chart.y());
-        width = chart.width();
-        height = chart.height();
+        root = el("g").translate(chart.area("x"), chart.area("y"));
+        width = chart.area("width");
+        height = chart.area("height");
         min = width;
 
         if (height < min) {
@@ -83,9 +80,9 @@ public class DonutBrush extends Brush {
     @Override
     public Object draw() {
 
-        String target = options.array("target").getString(0);
+        String target = options.getJSONArray( "target").getString(0);
 
-        Option s = chart.series(target);
+        JSONObject s = chart.series(target);
 
         double all = 360.0;
         double startAngle = 0;
@@ -100,10 +97,10 @@ public class DonutBrush extends Brush {
             double value = chart.dataDouble(i, target);
             double endAngle = all * (value / max);
 
-            Transform g = drawDonut(centerX, centerY, innerRadius, outerRadius, startAngle, endAngle, opt()
-                    .fill(color(i))
-                    .stroke(chart.theme("donutBorderColor"))
-                    .strokeWidth(chart.theme("donutBorderWidth"))
+            Transform g = drawDonut(centerX, centerY, innerRadius, outerRadius, startAngle, endAngle, new JSONObject()
+                    .put("fill",color(i))
+                    .put("stroke", chart.theme("donutBorderColor"))
+                    .put("stroke-width",chart.theme("donutBorderWidth"))
             );
 
             root.append(g);
@@ -113,44 +110,44 @@ public class DonutBrush extends Brush {
 
 
 
-        return opt().put("root", root);
+        return new JSONObject().put("root", root);
     }
 
-    protected Transform drawDonut(double centerX, double centerY, double innerRadius, double outerRadius, double startAngle, double endAngle, Option attrs) {
+    protected Transform drawDonut(double centerX, double centerY, double innerRadius, double outerRadius, double startAngle, double endAngle, JSONObject attrs) {
         return drawDonut(centerX, centerY, innerRadius, outerRadius, startAngle, endAngle, attrs, false);
     }
 
-    protected Transform drawDonut(double centerX, double centerY, double innerRadius, double outerRadius, double startAngle, double endAngle, Option attrs, boolean hasCircle) {
+    protected Transform drawDonut(double centerX, double centerY, double innerRadius, double outerRadius, double startAngle, double endAngle, JSONObject attrs, boolean hasCircle) {
 
         double dist = Math.abs(outerRadius - innerRadius);
 
         Transform g = (Transform) el("g").put("class", "donut");
         Path path = g.path(attrs);
 
-        Option obj = (Option) MathUtil.rotate(0.0, -outerRadius, MathUtil.radian(startAngle));
+        JSONObject obj =  MathUtil.rotate(0.0, -outerRadius, MathUtil.radian(startAngle));
 
-        double startX = obj.x();
-        double startY = obj.y();
+        double startX = obj.getDouble("x");
+        double startY = obj.getDouble("y");
 
-        Option innerCircle = (Option) MathUtil.rotate(0, -innerRadius, MathUtil.radian(startAngle));
+        JSONObject innerCircle =  MathUtil.rotate(0, -innerRadius, MathUtil.radian(startAngle));
 
-        double startInnerX = innerCircle.x();
-        double startInnerY = innerCircle.y();
+        double startInnerX = innerCircle.getDouble("x");
+        double startInnerY = innerCircle.getDouble("y");
 
         path.MoveTo(startX, startY);
 
-        obj = (Option) MathUtil.rotate(startX, startY, MathUtil.radian(endAngle));
+        obj =  MathUtil.rotate(startX, startY, MathUtil.radian(endAngle));
 
-        innerCircle = (Option) MathUtil.rotate(startInnerX, startInnerY, MathUtil.radian(endAngle));
+        innerCircle =  MathUtil.rotate(startInnerX, startInnerY, MathUtil.radian(endAngle));
 
         // move to center
         g.translate(centerX, centerY);
 
         // draw outer arc
-        path.Arc(outerRadius, outerRadius, 0, (endAngle > 180) ? 1 : 0, 1, obj.x(), obj.y());
+        path.Arc(outerRadius, outerRadius, 0, (endAngle > 180) ? 1 : 0, 1, obj.getDouble("x"), obj.getDouble("y"));
 
         // draw line
-        path.LineTo(innerCircle.x(), innerCircle.y());
+        path.LineTo(innerCircle.getDouble("x"), innerCircle.getDouble("y"));
 
         // draw inner arc
         path.Arc(innerRadius, innerRadius, 0, (endAngle > 180) ? 1 : 0, 0, startInnerX, startInnerY);

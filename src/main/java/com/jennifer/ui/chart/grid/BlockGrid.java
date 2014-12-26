@@ -25,31 +25,28 @@ package com.jennifer.ui.chart.grid;
 import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.util.ChartDateFormat;
 import com.jennifer.ui.util.ChartStringFormat;
-import com.jennifer.ui.util.Option;
-import com.jennifer.ui.util.OptionArray;
+
+
 import com.jennifer.ui.util.scale.OrdinalScale;
 import com.jennifer.ui.util.dom.Transform;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
-import static com.jennifer.ui.util.Option.opt;
+
 
 /**
  *
- * new BlockGrid().title().domain().target()
+ * new BlockGrid().title().domain().getJSONArray("target")
  *
  * Created by Jayden on 2014-10-24.
  */
 public class BlockGrid extends Grid {
 
-    private OptionArray points;
-    private OptionArray domain;
+    private JSONArray points;
+    private JSONArray domain;
     private double band;
     private double half_band;
     private int bar;
-
-    public BlockGrid(Orient orient, ChartBuilder chart, Option options) {
-        super(orient, chart, options);
-    }
 
     public BlockGrid(Orient orient, ChartBuilder chart, JSONObject options) {
         super(orient, chart, options);
@@ -63,75 +60,75 @@ public class BlockGrid extends Grid {
 
 
     protected void drawTop(Transform root) {
-        int full_height = chart.height();
+        int full_height = chart.area("height");
 
         boolean hasLine = options.optBoolean("line", false);
         boolean hasFull = options.optBoolean("full", false);
 
         if (!hasLine) {
-            Option o = new Option().x2(chart.width());
+            JSONObject o = new JSONObject().put("x2", chart.area("width"));
             root.append(this.axisLine(o));
         }
 
         for (int i = 0, len = this.points.length(); i < len; i++) {
 
-            String domain = getFormatString(this.domain.string(i));
+            String domain = getFormatString(this.domain.getString(i));
 
             if ("".equals(domain)) {
                 continue;
             }
 
-            Transform axis = root.group().translate(this.points.D(i), 0);
+            Transform axis = root.group().translate(this.points.getDouble(i), 0);
 
-            Option lineOpt = new Option()
-                    .x1(-half_band)
-                    .y1(0)
-                    .x2(-half_band)
-                    .y2(hasLine ? full_height : -this.bar);
+            JSONObject lineOpt = new JSONObject()
+                    .put("x1", -half_band)
+                    .put("y1", 0)
+                    .put("x2", -half_band)
+                    .put("y2", hasLine ? full_height : -this.bar);
 
             axis.append(this.line(lineOpt));
 
-            Option textOpt = new Option()
-                .x(0)
-                .y(-20)
-                .textAnchor("middle")
-                .fill(chart.theme("gridFontColor"));
+            JSONObject textOpt = new JSONObject()
+                .put("x", 0)
+                .put("y", -20)
+                .put("text-anchor", "middle")
+                .put("fill", chart.theme("gridFontColor"));
 
             axis.append(chart.text(textOpt, domain));
         }
 
         if (!hasFull) {
-            Transform axis = root.group().translate(chart.width(), 0);
+            Transform axis = root.group().translate(chart.area("width"), 0);
 
-            Option lineOpt = new Option().y2(hasLine ? full_height : -this.bar);
+            JSONObject lineOpt = new JSONObject().put("y2", hasLine ? full_height : -this.bar);
 
             axis.append(this.line(lineOpt));
         }
     }
 
     protected void drawBottom(Transform root) {
-        int full_height = chart.height();
+        int full_height = chart.area("height");
 
         boolean hasLine = options.optBoolean("line", false);
         boolean hasFull = options.optBoolean("full", false);
 
         if (!hasLine) {
-            Option o = new Option();
-            o.put("x2", chart.width());
+            JSONObject o = new JSONObject();
+            o.put("x2", chart.area("width"));
             root.append(this.axisLine(o));
         }
 
         for (int i = 0, len = this.points.length(); i < len; i++) {
 
-            String domain = getFormatString(this.domain.string(i));
+            String domain = getFormatString(this.domain.getString(i));
 
             if ("".equals(domain)) {
                 continue;
             }
 
-            Transform axis = root.group().translate(this.points.D(i), 0);
+            Transform axis = root.group().translate(this.points.getDouble(i), 0);
 
-            Option lineOpt = new Option();
+            JSONObject lineOpt = new JSONObject();
             lineOpt.put("x1",-this.half_band);
             lineOpt.put("y1",0);
             lineOpt.put("x2",-this.half_band);
@@ -139,7 +136,7 @@ public class BlockGrid extends Grid {
 
             axis.append(this.line(lineOpt));
 
-            Option textOpt = new Option();
+            JSONObject textOpt = new JSONObject();
             textOpt.put("x", 0);
             textOpt.put("y", 20);
             textOpt.put("text-anchor", "middle");
@@ -149,9 +146,9 @@ public class BlockGrid extends Grid {
         }
 
         if (!hasFull) {
-            Transform axis = root.group().translate(chart.width(), 0);
+            Transform axis = root.group().translate(chart.area("width"), 0);
 
-            Option lineOpt = new Option();
+            JSONObject lineOpt = new JSONObject();
             lineOpt.put("y2", hasLine ? -full_height : this.bar);
 
             axis.append(this.line(lineOpt));
@@ -159,33 +156,33 @@ public class BlockGrid extends Grid {
     }
 
     protected void drawLeft(Transform root) {
-        int full_width = chart.width();
+        int full_width = chart.area("width");
 
         boolean hasLine = options.optBoolean("line", false);
         boolean hasFull = options.optBoolean("full", false);
 
         if (!hasLine) {
-            Option o = opt();
-            o.put("y2", chart.height());
+            JSONObject o = new JSONObject();
+            o.put("y2", chart.area("height"));
             root.append(this.axisLine(o));
         }
 
         for (int i = 0, len = this.points.length(); i < len; i++) {
 
-            String domain = getFormatString(this.domain.string(i));
+            String domain = getFormatString(this.domain.getString(i));
 
             if ("".equals(domain)) {
                 continue;
             }
 
-            Transform axis = root.group().translate(0, this.points.D(i) - this.half_band);
+            Transform axis = root.group().translate(0, this.points.getDouble(i) - this.half_band);
 
-            Option lineOpt = opt();
+            JSONObject lineOpt = new JSONObject();
             lineOpt.put("x2",hasLine ? full_width : -this.bar);
 
             axis.append(this.line(lineOpt));
 
-            Option textOpt = opt();
+            JSONObject textOpt = new JSONObject();
             textOpt.put("x", -this.bar - 4);
             textOpt.put("y", this.half_band);
             textOpt.put("text-anchor", "end");
@@ -195,9 +192,9 @@ public class BlockGrid extends Grid {
         }
 
         if (!hasFull) {
-            Transform axis = root.group().translate(0, chart.height());
+            Transform axis = root.group().translate(0, chart.area("height"));
 
-            Option lineOpt = opt();
+            JSONObject lineOpt = new JSONObject();
             lineOpt.put("x2", hasLine ? full_width : -this.bar);
 
             axis.append(this.line(lineOpt));
@@ -217,33 +214,33 @@ public class BlockGrid extends Grid {
 
 
     protected void drawRight(Transform root) {
-        int full_width = chart.width();
+        int full_width = chart.area("width");
 
         boolean hasLine = options.optBoolean("line", false);
         boolean hasFull = options.optBoolean("full", false);
 
         if (!hasLine) {
-            Option o = opt();
-            o.put("y2", chart.height());
+            JSONObject o = new JSONObject();
+            o.put("y2", chart.area("height"));
             root.append(this.axisLine(o));
         }
 
         for (int i = 0, len = this.points.length(); i < len; i++) {
 
-            String domain = getFormatString(this.domain.string(i));
+            String domain = getFormatString(this.domain.getString(i));
 
             if ("".equals(domain)) {
                 continue;
             }
 
-            Transform axis = root.group().translate(0, this.points.D(i) - this.half_band);
+            Transform axis = root.group().translate(0, this.points.getDouble(i) - this.half_band);
 
-            Option lineOpt = opt();
+            JSONObject lineOpt = new JSONObject();
             lineOpt.put("x2",hasLine ? -full_width : this.bar);
 
             axis.append(this.line(lineOpt));
 
-            Option textOpt = opt();
+            JSONObject textOpt = new JSONObject();
             textOpt.put("x", this.bar + 4);
             textOpt.put("y", this.half_band);
             textOpt.put("text-anchor", "start");
@@ -253,9 +250,9 @@ public class BlockGrid extends Grid {
         }
 
         if (!hasFull) {
-            Transform axis = root.group().translate(0, chart.height());
+            Transform axis = root.group().translate(0, chart.area("height"));
 
-            Option lineOpt = opt();
+            JSONObject lineOpt = new JSONObject();
             lineOpt.put("x2", hasLine ? -full_width : this.bar);
 
             axis.append(this.line(lineOpt));
@@ -274,13 +271,13 @@ public class BlockGrid extends Grid {
     public void drawBefore() {
         initDomain();
 
-        int width = chart.width();
-        int height = chart.height();
+        int width = chart.area("width");
+        int height = chart.area("height");
         int max = (orient == Orient.LEFT || orient == Orient.RIGHT) ? height : width;
 
-        this.scale.domain(options.array("domain"));
+        this.scale.domain(options.getJSONArray("domain"));
 
-        OptionArray range = new OptionArray();
+        JSONArray range = new JSONArray();
         range.put(0).put(max);
         if (this.full()) {
             scale.rangeBands(range, 0, 0);
@@ -299,14 +296,14 @@ public class BlockGrid extends Grid {
 
         if (has("target") && !has("domain")) {
 
-            OptionArray domain = new OptionArray();
-            OptionArray data = chart.data();
+            JSONArray domain = new JSONArray();
+            JSONArray data = chart.data();
 
             int start = 0;
             int end = data.length() - 1;
             int step = 1;
 
-            boolean reverse = options.reverse();
+            boolean reverse = options.optBoolean("reverse", false);
 
             if (reverse) {
                 start = data.length() - 1;
@@ -315,10 +312,11 @@ public class BlockGrid extends Grid {
             }
 
             for(int i = start; ((reverse) ? i >= end : i <= end); i += step) {
-                domain.put(((Option)data.object(i)).get(options.string("target")).toString());
+                domain.put((data.getJSONObject( i)).get(options.getString("target")).toString());
             }
 
-            options.domain(domain).step(options.optInt("step", 10));
+            options.put("domain", domain);
+            options.put("step", options.optInt("step", 10));
             options.put("max", options.optInt("max", 100));
 
         }
