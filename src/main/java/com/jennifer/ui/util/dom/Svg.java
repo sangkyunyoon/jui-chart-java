@@ -23,6 +23,7 @@
 package com.jennifer.ui.util.dom;
 
 import com.jennifer.ui.util.DomUtil;
+import org.apache.commons.codec.binary.Base64;
 import org.json.JSONObject;
 
 public class Svg extends DomUtil{
@@ -44,6 +45,10 @@ public class Svg extends DomUtil{
         // xml 리턴
         String str = "<?xml version='1.1' encoding='utf-8' ?>\r\n<!DOCTYPE svg>\r\n";
         return str + toString();
+    }
+
+    public String toDataURL() {
+        return "data:image/svg+xml;base64," + Base64.encodeBase64(toXml().getBytes());
     }
 
     public void save(String path) {

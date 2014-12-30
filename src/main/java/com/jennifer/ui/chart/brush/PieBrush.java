@@ -70,7 +70,7 @@ public class PieBrush extends Brush {
     @Override
     public Object draw() {
 
-        double all = 360, startAngle = 0, max = 0;
+        double all = 359.99, startAngle = 0, max = 0;
 
         JSONObject data = chart.data(0);
         JSONArray target = options.getJSONArray("target");
@@ -121,6 +121,8 @@ public class PieBrush extends Brush {
         path.Arc(outerRadius, outerRadius, 0, (endAngle > 180) ? 1 : 0, 1, obj.getDouble("x"), obj.getDouble("y"));
         path.LineTo(0, 0);
         path.Close();
+
+        // TODO: Text 표시 해야함
 
         return g;
     }
