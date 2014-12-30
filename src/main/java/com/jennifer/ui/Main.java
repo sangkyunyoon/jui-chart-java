@@ -13,25 +13,51 @@ public class Main {
 
     public static void main(String[] args) {
 
-        String json = "{\"width\":756,\"height\":220,\"padding\":{\"top\":40},\"data\":[{\"start\":1418569200000,\"end\":1418655540000,\"75539_$sum\":168,\"75540_$sum\":166,\"$sum\":334},{\"start\":1418655600000,\"end\":1418741940000,\"75539_$sum\":374,\"75540_$sum\":373,\"$sum\":747},{\"start\":1418742000000,\"end\":1418828340000,\"75539_$sum\":299,\"75540_$sum\":297,\"$sum\":596},{\"start\":1418828400000,\"end\":1418914740000,\"75539_$sum\":272,\"75540_$sum\":273,\"$sum\":545},{\"start\":1418914800000,\"end\":1419001140000,\"75539_$sum\":376,\"75540_$sum\":375,\"$sum\":751},{\"start\":1419001200000,\"end\":1419087540000,\"75539_$sum\":309,\"75540_$sum\":312,\"$sum\":621},{\"start\":1419087600000,\"end\":1419173940000,\"75539_$sum\":241,\"75540_$sum\":239,\"$sum\":480}],\"grid\":{\"x\":{\"type\":\"block\",\"target\":\"start\",\"line\":true,\"format\":\"com.jennifersoft.view.template.TemplateChartUtil$3@3d216f5a\"},\"y\":{\"type\":\"range\",\"target\":\"$sum\",\"unit\":\"com.jennifersoft.view.template.TemplateChartUtil$4@5e159d10\"}},\"brush\":{\"type\":\"column\",\"target\":\"$sum\",\"colors\":[\"#19345b\",\"#5b3299\",\"#3f7cf4\",\"#47b2ac\",\"#badbac\",\"#3f5ca8\",\"#a9d8f8\",\"#ffc000\",\"#555d69\",\"#64b044\"]},\"widget\":{\"type\":\"title\",\"text\":\"bar sample - metrics \"}}";
+        String json = "{\n" +
+                "  \"brush\": {\n" +
+                "    \"colors\": [\n" +
+                "      \"#773ab6\",\n" +
+                "      \"#7bbae7\",\n" +
+                "      \"#1a345b\",\n" +
+                "      \"#b3d75a\",\n" +
+                "      \"#3f7cf4\",\n" +
+                "      \"#f0c7f3\",\n" +
+                "      \"#2ec2ba\",\n" +
+                "      \"#584f42\",\n" +
+                "      \"#ababab\",\n" +
+                "      \"#badbac\"\n" +
+                "    ],\n" +
+                "    \"type\": \"pie\"\n" +
+                "  },\n" +
+                "  \"data\": [{\n" +
+                "    \"10003\": 17.007730147575543,\n" +
+                "    \"10004\": 12.785464709993011\n" +
+                "  }],\n" +
+                "  \"grid\": {},\n" +
+                "  \"height\": 220,\n" +
+                "  \"padding\": {\n" +
+                "    \"bottom\": 20,\n" +
+                "    \"right\": 240,\n" +
+                "    \"top\": 40\n" +
+                "  },\n" +
+                "  \"series\": {\n" +
+                "    \"10003\": {\"text\": \"10003(17.007730147575543)\"},\n" +
+                "    \"10004\": {\"text\": \"10004(12.785464709993011)\"}\n" +
+                "  },\n" +
+                "  \"widget\": [\n" +
+                "    {\n" +
+                "      \"text\": \"\",\n" +
+                "      \"type\": \"title\"\n" +
+                "    },\n" +
+                "    {\"type\": \"legend\", brush : [0], position : 'right' }\n" +
+                "  ],\n" +
+                "  \"width\": 756\n" +
+                "}";
         ChartBuilder chart = new ChartBuilder(json);
 
-        chart.set("grid.x.format", new ChartDateFormat() {
-                    public String format(long d) {
-                        return new SimpleDateFormat("yy-MM-dd").format(new Date(d));
-                    }
-                });
 
-
-        chart.set("grid.y.unit", new ChartUnit() {
-
-            public double getUnit(double max, double size) {
-                return 100;
-            }
-        });
-
-            //System.out.println(chart.render());
-            chart.writeFile("line.html");
+            System.out.println(chart.render());
+            //chart.writeFile("line.html");
 
 
         /**

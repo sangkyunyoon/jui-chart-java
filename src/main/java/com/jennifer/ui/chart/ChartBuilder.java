@@ -80,7 +80,7 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     public ChartBuilder(JSONObject o) {
-        this.setoptions(o);
+        this.setOptions(o);
 
         init();
     }
@@ -93,7 +93,7 @@ public class ChartBuilder extends AbstractDraw {
         this(new JSONObject().put("width", width).put("height", height).put("theme", theme));
     }
 
-    public void setoptions(JSONObject options) {
+    public void setOptions(JSONObject options) {
         this.options = options;
 
         if (!this.options.has("brush")) {
@@ -113,7 +113,7 @@ public class ChartBuilder extends AbstractDraw {
         }
     }
 
-    public JSONObject getoptions() {
+    public JSONObject getOptions() {
         return this.options;
     }
 
@@ -595,7 +595,11 @@ public class ChartBuilder extends AbstractDraw {
         obj.remove("y");
         obj.remove("c");
 
-        JSONObject scales = (JSONObject) builderoptions.getJSONObject( "scales");
+        if (!builderoptions.has( "scales")) {
+            return ;
+        }
+
+        JSONObject scales = builderoptions.getJSONObject( "scales");
 
         if (scales.has("x") || scales.has("x1")) {
              if (drawObject.has("x1") && drawObject.getInt("x1")  > -1) {
@@ -628,13 +632,16 @@ public class ChartBuilder extends AbstractDraw {
     }
 
     private void drawGrid() {
-        JSONObject grid = (JSONObject) builderoptions.getJSONObject( "grid");
+        JSONObject grid = builderoptions.getJSONObject( "grid");
+
+        String[] names = JSONObject.getNames(grid);
+        if (names == null) return;
 
         if (grid != null && grid.names().length() > 0) {
 
             // create default cusotm grid
             if (grid.has("type")) {
-                grid = (JSONObject)new JSONObject().put("c", new JSONArray().put(JSONUtil.clone(grid)));
+                grid = new JSONObject().put("c", new JSONArray().put(JSONUtil.clone(grid)));
             }
 
             if (!builderoptions.has("scales")) {

@@ -70,19 +70,18 @@ public class PieBrush extends Brush {
     @Override
     public Object draw() {
 
-        String target = options.getJSONArray( "target").getString(0);
-        JSONObject s = chart.series(target);
+        double all = 360, startAngle = 0, max = 0;
 
-        double all = 360, startAngle = 0;
+        JSONObject data = chart.data(0);
+        JSONArray target = options.getJSONArray("target");
 
-        double max = 0;
-        JSONArray data = s.getJSONArray( "data");
-        for (int i = 0; i < data.length(); i++) {
-            max += data.getDouble(i);
+        for(int i = 0, len = target.length(); i < len; i++) {
+            max += data.getDouble(target.getString(i));
         }
 
-        for (int i = 0; i < data.length(); i++) {
-            double row = data.getDouble(i), endAngle = all * (row / max);
+
+        for (int i = 0; i < target.length(); i++) {
+            double value = data.getDouble(target.getString(i)), endAngle = all * (value / max);
 
             Transform g = drawPie(centerX, centerY, outerRadius, startAngle, endAngle, new JSONObject()
                             .put("fill",color(i))
@@ -102,7 +101,7 @@ public class PieBrush extends Brush {
     private Transform drawPie(double centerX, double centerY, double outerRadius, double startAngle, double endAngle, JSONObject option) {
         Transform g = (Transform)el("g").put("class", "pie");
 
-        Path path = g.path();
+        Path path = g.path(option);
 
         // 바깥 지름 부터 그림
         JSONObject obj = MathUtil.rotate(0, -outerRadius, MathUtil.radian(startAngle));
