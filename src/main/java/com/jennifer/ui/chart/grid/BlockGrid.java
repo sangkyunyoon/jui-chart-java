@@ -94,7 +94,7 @@ public class BlockGrid extends Grid {
                 .put("text-anchor", "middle")
                 .put("fill", chart.theme("gridFontColor"));
 
-            axis.append(chart.text(textOpt, domain));
+            axis.append(this.getTextRotate(chart.text(textOpt, domain)));
         }
 
         if (!hasFull) {
@@ -142,7 +142,7 @@ public class BlockGrid extends Grid {
             textOpt.put("text-anchor", "middle");
             textOpt.put("fill", chart.theme("gridFontColor"));
 
-            axis.append(chart.text(textOpt, domain));
+            axis.append(this.getTextRotate(chart.text(textOpt, domain)));
         }
 
         if (!hasFull) {
@@ -188,7 +188,7 @@ public class BlockGrid extends Grid {
             textOpt.put("text-anchor", "end");
             textOpt.put("fill", chart.theme("gridFontColor"));
 
-            axis.append(chart.text(textOpt, domain));
+            axis.append(this.getTextRotate(chart.text(textOpt, domain)));
         }
 
         if (!hasFull) {
@@ -246,7 +246,7 @@ public class BlockGrid extends Grid {
             textOpt.put("text-anchor", "start");
             textOpt.put("fill", chart.theme("gridFontColor"));
 
-            axis.append(chart.text(textOpt, domain));
+            axis.append(this.getTextRotate(chart.text(textOpt, domain)));
         }
 
         if (!hasFull) {

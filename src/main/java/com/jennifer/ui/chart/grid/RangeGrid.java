@@ -85,7 +85,7 @@ public class RangeGrid extends Grid {
             textOpt.put("text-anchor", "middle");
             textOpt.put("fill", chart.theme(isZero, "gridActiveFontColor", "gridFontColor"));
 
-            axis.append(chart.text(textOpt, getFormatString(ticks.get(i))));
+            axis.append(this.getTextRotate(chart.text(textOpt, getFormatString(ticks.get(i)))));
         }
     }
 
@@ -122,7 +122,7 @@ public class RangeGrid extends Grid {
             textOpt.put("text-anchor", "middle");
             textOpt.put("fill", chart.theme(isZero, "gridActiveFontColor", "gridFontColor"));
 
-            axis.append(chart.text(textOpt, getFormatString(ticks.get(i))));
+            axis.append(this.getTextRotate(chart.text(textOpt, getFormatString(ticks.get(i)))));
         }
 
     }
@@ -162,7 +162,7 @@ public class RangeGrid extends Grid {
                 textOpt.put("text-anchor", "end");
                 textOpt.put("fill", chart.theme(isZero, "gridActiveFontColor", "gridFontColor"));
 
-                axis.append(chart.text(textOpt, getFormatString(ticks.get(i))));
+                axis.append(this.getTextRotate(chart.text(textOpt, getFormatString(ticks.get(i)))));
 
             }
         }
@@ -205,7 +205,7 @@ public class RangeGrid extends Grid {
                 textOpt.put("text-anchor", "start");
                 textOpt.put("fill", chart.theme(isZero, "gridActiveFontColor", "gridFontColor"));
 
-                axis.append(chart.text(textOpt, getFormatString(ticks.get(i))));
+                axis.append(this.getTextRotate(chart.text(textOpt, getFormatString(ticks.get(i)))));
 
             }
         }

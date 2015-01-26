@@ -72,7 +72,7 @@ public class DateGrid extends Grid {
 
             JSONObject textOpt = new JSONObject().put("x", 0).put("y", -bar - 4).put("text-anchor", "middle").put("fill", chart.theme("gridFontColor"));
 
-            axis.append(chart.text(textOpt, getFormatString(ticks.getLong(i))));
+            axis.append(this.getTextRotate(chart.text(textOpt, getFormatString(ticks.getLong(i)))));
         }
 
     }
@@ -103,7 +103,7 @@ public class DateGrid extends Grid {
             textOpt.put("text-anchor", "middle");
             textOpt.put("fill", chart.theme("gridFontColor"));
 
-            axis.append(chart.text(textOpt, getFormatString(ticks.getLong(i))));
+            axis.append(this.getTextRotate(chart.text(textOpt, getFormatString(ticks.getLong(i)))));
         }
     }
 
@@ -133,7 +133,7 @@ public class DateGrid extends Grid {
             textOpt.put("text-anchor", "end");
             textOpt.put("fill", chart.theme("gridFontColor"));
 
-            axis.append(chart.text(textOpt, getFormatString(ticks.getLong(i))));
+            axis.append(this.getTextRotate(chart.text(textOpt, getFormatString(ticks.getLong(i)))));
         }
     }
 
@@ -162,7 +162,7 @@ public class DateGrid extends Grid {
             textOpt.put("text-anchor", "start");
             textOpt.put("fill", chart.theme("gridFontColor"));
 
-            axis.append(chart.text(textOpt, getFormatString(ticks.getLong(i))));
+            axis.append(this.getTextRotate(chart.text(textOpt, getFormatString(ticks.getLong(i)))));
         }
     }
 

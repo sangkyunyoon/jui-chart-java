@@ -24,6 +24,8 @@ package com.jennifer.ui.chart.grid;
 
 import com.jennifer.ui.chart.AbstractDraw;
 import com.jennifer.ui.chart.ChartBuilder;
+import com.jennifer.ui.util.ChartTextRotate;
+import com.jennifer.ui.util.DomUtil;
 import com.jennifer.ui.util.JSONUtil;
 
 import com.jennifer.ui.util.scale.Scale;
@@ -75,6 +77,30 @@ public abstract class Grid extends AbstractDraw {
 
     protected String theme(String key) { return chart.theme(key); }
     protected String theme(boolean checked, String key1, String key2) { return chart.theme(checked, key1, key2); }
+
+    protected DomUtil getTextRotate(Transform textElement) {
+
+        Object rotate = options.opt("textRotate");
+
+        if (rotate == null) {
+            return textElement;
+        }
+
+        double angle = 0;
+
+        if (rotate instanceof ChartTextRotate) {
+            angle = ((ChartTextRotate)rotate).run(chart, this, textElement);
+        } else {
+            angle = ((Integer)rotate).doubleValue();
+        }
+
+        double x = textElement.getDouble("x");
+        double y = textElement.getDouble("y");
+
+        textElement.rotate(angle, x, y);
+
+        return textElement;
+    }
 
     protected Transform axisLine(JSONObject attr) {
 
