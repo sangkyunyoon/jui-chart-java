@@ -91,7 +91,7 @@ public abstract class Grid extends AbstractDraw {
         if (rotate instanceof ChartTextRotate) {
             angle = ((ChartTextRotate)rotate).run(chart, this, textElement);
         } else {
-            angle = ((Integer)rotate).doubleValue();
+            angle = options.optDouble("textRotate");
         }
 
         double x = textElement.getDouble("x");
