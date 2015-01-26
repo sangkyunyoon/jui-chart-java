@@ -37,8 +37,5 @@ public class ChartBuilderTest {
         list.getJSONObject(1).put("type", "date");
 
         assertEquals(builder.get("grid.y.1.type").toString(), "date");
-
-
-
     }
 }

@@ -12,7 +12,7 @@
 
     <groupId>com.jennifersoft.chart</groupId>
     <artifactId>chart</artifactId>
-    <version>0.4.1</version>
+    <version>0.4.3</version>
     <packaging>jar</packaging>
 
     <name>Jennifer Simple SVG Chart</name>
@@ -69,6 +69,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>

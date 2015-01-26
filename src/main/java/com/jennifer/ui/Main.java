@@ -56,7 +56,7 @@ public class Main {
         ChartBuilder chart = new ChartBuilder(json);
 
 
-            System.out.println(chart.render());
+            System.out.println(chart.toDataURL());
             //chart.writeFile("line.html");
 
 

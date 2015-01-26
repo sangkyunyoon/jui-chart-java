@@ -744,6 +744,20 @@ public class ChartBuilder extends AbstractDraw {
         return this.svg.render();
     }
 
+    public String toDataURL() {
+        this.render();
+
+        return this.svg.toDataURL();
+    }
+
+    public String export(String type) {
+        if ("datauri".equals(type)) {
+            return this.toDataURL();
+        } else {
+            return this.render();
+        }
+    }
+
     private void drawDefs() {
         this.defs = (Transform) this.root.defs();
         this.clipId = StringUtil.createId("clip-id");

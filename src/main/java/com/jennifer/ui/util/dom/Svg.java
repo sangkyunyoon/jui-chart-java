@@ -48,7 +48,7 @@ public class Svg extends DomUtil{
     }
 
     public String toDataURL() {
-        return "data:image/svg+xml;base64," + Base64.encodeBase64(toXml().getBytes());
+        return "data:image/svg+xml;base64," + new String(Base64.encodeBase64(toXml().getBytes()));
     }
 
     public void save(String path) {
