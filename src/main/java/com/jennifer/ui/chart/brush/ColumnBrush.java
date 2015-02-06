@@ -29,6 +29,8 @@ import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
+
 import static com.jennifer.ui.util.DomUtil.el;
 
 
@@ -78,6 +80,12 @@ public class ColumnBrush extends Brush {
 
     @Override
     public Object draw() {
+        DecimalFormat format = new DecimalFormat(".##");
+        Transform[] t = new Transform[target.length()];
+        double[] maxValue = new double[target.length()];
+        for(int i = 0; i < maxValue.length; i++) {
+            maxValue[i] = Double.MIN_VALUE;
+        }
 
         for(int i = 0; i < count; i++) {
             double startX = x.get(i) - half_width/2;
@@ -86,10 +94,12 @@ public class ColumnBrush extends Brush {
 
             for(int j = 0, len = target.length(); j < len; j++) {
 
-                double startY = y.get(chart.dataDouble(i, target.getString(j)));
+                double valueValue = chart.dataDouble(i, target.getString(j));
+                double startY = y.get(valueValue);
                 double h = Math.abs(zeroY - startY);
+                String _color = this.color(j);
 
-                JSONObject o = new JSONObject().put("x", startX).put("height", h).put("width", columnWidth).put("fill",this.color(j));
+                JSONObject o = new JSONObject().put("x", startX).put("height", h).put("width", columnWidth).put("fill", _color);
                 if (startY <= zeroY) {
                     o.put("y", startY);
                 } else {
@@ -98,10 +108,21 @@ public class ColumnBrush extends Brush {
 
                 group.rect(o);
 
-                startX = startX + (columnWidth + innerPadding);
 
+                // display max value
+                if (valueValue > maxValue[j]) {
+                    maxValue[j] = valueValue;
+                    t[j] = createMaxElement(startX + half_width/2, startY, format.format(valueValue), _color);
+                }
+
+                startX = startX + (columnWidth + innerPadding);
             }
 
+        }
+
+        // Max Element 출력
+        for(int i = 0; i < t.length; i++) {
+            root.append(t[i]);
         }
 
         return new JSONObject().put("root", root);

@@ -132,7 +132,7 @@ public class LegendWidget extends Widget {
 
         }
 
-        root.translate(x, y);
+        root.translate(x + 0.5, y + 0.5);
 
         return new JSONObject().put("root", root);
     }

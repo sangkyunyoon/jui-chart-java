@@ -27,8 +27,11 @@ import com.jennifer.ui.chart.ChartBuilder;
 import com.jennifer.ui.chart.grid.Grid;
 import com.jennifer.ui.util.JSONUtil;
 import com.jennifer.ui.util.dom.Path;
+import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.text.DecimalFormat;
 
 /**
  * Created by Jayden on 2014-10-27.
@@ -154,6 +157,7 @@ public abstract class Brush extends AbstractDraw {
             }
         }
 
+        System.out.println(xy.toString());
 
         return xy;
     }
@@ -186,8 +190,25 @@ public abstract class Brush extends AbstractDraw {
         return xy;
     }
 
+    public Transform createMaxElement(double x, double y, String value, String color) {
+        Transform transform = new Transform("g");
+
+        transform.circle(new JSONObject().put("cx", x).put("cy", y).put("r", 4).put("fill", color).put("stroke", "white"));
+        transform.append(chart.text(new JSONObject("{ x : " + x +  " , y : " + (y - 10) +  " , 'text-anchor' : 'middle' } "), value));
+
+        return transform;
+    }
+
     public String color(int i) {
         return chart.color(i, options.getJSONArray( "colors"));
+    }
+
+    public String formatNumber(double value, DecimalFormat format) {
+        return format.format(value);
+    }
+
+    public String formatNumber(double value) {
+        return formatNumber(value, new DecimalFormat(".##"));
     }
 
     /**

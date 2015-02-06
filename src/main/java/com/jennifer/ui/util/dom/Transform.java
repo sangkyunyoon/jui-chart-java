@@ -57,6 +57,11 @@ public class Transform extends DomUtil {
         return this;
     }
 
+    public Transform scale(double xScale, double yScale) {
+        orders.put("scale", xScale + " " + yScale);
+        return this;
+    }
+
     public Transform rotate(double angle, double x, double y) {
         orders.put("rotate", angle + " " + x + " " + y);
         return this;

@@ -101,6 +101,7 @@ public class TitleWidget extends Widget {
             .put("text-anchor",anchor)
             .put("font-family", chart.theme("fontFamily"))
             .put("font-size", chart.theme("titleFontSize"))
+            .put("font-weight", chart.theme("titleFontBorder"))
             .put("fill",chart.theme("titleFontColor"))
         ).textNode(text);
     }

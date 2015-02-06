@@ -86,6 +86,10 @@ public class TimeScale extends LinearScale {
             start = TimeUtil.add(start, type, step);
         }
 
+        if (start > end) {
+            start = end;
+        }
+
         times.put(start);
 
         double first = this.get(times.getLong(0));

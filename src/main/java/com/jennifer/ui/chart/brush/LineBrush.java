@@ -23,11 +23,14 @@
 package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.ChartBuilder;
+import com.jennifer.ui.util.DomUtil;
 import com.jennifer.ui.util.JSONUtil;
 import com.jennifer.ui.util.dom.Path;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.text.DecimalFormat;
 
 import static com.jennifer.ui.util.DomUtil.el;
 
@@ -37,6 +40,7 @@ import static com.jennifer.ui.util.DomUtil.el;
 public class LineBrush extends Brush {
     private Transform root;
     private String symbol;
+    private boolean move;
 
     public LineBrush(ChartBuilder chart, JSONObject options) {
         super(chart, options);
@@ -47,6 +51,7 @@ public class LineBrush extends Brush {
 
         root = el("g").translate(chart.area("x"), chart.area("y"));
         symbol = options.optString("symbol", "normal");
+        move = options.optBoolean("move", false);
     }
 
 
@@ -64,12 +69,17 @@ public class LineBrush extends Brush {
         return new JSONObject().put("root", root);
     }
 
-    protected Path createLine(JSONObject pos, int index) {
+    protected DomUtil createLine(JSONObject pos, int index) {
         JSONArray x = JSONUtil.clone(pos.getJSONArray("x"));
         JSONArray y = JSONUtil.clone(pos.getJSONArray("y"));
+        JSONArray valueList = JSONUtil.clone(pos.getJSONArray("value"));
+        DecimalFormat format = new DecimalFormat(".##");
+        String _color = color(index);
+        Transform t = null;
 
+        Transform g = new Transform("g");
         Path p = new Path(new JSONObject()
-            .put("stroke", color(index))
+            .put("stroke", _color)
             .put("stroke-width",chart.theme("lineBorderWidth"))
             .put("fill","transparent")
         );
@@ -91,14 +101,40 @@ public class LineBrush extends Brush {
                );
             }
         } else {
-            for (int i = 0, len = x.length() -1; i < len-1; i++) {
+
+            double maxValue = Double.MIN_VALUE;
+            t = null;
+
+            for (int i = 0, len = x.length(); i < len-1; i++) {
                 if(Brush.SYMBOL_STEP.equals(symbol)) {
                     p.LineTo(x.getDouble(i), y.getDouble(i + 1));
                 }
 
-                p.LineTo(x.getDouble(i + 1), y.getDouble(i + 1));
+                double xValue = x.getDouble(i + 1);
+                double yValue = y.getDouble(i + 1);
+                double valueValue = valueList.getDouble( i + 1);
+
+                p.LineTo(xValue, yValue);
+
+                // display max value
+                if (valueValue > maxValue) {
+                    maxValue = valueValue;
+                    t = createMaxElement(xValue, yValue, formatNumber(valueValue), _color );
+                }
+
             }
+
         }
-        return p;
+
+        // 라인 옆으로 옮기기
+        if (move) {
+            double range = (x.getDouble(2) - x.getDouble(1)) / 2;
+            g.translate(range, 0);
+        }
+
+        g.append(p);
+        g.append(t);
+
+        return g;
     }
 }

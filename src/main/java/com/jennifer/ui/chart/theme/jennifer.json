@@ -1,7 +1,7 @@
 {
     "name": "jennifer",
     "backgroundColor": "white",
-    "fontSize": "13px",
+    "fontSize": "11px",
     "fontColor": "#333333",
     "fontFamily": "arial,Tahoma,verdana",
     "colors": [
@@ -57,10 +57,11 @@
     "scatterBorderWidth": 1,
     "titleFontColor": "#333",
     "titleFontSize": "13px",
+    "titleFontBorder" : "bold",
     "legendFontColor": "#333",
-    "legendFontSize": "13px",
+    "legendFontSize": "11px",
     "tooltipFontColor": "#333",
-    "tooltipFontSize": "13px",
+    "tooltipFontSize": "11px",
     "tooltipBackgroundColor": "white",
     "tooltipBorderColor": "#aaaaaa",
     "tooltipOpacity": 0.7,
@@ -72,7 +73,7 @@
     "crossBorderColor": "#a9a9a9",
     "crossBorderWidth": 1,
     "crossBorderOpacity": 0.8,
-    "crossBalloonFontSize": "13px",
+    "crossBalloonFontSize": "11px",
     "crossBalloonFontColor": "white",
     "crossBalloonBackgroundColor": "black",
     "crossBalloonOpacity": 0.5

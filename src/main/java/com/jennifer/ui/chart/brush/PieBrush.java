@@ -52,17 +52,36 @@ public class PieBrush extends Brush {
     public void drawBefore() {
         root = el("g").translate(chart.area("x"), chart.area("y"));
 
+        // 특정 크기에 맞게 자동으로 파이가 늘어나는 속성
+        boolean scalable = this.options.optBoolean("scalable", false);
+
         int width = chart.area("width"), height = chart.area("height");
         int min = width;
+        double xScale = 1;
+        double yScale = 1;
 
-        if (height < min) {
-            min = height;
+        if (scalable) {
+            xScale = 1;
+            yScale = (height - 120)/width;
+
+            if (height < min) {
+                min = height;
+
+                xScale = (width - 120)/height;
+                yScale = 1;
+            }
+
+            root.scale(xScale, yScale);
+        } else {
+            if (height < min) {
+                min = height;
+            }
         }
 
         // center
         w = min / 2.0;
-        centerX = width / 2.0;
-        centerY = height / 2.0;
+        centerX = width / 2.0 / xScale;
+        centerY = height / 2.0 / yScale;
         outerRadius = w;
 
     }
@@ -75,27 +94,75 @@ public class PieBrush extends Brush {
         JSONObject data = chart.data(0);
         JSONArray target = options.getJSONArray("target");
 
+        int maxCount = 0;
+
         for(int i = 0, len = target.length(); i < len; i++) {
-            max += data.getDouble(target.getString(i));
+            double value = data.getDouble(target.getString(i));
+
+            max += value;
+
+            if (value > 0) {
+                maxCount++;
+            }
         }
 
-
-        for (int i = 0; i < target.length(); i++) {
-            double value = data.getDouble(target.getString(i)), endAngle = all * (value / max);
-
-            Transform g = drawPie(centerX, centerY, outerRadius, startAngle, endAngle, new JSONObject()
-                            .put("fill",color(i))
+        if (max == 0) {
+            Transform g = drawPie(centerX, centerY, outerRadius, 0, 360, new JSONObject()
+                            .put("fill",color(8))
                             .put("stroke", chart.theme("pieBorderColor"))
-                            .put("stroke-width",chart.theme("pieBorderWidth"))
+                            .put("stroke-width",0)
             );
 
+            Transform text = drawText(centerX, centerY, outerRadius, 0, 180, "0");
+
+            g.append(text);
 
             root.append(g);
 
-            startAngle += endAngle;
+        } else {
+            for (int i = 0; i < target.length(); i++) {
+                double value = data.getDouble(target.getString(i)), endAngle = all * (value / max);
+
+                Transform g = drawPie(centerX, centerY, outerRadius, startAngle, endAngle, new JSONObject()
+                                .put("fill",color(i))
+                                .put("stroke", chart.theme("pieBorderColor"))
+                                .put("stroke-width",0)
+                );
+
+
+
+                Transform text = drawText(centerX, centerY, outerRadius, startAngle, endAngle, formatNumber(value));
+
+                g.append(text);
+
+                root.append(g);
+
+                startAngle += endAngle;
+            }
         }
 
         return new JSONObject().put("root",root);
+    }
+
+    private Transform drawText(double centerX, double centerY, double outerRadius, double startAngle, double endAngle, String text) {
+
+        double innerRadius = outerRadius * 0.62;
+        Transform t = this.chart.text(new JSONObject()
+                .put("text-anchor", "middle")
+                .put("fill", "white")
+                , text);
+
+        JSONObject obj = MathUtil.rotate(0, -innerRadius, MathUtil.radian(startAngle));
+
+        double startX = obj.getDouble("x"),
+                startY = obj.getDouble("y");
+
+        obj = MathUtil.rotate(startX, startY, MathUtil.radian(endAngle/2));
+
+        t.put("x", obj.getDouble("x"));
+        t.put("y", obj.getDouble("y") - 5);
+
+        return t;
     }
 
     private Transform drawPie(double centerX, double centerY, double outerRadius, double startAngle, double endAngle, JSONObject option) {
