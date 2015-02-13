@@ -157,7 +157,7 @@ public abstract class Brush extends AbstractDraw {
             }
         }
 
-        System.out.println(xy.toString());
+        //System.out.println(xy.toString());
 
         return xy;
     }
@@ -208,7 +208,7 @@ public abstract class Brush extends AbstractDraw {
     }
 
     public String formatNumber(double value) {
-        return formatNumber(value, new DecimalFormat(".##"));
+        return formatNumber(value, new DecimalFormat("#,###.##"));
     }
 
     /**

@@ -219,8 +219,12 @@ public class DomUtil {
         StringBuffer str = new StringBuffer();
 
         for(int i = 0, len = children.length(); i < len; i++) {
-            DomUtil dom = (DomUtil)children.get(i);
-            str.append(dom.render(tabIndex, tabSize) + "\n");
+            DomUtil dom = (DomUtil)children.opt(i);
+
+            if (dom != null) {
+                str.append(dom.render(tabIndex, tabSize) + "\n");
+            }
+
         }
 
         return str.toString();

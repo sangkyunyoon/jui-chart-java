@@ -30,6 +30,8 @@ import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
+
 import static com.jennifer.ui.util.DomUtil.el;
 
 
@@ -88,7 +90,7 @@ public class PieBrush extends Brush {
 
     @Override
     public Object draw() {
-
+        DecimalFormat format = new DecimalFormat(".##");
         double all = 359.99, startAngle = 0, max = 0;
 
         JSONObject data = chart.data(0);
@@ -99,6 +101,10 @@ public class PieBrush extends Brush {
         for(int i = 0, len = target.length(); i < len; i++) {
             double value = data.getDouble(target.getString(i));
 
+            String formatDoubleValue = formatNumber(value).replaceAll(",", "");
+
+            value = Double.parseDouble(formatDoubleValue);
+
             max += value;
 
             if (value > 0) {
@@ -107,13 +113,13 @@ public class PieBrush extends Brush {
         }
 
         if (max == 0) {
-            Transform g = drawPie(centerX, centerY, outerRadius, 0, 360, new JSONObject()
-                            .put("fill",color(8))
+            Transform g = drawPie(centerX, centerY, outerRadius, 0, 359.99, new JSONObject()
+                            .put("fill",color(1))
                             .put("stroke", chart.theme("pieBorderColor"))
                             .put("stroke-width",0)
             );
 
-            Transform text = drawText(centerX, centerY, outerRadius, 0, 180, "0");
+            Transform text = drawText(centerX, centerY, outerRadius, 0, 180, "0%");
 
             g.append(text);
 
@@ -121,7 +127,13 @@ public class PieBrush extends Brush {
 
         } else {
             for (int i = 0; i < target.length(); i++) {
-                double value = data.getDouble(target.getString(i)), endAngle = all * (value / max);
+                double value = data.getDouble(target.getString(i));
+
+                String formatDoubleValue = formatNumber(value).replaceAll(",", "");
+                value = Double.parseDouble(formatDoubleValue);
+
+                double rate = value/max;
+                double endAngle = all * rate;
 
                 Transform g = drawPie(centerX, centerY, outerRadius, startAngle, endAngle, new JSONObject()
                                 .put("fill",color(i))
@@ -131,7 +143,7 @@ public class PieBrush extends Brush {
 
 
 
-                Transform text = drawText(centerX, centerY, outerRadius, startAngle, endAngle, formatNumber(value));
+                Transform text = drawText(centerX, centerY, outerRadius, startAngle, endAngle, formatNumber(rate * 100) + "%");
 
                 g.append(text);
 

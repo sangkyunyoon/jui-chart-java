@@ -363,6 +363,9 @@ public class ChartBuilder extends AbstractDraw {
     public String color(int index, JSONArray colors) {
         String color = null;
 
+        // color rotate
+        index = index % colors.length();
+
         if (colors != null) {
             color = colors.getString(index);
         }

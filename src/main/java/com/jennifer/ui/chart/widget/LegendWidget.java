@@ -120,7 +120,7 @@ public class LegendWidget extends Widget {
             }
 
         } else {
-            x = ("left".equals(position)) ? chart.area("x") - chart.padding("left") : chart.area("x2") + chart.padding("right") - max_width;
+            x = ("left".equals(position)) ? chart.area("x") - max_width : chart.area("x2") + 20 ;
 
             if ("start".equals(align)) {
                 y = chart.area("y");

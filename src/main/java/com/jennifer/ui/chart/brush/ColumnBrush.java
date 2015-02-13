@@ -49,6 +49,7 @@ public class ColumnBrush extends Brush {
     private double half_width;
     private JSONArray target;
     private double columnWidth;
+    private boolean minCheck;
 
 
     public ColumnBrush(ChartBuilder chart, JSONObject options) {
@@ -63,6 +64,7 @@ public class ColumnBrush extends Brush {
 
         outerPadding = options.optInt("outerPadding", 2);
         innerPadding = options.optInt("innerPadding", 1);
+        minCheck = options.optBoolean("minCheck", false);
 
         x = (Grid)options.get("x");
         y = (Grid)options.get("y");
@@ -95,7 +97,8 @@ public class ColumnBrush extends Brush {
             for(int j = 0, len = target.length(); j < len; j++) {
 
                 double valueValue = chart.dataDouble(i, target.getString(j));
-                double startY = y.get(valueValue);
+
+                double startY = y.get((minCheck && valueValue == 0 ? 1 : valueValue));
                 double h = Math.abs(zeroY - startY);
                 String _color = this.color(j);
 
