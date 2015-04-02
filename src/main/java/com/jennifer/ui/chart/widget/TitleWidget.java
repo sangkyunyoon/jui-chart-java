@@ -42,6 +42,7 @@ public class TitleWidget extends Widget {
     private double dx;
     private double dy;
     private double size;
+    private JSONObject style;
 
     public TitleWidget(ChartBuilder chart, JSONObject options) {
         super(chart, options);
@@ -59,6 +60,11 @@ public class TitleWidget extends Widget {
 
         size = options.optDouble("size", 20);
 
+        style = options.optJSONObject("style");
+
+        if (style == null) {
+            style = new JSONObject();
+        }
 
     }
 
@@ -99,10 +105,10 @@ public class TitleWidget extends Widget {
             .put("x", x + dx)
             .put("y", y + dy)
             .put("text-anchor",anchor)
-            .put("font-family", chart.theme("fontFamily"))
-            .put("font-size", chart.theme("titleFontSize"))
-            .put("font-weight", chart.theme("titleFontBorder"))
-            .put("fill",chart.theme("titleFontColor"))
+            .put("font-family", style.optString("fontFamily", chart.theme("fontFamily")))
+            .put("font-size", style.optString("titleFontSize", chart.theme("titleFontSize")))
+            .put("font-weight", style.optString("titleFontBorder", chart.theme("titleFontBorder")))
+            .put("fill",style.optString("titleFontColor", chart.theme("titleFontColor")))
         ).textNode(text);
     }
 }
