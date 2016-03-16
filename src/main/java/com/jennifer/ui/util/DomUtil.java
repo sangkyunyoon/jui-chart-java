@@ -68,6 +68,10 @@ public class DomUtil {
         init();
     }
 
+    public DomUtil children(int i) {
+        return (DomUtil)children.get(i);
+    }
+
     public DomUtil put(String key, int value) { attrs.put(key, value);  return this; }
     public DomUtil put(String key, double value) { attrs.put(key, value);  return this; }
     public DomUtil put(String key, Object value) { attrs.put(key, value);  return this; }

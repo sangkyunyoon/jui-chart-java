@@ -26,6 +26,8 @@ import com.jennifer.ui.util.DomUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+
 public class Svg extends DomUtil{
 
     public Svg(JSONObject attr) {
@@ -48,7 +50,13 @@ public class Svg extends DomUtil{
     }
 
     public String toDataURL() {
-        return "data:image/svg+xml;base64," + new String(Base64.encodeBase64(toXml().getBytes()));
+        try {
+            return "data:image/svg+xml;base64," + new String(Base64.encodeBase64(toXml().getBytes("UTF-8")), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return "";
     }
 
     public void save(String path) {

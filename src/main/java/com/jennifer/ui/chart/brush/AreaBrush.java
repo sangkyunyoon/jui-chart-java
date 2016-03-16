@@ -22,6 +22,7 @@
 package com.jennifer.ui.chart.brush;
 
 import com.jennifer.ui.chart.ChartBuilder;
+import com.jennifer.ui.util.DomUtil;
 import com.jennifer.ui.util.dom.Path;
 import com.jennifer.ui.util.dom.Transform;
 import org.json.JSONArray;
@@ -53,8 +54,9 @@ public class AreaBrush extends LineBrush {
         for(int k = 0, len = path.length(); k < len; k++) {
             JSONObject o =  path.getJSONObject(k);
 
-            Path p = createLine(o, k);
-            JSONArray xList = (JSONArray) o.getJSONArray("x");
+            DomUtil g = createLine(o, k);
+            Path p = (Path)g.children(0);
+            JSONArray xList = o.getJSONArray("x");
 
             p.LineTo(xList.getDouble(xList.length() - 1), maxY);
             p.LineTo(xList.getDouble(0), maxY);
