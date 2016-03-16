@@ -208,7 +208,7 @@ public abstract class Brush extends AbstractDraw {
     }
 
     public String formatNumber(double value) {
-        return formatNumber(value, new DecimalFormat("#,###.##"));
+        return formatNumber(value, new DecimalFormat("#,##0.##"));
     }
 
     /**

@@ -82,7 +82,6 @@ public class ColumnBrush extends Brush {
 
     @Override
     public Object draw() {
-        DecimalFormat format = new DecimalFormat(".##");
         Transform[] t = new Transform[target.length()];
         double[] maxValue = new double[target.length()];
         for(int i = 0; i < maxValue.length; i++) {
@@ -98,7 +97,7 @@ public class ColumnBrush extends Brush {
 
                 double valueValue = chart.dataDouble(i, target.getString(j));
 
-                double startY = y.get((minCheck && valueValue == 0 ? 1 : valueValue));
+                double startY = y.get(((minCheck && valueValue == 0) ? 1 : valueValue));
                 double h = Math.abs(zeroY - startY);
                 String _color = this.color(j);
 
@@ -115,7 +114,7 @@ public class ColumnBrush extends Brush {
                 // display max value
                 if (valueValue > maxValue[j]) {
                     maxValue[j] = valueValue;
-                    t[j] = createMaxElement(startX + half_width/2, startY, format.format(valueValue), _color);
+                    t[j] = createMaxElement(startX + half_width/2, startY, formatNumber(valueValue), _color);
                 }
 
                 startX = startX + (columnWidth + innerPadding);
